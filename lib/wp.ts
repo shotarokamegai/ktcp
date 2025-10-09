@@ -1,7 +1,7 @@
+// lib/wp.ts
 const WP_API_BASE = process.env.WP_API_BASE || "https://xs849487.xsrv.jp";
 const API_BASE = `${WP_API_BASE.replace(/\/$/, "")}/wp-json/wp/v2`;
 
-// 型は最低限
 export type Work = {
   id: number;
   slug: string;
@@ -17,7 +17,7 @@ async function wpGet<T>(path: string): Promise<T> {
   return (await res.json()) as T;
 }
 
-// まずは posts を works 代わりに使う（後で CPT `work` に差し替え）
+// posts→CPT `work` に切替えたらここを /work に
 export async function fetchWorks(): Promise<Work[]> {
   return wpGet<Work[]>(`/posts?per_page=100&_embed`);
 }
