@@ -6,3 +6,7 @@ export async function fetchWorkBySlug(slug: string) {
   const items = await wpGet<Work[]>(`/work?slug=${encodeURIComponent(slug)}&_embed`);
   return items[0] || null;
 }
+
+export function strip(html: string): string {
+  return html.replace(/<[^>]*>/g, "");
+}
