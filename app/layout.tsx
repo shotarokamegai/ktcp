@@ -1,6 +1,8 @@
 import "../styles/globals.css";
 import Image from "next/image";
+import Link from 'next/link'
 import FMLink from "@/components/FMLink";
+import { LenisProvider } from './../components/LenisProvider'
 import TransitionCover from "@/components/TransitionCover"; // ← そのまま使う（後述の修正版）
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -11,15 +13,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <title>Ketchup Portfolio</title>
       </head>
       <body style={{ background: "var(--bg, #0b0b0b)" }}>
+        <LenisProvider />
         <header style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 24px",borderBottom:"1px solid #222"}}>
           <FMLink href="/" style={{ display: "inline-flex", alignItems: "center" }}>
             <Image src="/logo.svg" alt="Ketchup Logo" width={120} height={32} priority />
           </FMLink>
           <nav style={{ display: "flex", gap: 16, fontSize: 14 }}>
-            <FMLink href="/">Home</FMLink>
-            <FMLink href="/works">Works</FMLink>
-            <FMLink href="/about">About</FMLink>
-            <FMLink href="/contact">Contact</FMLink>
+            <Link href="/">Home</Link>
+            <Link href="/works">Works</Link>
+            <Link href="/about">About</Link>
+            <Link href="/contact">Contact</Link>
           </nav>
         </header>
 

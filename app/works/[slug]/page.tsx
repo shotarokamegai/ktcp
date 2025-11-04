@@ -1,7 +1,9 @@
 // app/works/[slug]/page.tsx
-import Link from "next/link";
-import { fetchWorkBySlug, strip } from "@/lib/wp";
 import type { Metadata } from "next";
+import { fetchWorkBySlug, strip } from "@/lib/wp";
+import { pickThumb, pickThumbSp } from "@/lib/wp";
+import ResponsiveImage from "@/components/ResponsiveImage";
+import FMLink from "@/components/FMLink";
 
 export const revalidate = 60;
 
@@ -26,11 +28,13 @@ export default async function WorkDetail({ params }: { params: { slug: string } 
   const dateTxt: string | undefined = acf.date;
   const skills: string | undefined = acf.skills;
   const client: string | undefined = acf.client;
-  const pcThumb: string | undefined = acf.pc_thumbnail; // image(url)
-  const spThumb: string | undefined = acf.sp_thumbnail; // image(url)
-  const videoUrl: string | undefined = acf.video;        // file(url)
+  const videoUrl: string | undefined = acf.video; // file(url)
 
-  // images（repeater -> imgs（repeater）-> img（image: return_format=array））
+  // PC/SP サムネ（ACF優先、PCは無ければアイキャッチにフォールバック）
+  const pcMeta = pickThumb(work);     // { url, width?, height? } | null
+  const spMeta = pickThumbSp(work);   // { url } | null
+
+  // images（repeater -> imgs（repeater）-> img（image: return_format=array or url））
   const gallery: string[] = [];
   const imagesRep = acf.images as any[] | undefined;
   if (Array.isArray(imagesRep)) {
@@ -61,27 +65,52 @@ export default async function WorkDetail({ params }: { params: { slug: string } 
 
   return (
     <main className="container" style={{ maxWidth: 940 }}>
-      {/* ヒーロー：pc/spサムネがあれば<picture>で */}
-      {(pcThumb || spThumb) && (
-        <picture style={{ display: "block", marginBottom: 20 }}>
-          {spThumb && <source media="(max-width: 767px)" srcSet={spThumb} />}
-          {pcThumb && <img src={pcThumb} alt={strip(work.title.rendered)} style={{ width: "100%", borderRadius: 12 }} />}
-          {!pcThumb && spThumb && <img src={spThumb} alt={strip(work.title.rendered)} style={{ width: "100%", borderRadius: 12 }} />}
-        </picture>
+      {/* ヒーロー：PC/SP 出し分け + プレースホルダー（高さ確保） */}
+      {pcMeta && (
+        <div style={{ marginBottom: 20 }}>
+          <ResponsiveImage
+            pc={pcMeta}
+            sp={spMeta ?? undefined}
+            alt={strip(work.title.rendered)}
+            fallbackRatio="16 / 9"
+          />
+        </div>
       )}
 
       <h1 dangerouslySetInnerHTML={{ __html: work.title.rendered }} />
 
       {/* メタ情報（ACF） */}
       {(client || dateTxt || skills || url) && (
-        <ul style={{ listStyle: "none", padding: 0, margin: "8px 0 24px", lineHeight: 1.7, opacity: 0.9 }}>
-          {client && <li><strong>Client:</strong> {client}</li>}
-          {dateTxt && <li><strong>Date:</strong> {dateTxt}</li>}
-          {skills && <li><strong>Skills:</strong> {skills}</li>}
+        <ul
+          style={{
+            listStyle: "none",
+            padding: 0,
+            margin: "8px 0 24px",
+            lineHeight: 1.7,
+            opacity: 0.9,
+          }}
+        >
+          {client && (
+            <li>
+              <strong>Client:</strong> {client}
+            </li>
+          )}
+          {dateTxt && (
+            <li>
+              <strong>Date:</strong> {dateTxt}
+            </li>
+          )}
+          {skills && (
+            <li>
+              <strong>Skills:</strong> {skills}
+            </li>
+          )}
           {url && (
             <li>
               <strong>URL:</strong>{" "}
-              <a href={url} target="_blank" rel="noreferrer">{url}</a>
+              <a href={url} target="_blank" rel="noreferrer">
+                {url}
+              </a>
             </li>
           )}
         </ul>
@@ -97,11 +126,16 @@ export default async function WorkDetail({ params }: { params: { slug: string } 
       {/* 動画（ACF file=url） */}
       {videoUrl && (
         <div style={{ margin: "24px 0" }}>
-          <video src={videoUrl} controls playsInline style={{ width: "100%", borderRadius: 12 }} />
+          <video
+            src={videoUrl}
+            controls
+            playsInline
+            style={{ width: "100%", borderRadius: 12 }}
+          />
         </div>
       )}
 
-      {/* 画像ギャラリー（新images） */}
+      {/* 画像ギャラリー（新images）— 読み込み時も高さ確保 */}
       {gallery.length > 0 && (
         <>
           <h2 style={{ marginTop: 32, fontSize: 18 }}>Gallery</h2>
@@ -114,7 +148,12 @@ export default async function WorkDetail({ params }: { params: { slug: string } 
             }}
           >
             {gallery.map((src, i) => (
-              <img key={i} src={src} alt={`image-${i}`} style={{ width: "100%", borderRadius: 12 }} />
+              <ResponsiveImage
+                key={i}
+                pc={{ url: src }}
+                alt={`image-${i}`}
+                fallbackRatio="4 / 3"
+              />
             ))}
           </div>
         </>
@@ -133,19 +172,19 @@ export default async function WorkDetail({ params }: { params: { slug: string } 
             }}
           >
             {galleryOld.map((it, i) => (
-              <img
+              <ResponsiveImage
                 key={i}
-                src={it.url}
+                pc={{ url: it.url }}
                 alt={`old-${i}`}
-                className={it.className}
-                style={{ width: "100%", borderRadius: 12 }}
+                fallbackRatio="4 / 3"
               />
             ))}
           </div>
         </>
       )}
+
       <p style={{ marginTop: 20 }}>
-        <Link href="/works">Back to works</Link>
+        <FMLink href="/works">Back to works</FMLink>
       </p>
     </main>
   );

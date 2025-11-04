@@ -15,15 +15,17 @@ export default function TransitionCover() {
   const pathname = usePathname();
 
   // 新ページでマウントされたらカバーを外す
+  // 新ページでを表示するとき
   useEffect(() => {
-    controls.start({ opacity: 0, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } });
+    controls.start({ x: window.innerWidth, opacity: 1, transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } });
   }, [pathname, controls]);
 
   useEffect(() => {
     const handler = (e: Event) => {
       const href = (e as CustomEvent).detail?.href as string;
+      // 隠す時
       controls
-        .start({ opacity: 1, transition: { duration: 0.45, ease: [0.4, 0, 1, 1] } })
+        .start({ x: 0, opacity: 1, transition: { duration: 0.45, ease: [0.4, 0, 1, 1] } })
         .then(() => router.push(href));
     };
     window.addEventListener("fm:start", handler as EventListener);
@@ -33,12 +35,13 @@ export default function TransitionCover() {
   return (
     <motion.div
       aria-hidden
-      initial={{ opacity: 0 }}
+      initial={{ opacity: 1, x: window.innerWidth }}
       animate={controls}
       style={{
         position: "absolute", // ★ fixed → absolute
         inset: 0,             // ★ 親(main)の範囲だけ
-        background: "var(--bg, #0b0b0b)",
+        // background: "#ffffff)",
+        background: "#ffffff",
         zIndex: 100,          // main内では最前面
         pointerEvents: "none",
       }}

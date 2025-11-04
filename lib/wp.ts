@@ -30,18 +30,30 @@ export async function fetchWorkBySlug(slug: string): Promise<Work | null> {
   return items[0] || null;
 }
 
-export function pickThumb(work: Work): string | null {
-  // 優先順位: pc_thumbnail → アイキャッチ
+export type ImageMeta = {
+  url: string;
+  width?: number;
+  height?: number;
+};
+
+// PC（優先：ACF → アイキャッチ）
+export function pickThumb(work: Work): ImageMeta | null {
   const acfPc = work.acf?.pc_thumbnail;
   const media = work?._embedded?.["wp:featuredmedia"]?.[0];
   const defaultImg = media?.source_url ?? null;
-  return acfPc || defaultImg;
+  const width = media?.media_details?.width;
+  const height = media?.media_details?.height;
+
+  if (acfPc) return { url: acfPc };
+  if (defaultImg) return { url: defaultImg, width, height };
+  return null;
 }
 
-export function pickThumbSp(work: Work): string | null {
-  return work.acf?.sp_thumbnail ?? null;
+// SP（ACFのみ）
+export function pickThumbSp(work: Work): ImageMeta | null {
+  const acfSp = work.acf?.sp_thumbnail;
+  return acfSp ? { url: acfSp } : null;
 }
-
 export function strip(html: string): string {
   return html.replace(/<[^>]*>/g, "");
 }

@@ -1,6 +1,8 @@
 // app/page.tsx
 import Link from "next/link";
-import { fetchWorks, pickThumb } from "@/lib/wp";
+import FMLink from "@/components/FMLink";
+import ResponsiveImage from "@/components/ResponsiveImage";
+import { fetchWorks, pickThumb, pickThumbSp } from "@/lib/wp";
 
 export const revalidate = 60; // /works と同じくISR
 
@@ -14,14 +16,34 @@ export default async function Home() {
 
       <section className="grid" style={{ marginTop: 16 }}>
         {latest.map((w) => {
-          const img = pickThumb(w);
+          const pc = pickThumb(w);
+          const sp = pickThumbSp(w);
+
           return (
-            <a key={w.id} href={`/works/${w.slug}`} className="card">
-              {img && <img src={img} alt={w.title.rendered} />}
+            <FMLink
+              key={w.id}
+              href={`/works/${w.slug}`}
+              style={{
+                textDecoration: "none",
+                color: "inherit",
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+              }}
+            >
+              {pc && (
+                <ResponsiveImage
+                  pc={pc}
+                  sp={sp}
+                  alt={w.title.rendered}
+                  fallbackRatio="4 / 3"
+                />
+              )}
               <h2
                 dangerouslySetInnerHTML={{ __html: w.title.rendered }}
+                style={{ fontSize: "1rem", lineHeight: 1.4 }}
               />
-            </a>
+            </FMLink>
           );
         })}
       </section>
