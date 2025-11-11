@@ -11,13 +11,7 @@ export default async function WorksPage() {
     <main className="container" style={{ padding: "80px 24px" }}>
       <h1 style={{ fontSize: "2rem", marginBottom: "2rem" }}>Works</h1>
 
-      <section
-        style={{
-          display: "grid",
-          gap: "40px",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-        }}
-      >
+      <section className="pre:flex pre:justify-between pre:flex-wrap">
         {works.map((w) => {
           const pc = pickThumb(w);
           const sp = pickThumbSp(w);
@@ -26,13 +20,7 @@ export default async function WorksPage() {
             <FMLink
               key={w.id}
               href={`/works/${w.slug}`}
-              style={{
-                textDecoration: "none",
-                color: "inherit",
-                display: "flex",
-                flexDirection: "column",
-                gap: "12px",
-              }}
+              className="pre:w-[calc(339/1401*100%)]"
             >
               {pc && (
                 <ResponsiveImage

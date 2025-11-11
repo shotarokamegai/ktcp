@@ -11,10 +11,8 @@ export default async function Home() {
   const latest = works.slice(0, 9);           // トップでは最新9件だけ表示（お好みで調整）
 
   return (
-    <main className="container">
-      <h1>Ketchup Portfolio</h1>
-
-      <section className="grid" style={{ marginTop: 16 }}>
+    <main className="container pre:pt-[580px]">
+      <section className="pre:flex pre:justify-between pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto">
         {latest.map((w) => {
           const pc = pickThumb(w);
           const sp = pickThumbSp(w);
@@ -23,13 +21,7 @@ export default async function Home() {
             <FMLink
               key={w.id}
               href={`/works/${w.slug}`}
-              style={{
-                textDecoration: "none",
-                color: "inherit",
-                display: "flex",
-                flexDirection: "column",
-                gap: "12px",
-              }}
+              className="pre:w-[calc(339/1401*100%)] pre:mb-[20px]"
             >
               {pc && (
                 <ResponsiveImage
@@ -48,11 +40,15 @@ export default async function Home() {
         })}
       </section>
 
-      <p style={{ marginTop: 20 }}>
-        <Link href="/works">→ すべてのWorksを見る</Link>
-      </p>
+      {/* <p style={{ marginTop: 20 }}> */}
+        {/* <Link href="/works">→ すべてのWorksを見る</Link> */}
+      {/* </p> */}
 
-      <footer>© Ketchup Inc.</footer>
+      <footer className="pre:flex pre:items-center pre:justify-between pre:px-[20px]">
+        <a href="mailto:info@ktcp.jp">info@ktcp.jp</a>
+        <p>©Ketchup.inc all rights reserved.</p>
+        <p>2025</p>
+      </footer>
     </main>
   );
 }

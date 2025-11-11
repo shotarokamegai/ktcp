@@ -8,14 +8,12 @@ export default function ResponsiveImage({
   sp,
   alt,
   fallbackRatio = "4 / 3",
-  radius = 12,
   fit = "cover",
 }: {
   pc: ImageMeta;
   sp?: ImageMeta | null;
   alt: string;
   fallbackRatio?: string;
-  radius?: number;
   fit?: React.CSSProperties["objectFit"];
 }) {
   const [loaded, setLoaded] = useState(false);
@@ -32,7 +30,6 @@ export default function ResponsiveImage({
         position: "relative",
         width: "100%",
         aspectRatio: ratio,
-        borderRadius: radius,
         overflow: "hidden",
       }}
     >

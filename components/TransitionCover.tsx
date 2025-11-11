@@ -17,7 +17,9 @@ export default function TransitionCover() {
   // 新ページでマウントされたらカバーを外す
   // 新ページでを表示するとき
   useEffect(() => {
-    controls.start({ x: window.innerWidth, opacity: 1, transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } });
+    if (window) {
+      controls.start({ x: window.innerWidth, opacity: 1, transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } });
+    }
   }, [pathname, controls]);
 
   useEffect(() => {
