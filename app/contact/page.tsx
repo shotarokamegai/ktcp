@@ -1,5 +1,6 @@
 // app/contact/page.tsx
 import type { Metadata } from "next";
+import Footer from "@/components/Footer";
 import ContactForm from "@/components/ContactForm";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default function ContactPage() {
         お仕事のご相談・ご依頼はこちらからお願いします。
       </p>
       <ContactForm />
+      <Footer/>
     </main>
   );
 }

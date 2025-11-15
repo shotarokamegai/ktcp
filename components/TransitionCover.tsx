@@ -18,7 +18,7 @@ export default function TransitionCover() {
   // 新ページでを表示するとき
   useEffect(() => {
     if (window) {
-      controls.start({ x: window.innerWidth, opacity: 1, transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } });
+      // controls.start({ x: window.innerWidth, opacity: 1, transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } });
     }
   }, [pathname, controls]);
 
@@ -27,8 +27,8 @@ export default function TransitionCover() {
       const href = (e as CustomEvent).detail?.href as string;
       // 隠す時
       controls
-        .start({ x: 0, opacity: 1, transition: { duration: 0.45, ease: [0.4, 0, 1, 1] } })
-        .then(() => router.push(href));
+        // .start({ x: 0, opacity: 1, transition: { duration: 0.45, ease: [0.4, 0, 1, 1] } })
+        // .then(() => router.push(href));
     };
     window.addEventListener("fm:start", handler as EventListener);
     return () => window.removeEventListener("fm:start", handler as EventListener);
@@ -43,7 +43,7 @@ export default function TransitionCover() {
         position: "absolute", // ★ fixed → absolute
         inset: 0,             // ★ 親(main)の範囲だけ
         // background: "#ffffff)",
-        background: "#ffffff",
+        // background: "#ffffff",
         zIndex: 100,          // main内では最前面
         pointerEvents: "none",
       }}

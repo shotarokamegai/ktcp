@@ -1,4 +1,3 @@
-// components/ResponsiveImage.tsx
 "use client";
 import { useState, useMemo } from "react";
 import type { ImageMeta } from "@/lib/wp";
@@ -33,38 +32,39 @@ export default function ResponsiveImage({
         overflow: "hidden",
       }}
     >
-      {/* Skeleton */}
-      <div
-        aria-hidden
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "linear-gradient(90deg, rgba(255,255,255,.06) 0, rgba(255,255,255,.12) 20%, rgba(255,255,255,.06) 40%)",
-          backgroundSize: "200% 100%",
-          animation: "shim 1.2s linear infinite",
-          opacity: loaded ? 0 : 1,
-          transition: "opacity .25s ease",
-        }}
-      />
+    {/* ▼ BLUR プレースホルダー */}
+    <div
+      aria-hidden
+      style={{
+        position: "absolute",
+        inset: 0,
+        background: "#D9D9D9",
+        filter: "blur(20px)",
+        opacity: loaded ? 0 : 1,
+        transition: "opacity .4s ease 1s",
+        zIndex: 0,
+      }}
+    />
 
-      {/* PC用 */}
-      <img
-        src={pc.url}
-        alt={alt}
-        onLoad={() => setLoaded(true)}
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: fit,
-          display: "block",
-        }}
-        className="img-pc"
-      />
+    {/* ▼ PC画像 */}
+    <img
+      src={pc.url}
+      alt={alt}
+      onLoad={() => setLoaded(true)}
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        objectFit: fit,
+        opacity: loaded ? 1 : 0,
+        transition: "opacity .4s ease",
+        zIndex: 1,
+      }}
+      className="img-pc"
+    />
 
-      {/* SP用 */}
+      {/* ▼ SP画像（ある場合のみ） */}
       {sp?.url && (
         <img
           src={sp.url}
@@ -76,9 +76,10 @@ export default function ResponsiveImage({
             width: "100%",
             height: "100%",
             objectFit: fit,
-            display: "block",
-          }}
-          className="img-sp"
+            opacity: loaded ? 1 : 0,
+            transition: "opacity .4s ease",
+        }}
+        className="img-sp"
         />
       )}
 
@@ -88,13 +89,6 @@ export default function ResponsiveImage({
         @media (max-width: 767px) {
           .img-pc { display: none; }
           .img-sp { display: block; }
-        }
-      `}</style>
-
-      <style jsx global>{`
-        @keyframes shim {
-          0% { background-position: 200% 0 }
-          100% { background-position: -200% 0 }
         }
       `}</style>
     </div>
