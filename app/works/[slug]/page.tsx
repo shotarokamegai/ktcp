@@ -1,8 +1,9 @@
 // app/works/[slug]/page.tsx
 import Link from "next/link";
+import FMLink from "@/components/FMLink";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
-import { fetchWorkBySlug, strip } from "@/lib/wp";
+import { fetchWorkBySlug, strip, fetchWorks, pickEyecatchRandom } from "@/lib/wp";
 import ResponsiveImage from "@/components/ResponsiveImage";
 
 export const revalidate = 60;
@@ -53,6 +54,12 @@ export default async function WorkDetail({
     });
   }
 
+  // ▼ Featured works 用：全 works から4件ピックアップ（自分自身は除外）
+  const allWorks = await fetchWorks();
+  const featured = allWorks
+    .filter((w: any) => w.slug !== work.slug) // 自分自身は除く
+    .slice(0, 4);     
+
   return (
     <main className="container pre:pt-[307px]">
       <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between">
@@ -100,6 +107,69 @@ export default async function WorkDetail({
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ▼ ここから Featured works セクションを追加 */}
+      <section className="pre:mt-[160px] pre:mb-[180px]">
+        <div className="pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[26px]">
+          <h2 className="pre:text-[24px] pre:font-gt pre:font-light">
+            Featured works
+          </h2>
+        </div>
+
+        <div className="pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto">
+          {featured.map((w: any) => {
+            const picked = pickEyecatchRandom(w, { seed: w.id });
+            if (!picked) return null;
+
+            return (
+              <FMLink
+                key={w.id}
+                href={`/works/${w.slug}`}
+                className={
+                  [
+                    "pre:w-[calc(1/4*100%)]", // ★ 全部1/4幅
+                    "pre:mb-[20px]",
+                    "pre:px-[calc(7.5/1401*100%)]",
+                    "pre:hover:text-ketchup",
+                    // ホバー時のResponsiveImageアニメ（トップと合わせたければそのまま）
+                    "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
+                    "pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))]",
+                    "pre:[&_.responsive-image-content]:scale-[1]",
+                    "pre:hover:[&_.responsive-image-content]:scale-[1.1]",
+                    "slide-in",
+                    "slide-out",
+                  ].join(" ")
+                }
+              >
+                <ResponsiveImage
+                  pc={picked.pc}
+                  sp={picked.sp || undefined}
+                  alt={w.title.rendered}
+                  placeholder_color={w.acf?.placeholder_color}
+                  fallbackRatio="4 / 3"
+                />
+
+                <header className="pre:flex pre:mt-[10px]">
+                  <p className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[70px]">
+                    {w.acf?.date}
+                  </p>
+
+                  <h2
+                    className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-70px-105px)] pre:text-ellipsis pre:overflow-hidden pre:whitespace-nowrap"
+                    dangerouslySetInnerHTML={{ __html: w.title.rendered }}
+                  />
+
+                  <p className="pre:text-[10px] pre:leading-[130%] pre:font-gt pre:font-light pre:w-[105px] pre:text-right">
+                    {Array.isArray(w.works_cat) && w.works_cat.length > 0
+                      ? w.works_cat.map((cat: any) => cat.name).join(" / ")
+                      : ""}
+                  </p>
+                </header>
+              </FMLink>
+            );
+          })}
         </div>
       </section>
       <Footer/>
