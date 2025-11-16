@@ -50,18 +50,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body>
+      <body className="pre:w-full pre:overflow-hidden">
         <LenisProvider />
         <header className="pre:fixed pre:top-0 pre:left-0 pre:w-full pre:px-[20px] pre:pt-[26px] pre:flex pre:justify-between pre:z-[100]">
           <FMLink href="/" className="pre:w-[104.4px] pre:h-[44px]">
             <Image src="/logo.svg" alt="Ketchup Logo" width={104.4} height={44} />
           </FMLink>
-          <nav className="pre:flex pre:justify-end pre:items-start pre:[&_a]:font-gt pre:[&_a]:font-regular pre:[&_a]:text-black pre:[&_a]:hover:text-ketchup pre:[&_a]:text-[12px]">
-            <FMLink href="/about" className="pre:mr-[37px]">ABOUT</FMLink>
-            <FMLink href="/contact" className="pre:mr-[37px]">CONTACT</FMLink>
-            <FMLink href="/careers" className="pre:inline-flex pre:items-center">
+          <nav className="pre:flex pre:justify-end pre:items-start pre:[&_a]:font-gt pre:[&_a]:font-regular pre:[&_a]:text-[12px]">
+            <FMLink href="/about" className="pre:mr-[37px] pre:text-black pre:hover:text-ketchup">ABOUT</FMLink>
+            <FMLink href="/contact" className="pre:mr-[37px] pre:text-black pre:hover:text-ketchup">CONTACT</FMLink>
+            <FMLink href="/careers" className="pre:inline-flex pre:text-ketchup pre:items-center pre:hover:text-black pre:[&_svg]:relative pre:hover:[&_div]:rotate-[45deg]">
               <Plus />
-              <span className="pre:mx-[6px] pre:text-ketchup">
+              <span className="pre:mx-[6px]">
                 CAREERS
               </span>
               <Plus />

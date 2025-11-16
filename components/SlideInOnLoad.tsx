@@ -17,7 +17,8 @@ const TRANSITION_DURATION = 600;
 // ▼ 追加：ランダム or 順番
 const IN_MODE: "random" | "sequence" = "sequence";
 // const IN_MODE: "random" | "sequence" = "random";
-const OUT_MODE: "random" | "sequence" = "random";
+const OUT_MODE: "random" | "sequence" = "sequence";
+// const OUT_MODE: "random" | "sequence" = "random";
 
 export default function SlideInOnLoad() {
   const pathname = usePathname();

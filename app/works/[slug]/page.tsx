@@ -54,63 +54,53 @@ export default async function WorkDetail({
   }
 
   return (
-    <main className="container pre:mt-[284px]">
-      <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]">
-        {/* タイトル */}
-        <h1 dangerouslySetInnerHTML={{ __html: work.title.rendered }} />
-
-        {/* 日付 + カテゴリ */}
-        {(dateTxt || (categories && categories.length > 0)) && (
-          <div
-            style={{
-              margin: "8px 0 24px",
-              lineHeight: 1.7,
-              opacity: 0.9,
-            }}
-          >
-            {dateTxt && (
-              <p>
-                <strong>Date:</strong> {dateTxt}
-              </p>
-            )}
-            {Array.isArray(categories) && categories.length > 0 && (
-              <p>
-                <strong>Category:</strong>{" "}
-                {categories.map((cat, i) => (
-                  <span key={cat.id}>
-                    {cat.name}
-                    {i < categories.length - 1 && " / "}
-                  </span>
-                ))}
-              </p>
-            )}
+    <main className="container pre:pt-[307px]">
+      <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between">
+        <div className="pre:w-[calc(339/1401*100%)]">
+          {/* 日付 */}
+          {(dateTxt) && (
+            <div className="pre:mb-[14px] slide-in slide-out">
+              {dateTxt && (
+                <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[1]">
+                  {dateTxt}
+                </p>
+              )}
+            </div>
+          )}
+          {/* タイトル */}
+          <h1 dangerouslySetInnerHTML={{ __html: work.title.rendered }} className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[1] slide-in slide-out" />
+          {/* カテゴリー */}
+          {((categories && categories.length > 0)) && (
+            <div className="pre:mt-[426px] slide-in slide-out">
+              {Array.isArray(categories) && categories.length > 0 && (
+                <p className="pre:text-[15px] pre:font-gt pre:font-light">
+                  {categories.map((cat, i) => (
+                    <span key={cat.id}>
+                      {cat.name}
+                      {i < categories.length - 1 && " / "}
+                    </span>
+                  ))}
+                </p>
+              )}
+            </div>
+          )}
           </div>
-        )}
-
-        {/* images（ACF images の image.url を列挙） */}
-        {gallery.length > 0 && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-              gap: 12,
-              marginTop: 12,
-            }}
-          >
-            {gallery.map((src, i) => (
-              <ResponsiveImage
-                key={i}
-                pc={{ url: src }}
-                alt={`image-${i}`}
-                fallbackRatio="4 / 3"
-              />
-            ))}
-          </div>
-        )}
-
-        <p style={{ marginTop: 20 }}>
-          <Link href="/works">Back to works</Link>
-        </p>
+        <div className="pre:w-[calc(870/1401*100%)] slide-in">
+          {/* images（ACF images の image.url を列挙） */}
+          {gallery.length > 0 && (
+            <div>
+              {gallery.map((src, i) => (
+                <div className="pre:mb-[10px] pre:last-child:mb-[10] slide-out">
+                  <ResponsiveImage
+                    key={i}
+                    pc={{ url: src }}
+                    alt={`image-${i}`}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
       <Footer/>
     </main>
