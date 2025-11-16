@@ -54,8 +54,8 @@ export default async function WorkDetail({
   }
 
   return (
-    <main className="container pre:mt-[284px]" style={{ maxWidth: 940 }}>
-      <section className=" pre:w-[calc(100%-40px)] pre:mx-auto">
+    <main className="container pre:mt-[284px]">
+      <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]">
         {/* タイトル */}
         <h1 dangerouslySetInnerHTML={{ __html: work.title.rendered }} />
 

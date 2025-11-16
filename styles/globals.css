@@ -1,6 +1,100 @@
+/* app/globals.css など */
+:root {
+  --ease-in-sine: cubic-bezier(0.47, 0, 0.745, 0.715);
+  --ease-out-sine: cubic-bezier(0.39, 0.575, 0.565, 1);
+  --ease-in-out-sine: cubic-bezier(0.39, 0.575, 0.565, 1);
+
+  --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-in-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+
+  --ease-in-quart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-in-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+  --ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+
+  --ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+
+  --ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+  --ease-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+  --ease-in-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+
+  --ease-in-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  /* 元のコメントに合わせて強めの back */
+  --ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.45);
+  --ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  --ease-in-out-fast: cubic-bezier(1, 0, 0, 1);
+
+  --ease-authentic-motion: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --ease-a: cubic-bezier(0.22, 0.61, 0.32, 1.15);
+
+  /* Power 系の alias（Sass の再代入相当） */
+  --power1-ease-in: var(--ease-in-quad);
+  --power1-ease-out: var(--ease-out-quad);
+  --power1-ease-in-out: var(--ease-in-out-quad);
+
+  --power2-ease-in: var(--ease-in-cubic);
+  --power2-ease-out: var(--ease-out-cubic);
+  --power2-ease-in-out: var(--ease-in-out-cubic);
+
+  --power3-ease-in: var(--ease-in-quart);
+  --power3-ease-out: var(--ease-out-quart);
+  --power3-ease-in-out: var(--ease-in-out-quart);
+
+  --power4-ease-in: var(--ease-in-quint);
+  --power4-ease-out: var(--ease-out-quint);
+  --power4-ease-in-out: var(--ease-in-out-quint);
+
+  --power0: linear;
+}
+
 body {
     margin: 0;
 }
+body::selection {
+    color: #fff;  
+    background-color: #C80F2E;
+}
 a {
     text-decoration: initial;
+}
+/* ▼ 離脱アニメ（leave）用 */
+.slide-out {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 1.5s var(--ease-in-out-quad),
+    transform 1.5s var(--ease-in-out-quad);
+}
+
+/* 消えた状態 */
+.slide-out.is-hidden {
+  opacity: 0;
+  transform: translateY(-16px); /* 下に吸い込まれる感じ */
+}
+
+/* ▼ 表示アニメ（enter）用 */
+.slide-in {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 1.5s var(--ease-in-out-quint),
+    transform 1.5s var(--ease-in-out-quint);
+}
+
+/* 表示された状態 */
+.slide-in.is-shown {
+  opacity: 1;
+  transform: translateY(0);
 }

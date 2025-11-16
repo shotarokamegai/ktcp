@@ -1,29 +1,23 @@
+// components/FMLink.tsx
 "use client";
-import { useRouter } from "next/navigation";
-import { MouseEvent } from "react";
 
-export default function FMLink({
-  href,
-  children,
-  className,
-  style,
-}: {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-}) {
-  const router = useRouter();
+import Link from "next/link";
 
-  const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
+type Props = React.ComponentProps<typeof Link>;
+
+export default function FMLink({ href, onClick, ...rest }: Props) {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    const evt = new CustomEvent("fm:start", { detail: { href } });
-    window.dispatchEvent(evt); // カバーに「開始」を通知
+    onClick?.(e as any);
+
+    window.dispatchEvent(
+      new CustomEvent("fm:start", {
+        detail: { href },
+      })
+    );
   };
 
   return (
-    <a href={href} onClick={onClick} className={className} style={style}>
-      {children}
-    </a>
+    <Link href={href} onClick={handleClick} {...rest} />
   );
 }

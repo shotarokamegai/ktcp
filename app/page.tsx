@@ -15,11 +15,11 @@ export default async function Home() {
   return (
     <main className="container pre:pt-[580px]">
       {/* ▼ タクソノミー一覧 */}
-      <section className="pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px]">
+      <section className="pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[180px]">
         <Link
           key="all"
           href="/works"
-          className="pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:text-black pre:hover:text-black"
+          className="pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:text-black pre:hover:text-black slide-out"
         >
           ALL
         </Link>
@@ -27,7 +27,7 @@ export default async function Home() {
           <Link
             key={cat.id}
             href={`/works/category/${cat.slug}`}
-            className="pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:text-gray-400 pre:hover:text-black pre:transition-colors"
+            className="pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:text-gray-400 pre:hover:text-black pre:transition-colors slide-out"
           >
             {cat.name}
           </Link>
@@ -62,7 +62,7 @@ export default async function Home() {
         return (
           <div
             key={item.key}
-            className="pre:w-[calc(1/4*100%)] pre:mb-[20px] pre:px-[calc(7.5/1401*100%)]"
+            className="pre:w-[calc(1/4*100%)] pre:mb-[20px] pre:px-[calc(7.5/1401*100%)] slide-out"
           >
             <ResponsiveImage
               pc={{ url: "/illust.png" }} // public/illust.png 前提
@@ -101,7 +101,7 @@ export default async function Home() {
         <Link
           key={item.key}
           href={`/works/${w.slug}`}
-          className={`${widthClass} pre:mb-[20px] pre:px-[calc(7.5/1401*100%)] pre:hover:text-ketchup`}
+          className={`${widthClass} pre:mb-[20px] pre:px-[calc(7.5/1401*100%)] pre:hover:text-ketchup slide-out`}
         >
           <ResponsiveImage
             pc={picked.pc}

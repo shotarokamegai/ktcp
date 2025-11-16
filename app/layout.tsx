@@ -2,18 +2,20 @@ import "../styles/globals.css";
 import { gtAmerica } from "./fonts";
 import "../styles/tailwind.css";
 import Image from "next/image";
-import Link from 'next/link'
+// import Link from 'next/link'
+import FMLink from "@/components/FMLink";
 import Script from "next/script";
 import { LenisProvider } from './../components/LenisProvider'
 import Plus from '../components/svg/Plus'
 import TransitionCover from "@/components/TransitionCover"; // ← そのまま使う（後述の修正版）
+import SlideInOnLoad from "@/components/SlideInOnLoad";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja" className={gtAmerica.variable}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Ketchup Portfolio</title>
+        <title>Ketchup Inc. | 株式会社 Ketchup</title>
         <Script
           id="adobe-fonts"
           strategy="afterInteractive"
@@ -51,19 +53,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <LenisProvider />
         <header className="pre:fixed pre:top-0 pre:left-0 pre:w-full pre:px-[20px] pre:pt-[26px] pre:flex pre:justify-between pre:z-[100]">
-          <Link href="/" className="pre:w-[104.4px] pre:h-[44px]">
+          <FMLink href="/" className="pre:w-[104.4px] pre:h-[44px]">
             <Image src="/logo.svg" alt="Ketchup Logo" width={104.4} height={44} />
-          </Link>
+          </FMLink>
           <nav className="pre:flex pre:justify-end pre:items-start pre:[&_a]:font-gt pre:[&_a]:font-regular pre:[&_a]:text-black pre:[&_a]:hover:text-ketchup pre:[&_a]:text-[12px]">
-            <Link href="/about" className="pre:mr-[37px]">ABOUT</Link>
-            <Link href="/contact" className="pre:mr-[37px]">CONTACT</Link>
-            <Link href="/careers" className="pre:inline-flex pre:items-center">
+            <FMLink href="/about" className="pre:mr-[37px]">ABOUT</FMLink>
+            <FMLink href="/contact" className="pre:mr-[37px]">CONTACT</FMLink>
+            <FMLink href="/careers" className="pre:inline-flex pre:items-center">
               <Plus />
               <span className="pre:mx-[6px] pre:text-ketchup">
                 CAREERS
               </span>
               <Plus />
-            </Link>
+            </FMLink>
           </nav>
         </header>
 
@@ -72,6 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           {/* ★ カバーは main の中に置く（= ヘッダーは覆わない） */}
           <TransitionCover />
+          <SlideInOnLoad />  {/* ← これを追加 */}
         </main>
       </body>
     </html>

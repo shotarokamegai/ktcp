@@ -1,7 +1,7 @@
 // components/Footer.tsx
 export default function Footer() {
   return (
-    <footer className="pre:flex pre:items-center pre:justify-between pre:px-[20px] pre:mt-[180px]">
+    <footer className="pre:flex pre:items-center pre:justify-between pre:px-[20px]">
       <a
         href="mailto:info@ktcp.jp"
         className="pre:text-[24px] pre:font-gt pre:font-light pre:hover:text-ketchup"
