@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 const GETFORM_ENDPOINT =
   process.env.NEXT_PUBLIC_GETFORM_ENDPOINT ||
@@ -112,10 +113,10 @@ export default function ContactForm() {
     input: React.ReactNode;
     error?: string;
   }) => (
-    <div style={{ marginBottom: 16 }}>
+    <div style={{ marginBottom: 53 }}>
       <label
         htmlFor={name}
-        style={{ display: "block", marginBottom: 6, fontWeight: 600 }}
+        className="pre:font-dnp pre:text-[12px] pre:font-light pre:block pre:mt-[-3px]"
       >
         {label} {required && <span style={{ color: "#f55" }}>※</span>}
       </label>
@@ -253,13 +254,15 @@ export default function ContactForm() {
       <input type="text" name="_gotcha" style={{ display: "none" }} tabIndex={-1} />
 
       <div style={{ textAlign: "center", marginTop: 20 }}>
-        <button
-          type="submit"
-          disabled={sending}
-          className="submit"
-          style={btn}
-        >
+        <button type="submit" disabled={sending} className="btn-submit">
           {sending ? "Sending..." : "SEND"}
+          <Image
+            src="/arrow.svg"
+            alt=""
+            width={19}
+            height={18}
+            className="btn-submit__arrow"
+          />
         </button>
       </div>
     </form>
@@ -267,24 +270,9 @@ export default function ContactForm() {
 }
 
 const ipt: React.CSSProperties = {
+  marginTop: "12px",
   width: "100%",
-  background: "#111",
-  border: "1px solid #222",
-  borderRadius: 10,
-  color: "var(--fg, #f4f4f4)",
-  padding: "12px 14px",
+  color: "#adadad",
+  fontSize: "16px",
   outline: "none",
-};
-
-const btn: React.CSSProperties = {
-  display: "inline-block",
-  minWidth: 160,
-  padding: "12px 18px",
-  background: "#d62828",
-  border: "1px solid #d62828",
-  color: "#fff",
-  borderRadius: 999,
-  fontWeight: 700,
-  letterSpacing: 1,
-  cursor: "pointer",
 };

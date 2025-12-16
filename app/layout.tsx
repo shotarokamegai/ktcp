@@ -52,8 +52,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="pre:w-full pre:overflow-hidden">
         <LenisProvider />
-        <header className="pre:fixed pre:top-0 pre:left-0 pre:w-full pre:px-[20px] pre:pt-[26px] pre:flex pre:justify-between pre:z-[100]">
-          <FMLink href="/" className="pre:w-[104.4px] pre:h-[44px]">
+        <header className="pre:fixed pre:top-0 pre:left-0 pre:w-full pre:px-5 pre:pt-[26px] pre:flex pre:justify-between pre:z-[100]">
+          <FMLink href="/" className="pre:w-[104.4px] pre:h-11">
             <Image src="/logo.svg" alt="Ketchup Logo" width={104.4} height={44} />
           </FMLink>
           <nav className="pre:flex pre:justify-end pre:items-start pre:[&_a]:font-gt pre:[&_a]:font-regular pre:[&_a]:text-[12px]">

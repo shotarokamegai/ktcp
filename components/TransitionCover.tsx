@@ -37,7 +37,8 @@ export default function TransitionCover() {
   return (
     <motion.div
       aria-hidden
-      initial={{ opacity: 1, x: window.innerWidth }}
+      initial={{ opacity: 1 }}
+      // initial={{ opacity: 1, x: window.innerWidth }}
       animate={controls}
       style={{
         position: "absolute", // ★ fixed → absolute

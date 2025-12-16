@@ -97,7 +97,7 @@ export default async function WorkDetail({
           {gallery.length > 0 && (
             <div>
               {gallery.map((src, i) => (
-                <div className="pre:mb-[10px] pre:last-child:mb-[10] slide-out">
+                <div className="pre:mb-2.5 pre:last-child:mb-[10] slide-out">
                   <ResponsiveImage
                     key={i}
                     pc={{ url: src }}
@@ -113,7 +113,7 @@ export default async function WorkDetail({
       {/* ▼ ここから Featured works セクションを追加 */}
       <section className="pre:mt-[160px] pre:mb-[180px]">
         <div className="pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[26px]">
-          <h2 className="pre:text-[24px] pre:font-gt pre:font-light">
+          <h2 className="pre:text-[24px] pre:font-gt pre:font-light slide-out">
             Featured works
           </h2>
         </div>
