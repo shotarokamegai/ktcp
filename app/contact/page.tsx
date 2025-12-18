@@ -25,7 +25,7 @@ export default function ContactPage() {
           Transforms a Meal, The Perfect Condiment<br/>
           for Your Business</p>
           </div>
-        <div className="pre:w-[calc(870/1401*100%)] slide-in">
+        <div className="pre:w-[calc(870/1401*100%)] slide-in slide-out">
           <ContactForm />
         </div>
       </section>

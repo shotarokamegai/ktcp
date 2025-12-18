@@ -13,35 +13,43 @@
   --font-dnp: dnp-shuei-gothic-kin-std, sans-serif;
 }
 
-@layer components {
-  .btn-submit {
-    @apply pre:relative pre:h-20 pre:w-[340px] pre:text-[20px] pre:font-gt pre:font-light
-      pre:text-center pre:leading-20 pre:bg-black pre:block pre:text-white pre:cursor-pointer;
-  }
+.btn-submit {
+  @apply pre:relative pre:h-20 pre:w-[340px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer;
+}
 
-  /* 任意：disabledの見た目 */
-  .btn-submit:disabled {
-    @apply pre:opacity-60 pre:cursor-not-allowed;
-  }
+/* 任意：disabledの見た目 */
+.btn-submit:disabled {
+  @apply pre:opacity-60 pre:cursor-not-allowed;
+}
 
-  /* 任意：矢印用（毎回同じなら） */
-  .btn-submit__arrow {
-    @apply pre:absolute pre:top-[50%] pre:right-[25px] pre:[transform:translate3d(0,-50%,0)];
-  }
+/* 任意：矢印用（毎回同じなら） */
+.btn-submit__arrow {
+  @apply pre:absolute pre:top-[50%] pre:right-[25px] pre:[transform:translate3d(0,-50%,0)];
+}
 
-  .careers-accordion-box {
-    @apply pre:flex pre:py-[30px] pre:pl-5 pre:pb-10 pre:border-b pre:border-lightGray pre:border-solid
-  }
-  .careers-accordion-icon {
-    @apply pre:h-[22px] pre:w-[22px] pre:absolute pre:right-0 pre:top-[50%] pre:[transform:translate3d(0,-50%,0)]
-  }
-  .careers-accordion-title {
-    @apply pre:relative pre:h-[54px] pre:border-b pre:border-black pre:border-solid pre:cursor-pointer
-  }
-  .careers-accordion__inner {
-     @apply pre:relative pre:overflow-hidden pre:flex pre:justify-end
-  }
-  .careers-accordion__inner-content {
-     @apply pre:pt-[60px] pre:w-[calc(693/1440*100%)] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light
-  }
+.careers-accordion {
+  @apply pre:mb-[110px] pre:last:mb-0
+}
+
+.careers-accordion.active .careers-accordion-title {
+  @apply pre:border-ketchup
+}
+.careers-accordion.active .careers-accordion-icon {
+  @apply pre:border-ketchup;
+  transform: translate3d(0, -50%, 0) rotate(90deg);
+}
+.careers-accordion-box {
+  @apply pre:flex pre:py-[30px] pre:pl-5 pre:pb-10 pre:border-b pre:border-lightGray pre:border-solid
+}
+.careers-accordion-icon {
+  @apply pre:h-[22px] pre:w-[22px] pre:absolute pre:right-0 pre:top-[50%] pre:transform-[translate3d(0,-50%,0)]
+}
+.careers-accordion-title {
+  @apply pre:relative pre:h-[54px] pre:border-b-[1px] pre:border-black pre:cursor-pointer pre:flex pre:items-center
+}
+.careers-accordion__inner {
+   @apply pre:relative pre:overflow-hidden pre:flex pre:justify-end
+}
+.careers-accordion__inner-content {
+   @apply pre:pt-[60px] pre:pb-[54px] pre:w-[calc(693/1440*100%)] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light
 }

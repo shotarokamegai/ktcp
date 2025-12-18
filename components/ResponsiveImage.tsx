@@ -1,9 +1,9 @@
 "use client";
+
 import { useState, useMemo, useEffect, useRef } from "react";
 import type { ImageMeta } from "@/lib/wp";
 
 type ExtendedImageMeta = ImageMeta & {
-  // ACF 側のフィールド名に合わせている
   placeholder_color?: string | null;
 };
 
@@ -13,9 +13,7 @@ export default function ResponsiveImage({
   alt,
   fallbackRatio = "4 / 3",
   fit = "cover",
-  // ACF などから直接色を渡したいとき用（例: "#f0f0f0"）
   placeholder_color,
-  // ▼ これが true のときは placeholder を一切出さない
   disablePlaceholder = false,
 }: {
   pc: ExtendedImageMeta;
@@ -41,7 +39,6 @@ export default function ResponsiveImage({
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const ticking = useRef(false);
 
-  // props / ACF の値が変わったら placeholder 色を更新
   useEffect(() => {
     setPlaceholderBg(
       placeholder_color ||
@@ -51,17 +48,13 @@ export default function ResponsiveImage({
     );
   }, [placeholder_color, pc.placeholder_color, sp?.placeholder_color]);
 
-  // ▼ 要素の bottom が window の bottom より上に来たら inView = true
+  // inView 判定（初期表示で見えてる場合も true）
   useEffect(() => {
     const checkInView = () => {
       const el = wrapperRef.current;
       if (!el) return;
-
       const rect = el.getBoundingClientRect();
-      // 「要素の一番下」が「ウィンドウの一番下」より上に来たら
-      if (rect.top + 100 <= window.innerHeight) {
-        setInView(true);
-      }
+      if (rect.top + 100 <= window.innerHeight) setInView(true);
     };
 
     const onScroll = () => {
@@ -73,9 +66,7 @@ export default function ResponsiveImage({
       });
     };
 
-    // 初期チェック（読み込み時点で条件満たしている可能性もあるので）
     checkInView();
-
     window.addEventListener("scroll", onScroll);
     window.addEventListener("resize", onScroll);
     return () => {
@@ -84,22 +75,17 @@ export default function ResponsiveImage({
     };
   }, []);
 
-  const handleImageLoad = () => {
-    setLoaded(true);
-  };
-
-  // ▼ aspect-ratio
   const ratio = useMemo(() => {
     const r = (m?: ExtendedImageMeta | null) =>
       m?.width && m?.height ? `${m.width} / ${m.height}` : undefined;
     return r(pc) || r(sp || null) || fallbackRatio;
   }, [pc, sp, fallbackRatio]);
 
-  // ▼ placeholder を外す条件：ロード済み & inView
-  const showImage = loaded && inView;
-
-  // ▼ placeholder を描画するかどうか
   const enablePlaceholder = !disablePlaceholder;
+
+  // placeholder を外す条件：ロード済み & inView
+  // ※ inView になる前にロード完了しても、inView が true になったら表示される
+  const showImage = loaded && inView;
 
   return (
     <div
@@ -121,42 +107,19 @@ export default function ResponsiveImage({
           background: enablePlaceholder ? placeholderBg : "transparent",
           filter: enablePlaceholder ? "blur(20px)" : "none",
           opacity: enablePlaceholder ? (showImage ? 0 : 1) : 0,
-          transition: "opacity .4s ease 0.4s",
+          transition: "opacity .4s ease .4s",
           zIndex: 0,
         }}
       />
 
-<div
-  className="responsive-image-content"
-  style={{
-    width: "100%",
-    height: "100%",
-  }}
->
-      {/* ▼ PC画像 */}
-      <img
-        src={pc.url}
-        alt={alt}
-        onLoad={handleImageLoad}
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: fit,
-          opacity: showImage ? 1 : 0,
-          transition: "opacity .4s ease",
-          zIndex: 1,
-        }}
-        className="img-pc"
-      />
-
-      {/* ▼ SP画像（ある場合のみ） */}
-      {sp?.url && (
+      {/* ▼ PC/SP を picture で出し分け（表示される1枚だけロードされる） */}
+      <picture>
+        {sp?.url && <source media="(max-width: 767px)" srcSet={sp.url} />}
         <img
-          src={sp.url}
+          src={pc.url}
           alt={alt}
-          onLoad={handleImageLoad}
+          onLoad={() => setLoaded(true)}
+          loading="lazy"
           style={{
             position: "absolute",
             inset: 0,
@@ -166,20 +129,10 @@ export default function ResponsiveImage({
             opacity: showImage ? 1 : 0,
             transition: "opacity .4s ease",
             zIndex: 1,
+            display: "block",
           }}
-          className="img-sp"
         />
-      )}
-</div>
-
-      <style jsx>{`
-        .img-pc { display: block; }
-        .img-sp { display: none; }
-        @media (max-width: 767px) {
-          .img-pc { display: none; }
-          .img-sp { display: block; }
-        }
-      `}</style>
+      </picture>
     </div>
   );
 }

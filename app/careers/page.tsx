@@ -4,6 +4,9 @@ import Footer from "@/components/Footer";
 import Image from "next/image";
 
 import FrontEndEngineer from "@/components/careers/FrontEndEngineer";
+import WebDirector from "@/components/careers/WebDirector";
+
+import AccordionClient from "@/components/AccordionClient";
 
 export const metadata: Metadata = {
   title: "Careers | Ketchup Portfolio",
@@ -19,8 +22,8 @@ export default function CareersPage() {
       <section className="pre:relative pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[230px]">
         <div className="pre:flex pre:justify-between pre:items-center pre:mb-[30px]">
           <div className="pre:w-[calc(339/1401*100%)] pre:min-w-[339px]">
-            <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[30px]">Careers</h2>
-            <p className="pre:text-[18px] pre:font-dnp pre:font-light pre:leading-[180%]">弊社では、新しいメンバーを募集中です。<br/>
+            <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[30px] slide-in slide-out">Careers</h2>
+            <p className="pre:text-[18px] pre:font-dnp pre:font-light pre:leading-[180%] slide-in slide-out">弊社では、新しいメンバーを募集中です。<br/>
             1つ1つの案件に真剣に向き合い、<br/>
             こだわりたいと考えている仲間を探しています。</p>
           </div>
@@ -28,7 +31,12 @@ export default function CareersPage() {
             <Image src="/illust_2.png" alt="" width={220} height={220} className="pre:w-[220px] slide-in slide-out" />
           </div>
         </div>
-        <FrontEndEngineer />
+        <div>
+        <AccordionClient smWidth={750}>
+          <FrontEndEngineer />
+          <WebDirector />
+        </AccordionClient>
+        </div>
       </section>
       <Footer/>
     </main>

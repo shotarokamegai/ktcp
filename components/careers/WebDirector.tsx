@@ -1,11 +1,11 @@
 import Image from "next/image";
 
-export default function FrontEndEngineer() {
+export default function WebDirector() {
   return (
-        <div className="accordion careers-accordion group" id="front-end-enginner">
-          <div className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup" data-target="front-end-enginner">
-            <h3 className="pre:text-[18px] pr:font-gt pre:font-light">Front End Engineer</h3>
-            <div className="careers-accordion-icon">
+        <div className="accordion careers-accordion pre:group" id="web-deirector">
+          <div className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup" data-target="web-deirector">
+            <h3 className="pre:text-[18px] pr:font-gt pre:font-light">Web Director</h3>
+            <div className=" careers-accordion-icon">
               <div className="pre:absolute pre:bg-black pre:h-0.5 pre:w-full center-xy sm:center-xy"></div>
               <div className="pre:absolute pre:bg-black pre:h-full pre:w-0.5 center-xy sm:center-xy"></div>
             </div>

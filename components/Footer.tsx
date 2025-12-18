@@ -3,7 +3,7 @@ import FMLink from "@/components/FMLink";
 
 export default function Footer() {
   return (
-    <footer className="pre:flex pre:items-center pre:justify-between pre:px-5 pre:pb-[33px] pre:leading-[1]">
+    <footer className="pre:flex pre:items-center pre:justify-between pre:px-5 pre:pb-[33px] pre:leading-[1] slide-in slide-out">
       <a
         href="mailto:info@ktcp.jp"
         className="pre:text-[24px] pre:font-gt pre:font-light pre:hover:text-ketchup"

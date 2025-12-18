@@ -1,6 +1,7 @@
+import "../styles/animations.css";
 import "../styles/globals.css";
-import { gtAmerica } from "./fonts";
 import "../styles/tailwind.css";
+import { gtAmerica } from "./fonts";
 import Image from "next/image";
 // import Link from 'next/link'
 import FMLink from "@/components/FMLink";
