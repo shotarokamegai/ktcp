@@ -1,15 +1,44 @@
+// app/layout.tsx (or RootLayout)
 import "../styles/animations.css";
 import "../styles/globals.css";
 import "../styles/tailwind.css";
 import { gtAmerica } from "./fonts";
+import SplittingSpan from "@/components/SplittingSpan"
 import Image from "next/image";
-// import Link from 'next/link'
 import FMLink from "@/components/FMLink";
 import Script from "next/script";
-import { LenisProvider } from './../components/LenisProvider'
-import Plus from '../components/svg/Plus'
-import TransitionCover from "@/components/TransitionCover"; // ← そのまま使う（後述の修正版）
+import { LenisProvider } from "./../components/LenisProvider";
+import Plus from "../components/svg/Plus";
+import TransitionCover from "@/components/TransitionCover";
 import SlideInOnLoad from "@/components/SlideInOnLoad";
+
+// ============================
+// Tailwind class presets
+// ============================
+const BODY = "pre:w-full pre:overflow-hidden";
+
+const HEADER =
+  "pre:fixed pre:top-0 pre:left-0 pre:z-[100] " +
+  "pre:flex pre:justify-between " +
+  "pre:w-full pre:px-5 pre:pt-[26px]";
+
+const LOGO_LINK = "pre:w-[104.4px] pre:h-11";
+
+const NAV = "pre:flex pre:items-start pre:justify-end";
+
+const NAV_LINK_BASE =
+  "pre:font-gt pre:font-regular pre:text-[12px] " +
+  "pre:text-black pre:hover:text-ketchup";
+
+const NAV_LINK_GAP = "pre:mr-[37px]";
+
+const CAREERS_LINK =
+  "pre:inline-flex pre:items-center pre:px-[17px] " +
+  "pre:text-ketchup pre:hover:text-black " +
+  "pre:[&_svg]:relative " +
+  "pre:hover:[&_svg]:rotate-[45deg]";
+
+const CAREERS_TEXT = "pre:block pre:relative";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,17 +46,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Ketchup Inc. | 株式会社 Ketchup</title>
+
         <Script
           id="adobe-fonts"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function(d) {
-                var config = {
-                  kitId: 'amd6ymi',
-                  scriptTimeout: 3000,
-                  async: true
-                },
+                var config = { kitId: 'amd6ymi', scriptTimeout: 3000, async: true },
                 h=d.documentElement,
                 t=setTimeout(function(){
                   h.className=h.className.replace(/\\bwf-loading\\b/g,"")+" wf-inactive";
@@ -51,31 +77,44 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body className="pre:w-full pre:overflow-hidden">
+
+      <body className={BODY}>
         <LenisProvider />
-        <header className="pre:fixed pre:top-0 pre:left-0 pre:w-full pre:px-5 pre:pt-[26px] pre:flex pre:justify-between pre:z-[100]">
-          <FMLink href="/" className="pre:w-[104.4px] pre:h-11">
+
+        <header className={HEADER}>
+          <FMLink href="/" className={LOGO_LINK}>
             <Image src="/logo.svg" alt="Ketchup Logo" width={104.4} height={44} />
           </FMLink>
-          <nav className="pre:flex pre:justify-end pre:items-start pre:[&_a]:font-gt pre:[&_a]:font-regular pre:[&_a]:text-[12px]">
-            <FMLink href="/about" className="pre:mr-[37px] pre:text-black pre:hover:text-ketchup">ABOUT</FMLink>
-            <FMLink href="/contact" className="pre:mr-[37px] pre:text-black pre:hover:text-ketchup">CONTACT</FMLink>
-            <FMLink href="/careers" className="pre:inline-flex pre:text-ketchup pre:items-center pre:hover:text-black pre:[&_svg]:relative pre:hover:[&_div]:rotate-[45deg]">
-              <Plus />
-              <span className="pre:mx-[6px]">
-                CAREERS
+
+          <nav className={NAV}>
+            <FMLink href="/about" className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}>
+             <SplittingSpan text="ABOUT" />
+             <SplittingSpan text="ABOUT" />
+            </FMLink>
+            <FMLink href="/contact" className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}>
+             <SplittingSpan text="CONTACT" />
+             <SplittingSpan text="CONTACT" />
+            </FMLink>
+
+            <FMLink href="/careers" className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover`}>
+              <div className="pre:absolute center-y pre:left-0 sm:center-y">
+                <Plus />
+              </div>
+              <span className={CAREERS_TEXT}>
+                <SplittingSpan text="CAREERS" />
+                <SplittingSpan text="CAREERS" />
               </span>
-              <Plus />
+              <div className="pre:absolute center-y pre:right-0 sm:center-y">
+                <Plus />
+              </div>
             </FMLink>
           </nav>
         </header>
 
-        {/* ★ メイン領域だけ覆うためにラップ */}
         <main id="page">
           {children}
-          {/* ★ カバーは main の中に置く（= ヘッダーは覆わない） */}
           <TransitionCover />
-          <SlideInOnLoad />  {/* ← これを追加 */}
+          <SlideInOnLoad />
         </main>
       </body>
     </html>

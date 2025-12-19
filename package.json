@@ -16,7 +16,8 @@
     "framer-motion": "^12.23.24",
     "next": "^14.2.33",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "splitting": "^1.1.0"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.17",
