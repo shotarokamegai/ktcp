@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Arrow from "@/components/svg/Arrow";
 import SplittingSpan from "@/components/SplittingSpan"
+import InteractiveButton from "@/components/InteractiveButton"
 
 export default function WebDirector() {
   return (

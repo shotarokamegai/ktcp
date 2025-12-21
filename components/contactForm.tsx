@@ -3,6 +3,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Arrow from "@/components/svg/Arrow";
+import SplittingSpan from "@/components/SplittingSpan"
 
 const GETFORM_ENDPOINT =
   process.env.NEXT_PUBLIC_GETFORM_ENDPOINT ||
@@ -224,15 +226,22 @@ export default function ContactForm() {
       <input type="text" name="_gotcha" style={{ display: "none" }} tabIndex={-1} />
 
       <div style={{ textAlign: "center", marginTop: 20 }}>
-        <button type="submit" disabled={sending} className="btn-submit">
-          {sending ? "Sending..." : "SEND"}
-          <Image
-            src="/arrow.svg"
-            alt=""
-            width={19}
-            height={18}
-            className="btn-submit__arrow"
-          />
+        <button type="submit" disabled={sending} className="btn-submit splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white">
+          {/* {sending ? "Sending..." : "SEND"} */}
+          <span className="splitting-hover__inner">
+            <SplittingSpan text="SEND" />
+            <SplittingSpan text="SEND" />
+          </span>
+          <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center">
+            <span className="icon-content__inner">
+              <div className="pre:p-[5px] icon">
+                <Arrow />
+              </div>
+              <div className="pre:p-[5px] icon">
+                <Arrow />
+              </div>
+            </span>
+          </div>
         </button>
       </div>
     </form>
