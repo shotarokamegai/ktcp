@@ -1,6 +1,7 @@
 // app/page.tsx
 import FMLink from "@/components/FMLink";
 import Footer from "@/components/Footer";
+import SplittingSpan from "@/components/SplittingSpan"
 import ResponsiveImage from "@/components/ResponsiveImage";
 import WorksCategoryNav from "@/components/WorksCategoryNav";
 
@@ -35,7 +36,7 @@ export default async function Home() {
               return (
                 <div
                   key={item.key}
-                  className="pre:w-[calc(1/4*100%)] pre:mb-[20px] pre:px-[calc(7.5/1401*100%)] slide-out"
+                  className="pre:w-1/4 pre:mb-5 pre:px-[calc(7.5/1401*100%)] slide-out"
                 >
                   <ResponsiveImage
                     pc={{ url: "/illust.png", width: 1200, height: 900 } as any}
@@ -65,7 +66,7 @@ export default async function Home() {
               <FMLink
                 key={item.key}
                 href={`/works/${w.slug}`}
-                className={`${widthClass} pre:mb-[20px] pre:px-[calc(7.5/1401*100%)] pre:hover:text-ketchup pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))] pre:hover:text-ketchup pre:[&_.responsive-image-content]:scale-[1] pre:hover:[&_.responsive-image-content]:scale-[1.1] slide-in slide-out`}
+                className={`${widthClass} pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:hover:text-ketchup pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))] pre:[&_.responsive-image-content]:scale-[1] pre:hover:[&_.responsive-image-content]:scale-[1.1] slide-in slide-out splitting-hover`}
               >
                 <ResponsiveImage
                   pc={picked.pc}
@@ -75,15 +76,22 @@ export default async function Home() {
                   fallbackRatio="4 / 3"
                 />
 
-                <header className="pre:flex pre:mt-[10px]">
+                <header className="pre:flex pre:mt-2.5">
                   <p className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[70px]">
-                    {w.acf.date}
+                    <span className="splitting-hover__inner">
+                      <SplittingSpan text={w.acf.date} />
+                      <SplittingSpan text={w.acf.date} />
+                    </span>
                   </p>
 
                   <h2
-                    className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-70px-105px)] pre:text-ellipsis pre:overflow-hidden pre:whitespace-nowrap"
-                    dangerouslySetInnerHTML={{ __html: w.title.rendered }}
-                  />
+                    className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-70px-105px)]"
+                  >
+                    <span className="splitting-hover__inner">
+                      <SplittingSpan text={w.title.rendered} />
+                      <SplittingSpan text={w.title.rendered} />
+                    </span>
+                  </h2>
 
                   <p className="pre:text-[10px] pre:leading-[130%] pre:font-gt pre:font-light pre:w-[105px] pre:text-right">
                     {Array.isArray(w.works_cat) && w.works_cat.length > 0

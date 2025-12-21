@@ -84,8 +84,11 @@ export default function ResponsiveImage({
   const enablePlaceholder = !disablePlaceholder;
 
   // placeholder を外す条件：ロード済み & inView
-  // ※ inView になる前にロード完了しても、inView が true になったら表示される
   const showImage = loaded && inView;
+
+  // blur の半径に対して、余白は「半径 * 2」くらいあると安全
+  const BLUR_PX = 20;
+  const PAD = BLUR_PX * 2; // 40px
 
   return (
     <div
@@ -98,17 +101,23 @@ export default function ResponsiveImage({
         overflow: "hidden",
       }}
     >
-      {/* ▼ BLUR プレースホルダー */}
+      {/* ▼ BLUR プレースホルダー（白フチ対策：insetマイナス + scale） */}
       <div
         aria-hidden
         style={{
           position: "absolute",
-          inset: 0,
+          inset: enablePlaceholder ? `-${PAD}px` : "0px",
           background: enablePlaceholder ? placeholderBg : "transparent",
-          filter: enablePlaceholder ? "blur(20px)" : "none",
+          filter: enablePlaceholder ? `blur(${BLUR_PX}px)` : "none",
+          transform: enablePlaceholder ? "scale(1.05)" : "none",
+          transformOrigin: "center",
           opacity: enablePlaceholder ? (showImage ? 0 : 1) : 0,
           transition: "opacity .4s ease .4s",
           zIndex: 0,
+
+          // ちらつき/エッジ対策の保険
+          willChange: "opacity, filter, transform",
+          backfaceVisibility: "hidden",
         }}
       />
 
