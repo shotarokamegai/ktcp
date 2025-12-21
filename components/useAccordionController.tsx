@@ -51,13 +51,12 @@ export function useAccordionController(
       return { sp, pc, all: [...sp, ...pc] };
     };
 
-    // ✅ splitting-hover を持つ trigger だけ、open 状態のとき stay を付与
     const toggleStayIfSplittingHover = (
       trigger: HTMLElement,
       isOpen: boolean
     ) => {
       if (!trigger.classList.contains("splitting-hover")) return;
-    
+
       if (isOpen) {
         trigger.classList.add("stay", "pre:text-ketchup");
       } else {
@@ -65,6 +64,44 @@ export function useAccordionController(
       }
     };
 
+    // ✅ accordion 内の illust の top を PC のみで切り替える
+    const setIllustTopPc = (wrapper: HTMLElement, enable: boolean) => {
+      if (getMode() !== "pc") return;
+
+      const illust = wrapper.querySelector<HTMLElement>(
+        ".careers-accordion-illust"
+      );
+      if (!illust) return;
+
+      if (enable) {
+        illust.style.top = "calc(96px + 54px)";
+      } else {
+        // 元に戻す（あなたのデフォルトが pre:top-0 なので 0 に戻すのが安全）
+        illust.style.top = "0px";
+      }
+    };
+
+    const setOverflowHidden = (inner: HTMLElement) => {
+      inner.style.overflow = "hidden";
+    };
+
+    // ✅ 「開き終わり（height transitionend）」で overflow visible + illust top 付与（PCのみ）
+    const setOverflowVisibleAfterTransition = (
+      inner: HTMLElement,
+      wrapper: HTMLElement
+    ) => {
+      // 多重発火防止（毎回 1回だけ）
+      const onEnd = (ev: TransitionEvent) => {
+        if (ev.target !== inner) return;
+        if (ev.propertyName !== "height") return;
+
+        inner.style.overflow = "visible";
+        setIllustTopPc(wrapper, true);
+
+        inner.removeEventListener("transitionend", onEnd);
+      };
+      inner.addEventListener("transitionend", onEnd);
+    };
 
     const initInnerStyles = () => {
       const allInner = Array.from(
@@ -75,7 +112,7 @@ export function useAccordionController(
         inner.style.willChange = "height";
         inner.style.transitionProperty = "height";
         inner.style.transitionTimingFunction = "cubic-bezier(0.4, 0, 0.2, 1)";
-        inner.style.transitionDuration = "500ms"; // 初期値（任意）
+        inner.style.transitionDuration = "500ms";
       });
     };
 
@@ -89,9 +126,80 @@ export function useAccordionController(
           ".accordion__inner-content"
         );
         if (!inner || !content) return;
+
         const h = content.scrollHeight;
         if (h > 0) inner.style.height = `${h}px`;
+
+        // すでに open 状態のものは visible & top 調整（PCのみ）
+        inner.style.overflow = "visible";
+        setIllustTopPc(wrapper, true);
       });
+
+      // 閉じてるやつは top 戻しておく（PCのみ）
+      const closed = Array.from(
+        root.querySelectorAll<HTMLElement>(".accordion:not(.active):not(.open)")
+      );
+      closed.forEach((wrapper) => setIllustTopPc(wrapper, false));
+    };
+
+    const onClick = (e: Event) => {
+      const elm = e.currentTarget as HTMLElement | null;
+      if (!elm) return;
+
+      const id = elm.dataset.target;
+      if (!id) return;
+
+      const wrapper = root.querySelector<HTMLElement>(`#${CSS.escape(id)}`);
+      if (!wrapper) return;
+
+      const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
+      const content = wrapper.querySelector<HTMLElement>(
+        ".accordion__inner-content"
+      );
+      if (!inner || !content) return;
+
+      const { all: triggers } = getTriggersById(id);
+      const isOpen = wrapper.classList.contains("active");
+
+      const currentH = inner.getBoundingClientRect().height;
+      const targetH = isOpen ? 0 : content.scrollHeight;
+      const distance = Math.abs(targetH - currentH);
+
+      setHeightTransition(inner, calcDurationMs(distance));
+
+      if (isOpen) {
+        wrapper.classList.remove("active");
+
+        // ✅ 閉じる時：まず hidden / top を戻す（PCのみ）
+        setOverflowHidden(inner);
+        setIllustTopPc(wrapper, false);
+
+        inner.style.height = `${currentH}px`;
+        requestAnimationFrame(() => {
+          inner.style.height = "0px";
+        });
+
+        triggers.forEach((t) => {
+          t.classList.remove("active");
+          toggleStayIfSplittingHover(t, false);
+        });
+      } else {
+        wrapper.classList.add("active");
+
+        // ✅ 開く時：hidden のままアニメ → 終了後 visible + top付与（PCのみ）
+        setOverflowHidden(inner);
+        setOverflowVisibleAfterTransition(inner, wrapper);
+
+        inner.style.height = `${currentH}px`;
+        requestAnimationFrame(() => {
+          inner.style.height = `${targetH}px`;
+        });
+
+        triggers.forEach((t) => {
+          t.classList.add("active");
+          toggleStayIfSplittingHover(t, true);
+        });
+      }
     };
 
     const applyMode = (mode: Mode) => {
@@ -102,12 +210,10 @@ export function useAccordionController(
         root.querySelectorAll<HTMLElement>(".js-pc-accordion")
       );
 
-      // いったん全部外す
       [...spTriggers, ...pcTriggers].forEach((el) =>
         el.removeEventListener("click", onClick)
       );
 
-      // 状態同期（開いてるやつは scrollHeight で高さを作る）
       const wrappers = Array.from(root.querySelectorAll<HTMLElement>(".accordion"));
       wrappers.forEach((wrapper) => {
         const id = wrapper.id;
@@ -127,6 +233,11 @@ export function useAccordionController(
         if (isOpenState) {
           wrapper.classList.add("active");
           inner.style.height = `${content.scrollHeight}px`;
+          inner.style.overflow = "visible";
+
+          // ✅ PC のときだけ top を適用
+          setIllustTopPc(wrapper, true);
+
           triggers.forEach((t) => {
             t.classList.add("active");
             toggleStayIfSplittingHover(t, true);
@@ -134,6 +245,11 @@ export function useAccordionController(
         } else {
           wrapper.classList.remove("active");
           inner.style.height = "0px";
+          inner.style.overflow = "hidden";
+
+          // ✅ PC のときだけ top を戻す
+          setIllustTopPc(wrapper, false);
+
           triggers.forEach((t) => {
             t.classList.remove("active");
             toggleStayIfSplittingHover(t, false);
@@ -141,65 +257,10 @@ export function useAccordionController(
         }
       });
 
-      // モードごとに有効なトリガーだけON
       if (mode === "sp") spTriggers.forEach((el) => el.addEventListener("click", onClick));
       else pcTriggers.forEach((el) => el.addEventListener("click", onClick));
 
       requestAnimationFrame(refreshOpenHeights);
-    };
-
-    const onClick = (e: Event) => {
-      const elm = e.currentTarget as HTMLElement | null;
-      if (!elm) return;
-
-      const id = elm.dataset.target;
-      if (!id) return;
-
-      const wrapper = root.querySelector<HTMLElement>(`#${CSS.escape(id)}`);
-      if (!wrapper) return;
-
-      const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
-      const content = wrapper.querySelector<HTMLElement>(".accordion__inner-content");
-      if (!inner || !content) return;
-
-      const { all: triggers } = getTriggersById(id);
-
-      const isOpen = wrapper.classList.contains("active");
-
-      // 現在高さ（アニメ距離算出用）
-      const currentH = inner.getBoundingClientRect().height;
-      const targetH = isOpen ? 0 : content.scrollHeight;
-      const distance = Math.abs(targetH - currentH);
-
-      setHeightTransition(inner, calcDurationMs(distance));
-
-      if (isOpen) {
-        wrapper.classList.remove("active");
-
-        // いきなり 0 にすると距離算出が崩れる環境があるので「今の高さ→0」を保証
-        inner.style.height = `${currentH}px`;
-        requestAnimationFrame(() => {
-          inner.style.height = "0px";
-        });
-
-        triggers.forEach((t) => {
-          t.classList.remove("active");
-          toggleStayIfSplittingHover(t, false);
-        });
-      } else {
-        wrapper.classList.add("active");
-
-        // 0 → targetH
-        inner.style.height = `${currentH}px`;
-        requestAnimationFrame(() => {
-          inner.style.height = `${targetH}px`;
-        });
-
-        triggers.forEach((t) => {
-          t.classList.add("active");
-          toggleStayIfSplittingHover(t, true);
-        });
-      }
     };
 
     // ResizeObserver（中身の高さ変化追従）
@@ -218,8 +279,13 @@ export function useAccordionController(
           if (wrapper.classList.contains("active") || wrapper.classList.contains("open")) {
             const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
             if (!inner) return;
+
             const h = content.scrollHeight;
             if (h > 0) inner.style.height = `${h}px`;
+            inner.style.overflow = "visible";
+
+            // ✅ open 中は PC なら top も維持
+            setIllustTopPc(wrapper, true);
           }
         });
 
@@ -228,9 +294,10 @@ export function useAccordionController(
       });
     };
 
-    // resize は rAF でまとめる（元実装踏襲）
+    // resize は rAF でまとめる
     let currentMode: Mode = getMode();
     let raf: number | null = null;
+
     const onResize = () => {
       if (raf) cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
@@ -249,14 +316,13 @@ export function useAccordionController(
     applyMode(currentMode);
     window.addEventListener("resize", onResize);
 
-    // フォント/画像ロードで高さが変わる保険（元実装踏襲）
     if (document.fonts?.ready) document.fonts.ready.then(refreshOpenHeights);
     window.addEventListener("load", refreshOpenHeights);
 
     setupResizeObservers();
     requestAnimationFrame(refreshOpenHeights);
 
-    // cleanup（Next.js で重要）
+    // cleanup
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("load", refreshOpenHeights);

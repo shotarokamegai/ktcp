@@ -1,22 +1,26 @@
 import Image from "next/image";
+import Arrow from "@/components/svg/Arrow";
 import SplittingSpan from "@/components/SplittingSpan"
 
 export default function WebDirector() {
   return (
-        <div className="accordion careers-accordion pre:group" id="web-deirector">
-          <div className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup splitting-hover" data-target="web-deirector">
+        <div className="accordion careers-accordion group" id="web-director">
+          <div className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup splitting-hover pre:sticky! pre:top-24" data-target="web-director">
             <h3 className="pre:text-[18px] pr:font-gt pre:font-light">
               <span className="splitting-hover__inner">
                 <SplittingSpan text="Web Director" />
                 <SplittingSpan text="Web Director" />
               </span>
             </h3>
-            <div className=" careers-accordion-icon">
+            <div className="careers-accordion-icon">
               <div className="pre:absolute pre:bg-black pre:h-0.5 pre:w-full center-xy sm:center-xy"></div>
               <div className="pre:absolute pre:bg-black pre:h-full pre:w-0.5 center-xy sm:center-xy"></div>
             </div>
           </div>
-          <div className="accordion__inner careers-accordion__inner">
+          <div className="accordion__inner careers-accordion__inner pre:grid-cols-[calc(436/1401*100%)_1fr] pre:gap-x-[calc(158/1401*100%)] pre:items-start">
+            <div className="pre:sticky pre:top-0 careers-accordion-illust pre:pl-[calc(114/436*100%)]">
+              <Image src="/illust.png" alt="" width={372} height={279} className="" />
+            </div>
             <div className="accordion__inner-content careers-accordion__inner-content">
               <div className="careers-accordion-box">
                 <div className="pre:w-[142px]">
@@ -171,15 +175,21 @@ export default function WebDirector() {
                   </ul>
                 </div>
               </div>
-              <a className="btn-submit pre:mt-[30px] pre:mx-auto">
-                APPLY NOW
-                <Image
-                  src="/arrow.svg"
-                  alt=""
-                  width={19}
-                  height={18}
-                  className="btn-submit__arrow"
-                />
+              <a className="btn-submit pre:mt-[30px] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white">
+                <span className="splitting-hover__inner">
+                  <SplittingSpan text="APPLY NOW" />
+                  <SplittingSpan text="APPLY NOW" />
+                </span>
+                <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center">
+                  <span className="icon-content__inner">
+                    <div className="pre:p-[5px] icon">
+                      <Arrow />
+                    </div>
+                    <div className="pre:p-[5px] icon">
+                      <Arrow />
+                    </div>
+                  </span>
+                </div>
               </a>
             </div>
           </div>

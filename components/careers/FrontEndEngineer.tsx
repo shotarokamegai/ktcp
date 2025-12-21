@@ -5,7 +5,7 @@ import SplittingSpan from "@/components/SplittingSpan"
 export default function FrontEndEngineer() {
   return (
         <div className="accordion careers-accordion group" id="front-end-enginner">
-          <div className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup splitting-hover" data-target="front-end-enginner">
+          <div className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup splitting-hover pre:sticky! pre:top-24" data-target="front-end-enginner">
             <h3 className="pre:text-[18px] pr:font-gt pre:font-light">
               <span className="splitting-hover__inner">
                 <SplittingSpan text="Front End Engineer" />
@@ -17,7 +17,10 @@ export default function FrontEndEngineer() {
               <div className="pre:absolute pre:bg-black pre:h-full pre:w-0.5 center-xy sm:center-xy"></div>
             </div>
           </div>
-          <div className="accordion__inner careers-accordion__inner">
+          <div className="accordion__inner careers-accordion__inner pre:grid-cols-[calc(436/1401*100%)_1fr] pre:gap-x-[calc(158/1401*100%)] pre:items-start">
+            <div className="pre:sticky pre:top-0 careers-accordion-illust pre:pl-[calc(114/436*100%)]">
+              <Image src="/illust.png" alt="" width={372} height={279} className="" />
+            </div>
             <div className="accordion__inner-content careers-accordion__inner-content">
               <div className="careers-accordion-box">
                 <div className="pre:w-[142px]">

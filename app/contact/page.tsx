@@ -27,7 +27,7 @@ export default function ContactPage() {
     "
   >
     {/* sticky は内側に */}
-    <div className="pre:sticky pre:top-[96px]">
+    <div className="pre:sticky pre:top-24">
       <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[106px] slide-in slide-out">
         Contact
       </h2>

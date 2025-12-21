@@ -20,7 +20,7 @@ const BODY = "pre:w-full pre:overflow-hidden";
 const HEADER =
   "pre:fixed pre:top-0 pre:left-0 pre:z-[100] " +
   "pre:flex pre:justify-between " +
-  "pre:w-full pre:px-5 pre:pt-[26px]";
+  "pre:w-full pre:px-5 pre:py-[26px] pre:bg-white";
 
 const LOGO_LINK = "pre:w-[104.4px] pre:h-11";
 

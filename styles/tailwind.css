@@ -87,13 +87,15 @@
   @apply pre:h-[22px] pre:w-[22px] pre:absolute pre:right-0 pre:top-[50%] pre:transform-[translate3d(0,-50%,0)]
 }
 .careers-accordion-title {
-  @apply pre:relative pre:h-[54px] pre:cursor-pointer pre:flex pre:items-center pre:overflow-hidden
+  @apply pre:relative pre:h-[54px] pre:cursor-pointer pre:flex pre:items-center pre:overflow-hidden pre:z-10 pre:bg-white
 }
 .careers-accordion__inner {
-   @apply pre:relative pre:overflow-hidden pre:flex pre:justify-end
+   @apply pre:relative pre:justify-end pre:grid
+   /* @apply pre:relative pre:overflow-hidden pre:flex pre:justify-end */
 }
 .careers-accordion__inner-content {
-   @apply pre:pt-[60px] pre:pb-[54px] pre:w-[calc(693/1440*100%)] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light
+   @apply pre:pt-[60px] pre:pb-[54px] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light
+   /* @apply pre:pt-[60px] pre:pb-[54px] pre:w-[calc(693/1440*100%)] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light */
 }
 
 #header {
