@@ -1,0 +1,10 @@
+export default function Arrow() {
+  return (
+    <div className="pre:w-[19px]">
+        <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="4.37114e-08" y1="9.86255" x2="18" y2="9.86255" stroke="white"/>
+        <path d="M8 0.362549L18 9.86255L8 19.3625" stroke="white" stroke-linejoin="round"/>
+        </svg>
+    </div>
+  );
+}

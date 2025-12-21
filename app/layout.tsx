@@ -81,7 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={BODY}>
         <LenisProvider />
 
-        <header className={HEADER}>
+        <header className={HEADER} id="header">
           <FMLink href="/" className={LOGO_LINK}>
             <Image src="/logo.svg" alt="Ketchup Logo" width={104.4} height={44} />
           </FMLink>

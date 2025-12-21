@@ -14,7 +14,9 @@
 }
 
 .btn-submit {
-  @apply pre:relative pre:h-20 pre:w-[340px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer;
+  will-change: background-color;
+  transition: background-color 0.5s var(--ease-out-quart); 
+  @apply pre:relative pre:h-20 pre:w-[340px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white;
 }
 
 /* 任意：disabledの見た目 */
@@ -92,4 +94,17 @@
 }
 .careers-accordion__inner-content {
    @apply pre:pt-[60px] pre:pb-[54px] pre:w-[calc(693/1440*100%)] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light
+}
+
+#header {
+  nav {
+    a {
+      &:last-child {
+        svg {
+            will-change: rotate;
+            transition: rotate 0.4s var(--ease-out-quart);
+        }
+      }
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Arrow from "@/components/svg/Arrow";
 import SplittingSpan from "@/components/SplittingSpan"
 
 export default function FrontEndEngineer() {
@@ -171,15 +172,21 @@ export default function FrontEndEngineer() {
                   </ul>
                 </div>
               </div>
-              <a className="btn-submit pre:mt-[30px] pre:mx-auto">
-                APPLY NOW
-                <Image
-                  src="/arrow.svg"
-                  alt=""
-                  width={19}
-                  height={18}
-                  className="btn-submit__arrow"
-                />
+              <a className="btn-submit pre:mt-[30px] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white">
+                <span className="splitting-hover__inner">
+                  <SplittingSpan text="APPLY NOW" />
+                  <SplittingSpan text="APPLY NOW" />
+                </span>
+                <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center">
+                  <span className="icon-content__inner">
+                    <div className="pre:p-[5px] icon">
+                      <Arrow />
+                    </div>
+                    <div className="pre:p-[5px] icon">
+                      <Arrow />
+                    </div>
+                  </span>
+                </div>
               </a>
             </div>
           </div>

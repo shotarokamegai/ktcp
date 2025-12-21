@@ -102,13 +102,55 @@
         .splitting-text {
             &:nth-child(1) {
                 .char {
-                    transform: translateY(-101%);
+                    transform: translateY(-107%);
                 }
             }
             &:nth-child(2) {
                 .char {
-                    transform: translateY(0%);
+                    transform: translateY(-5%);
                 }
+            }
+        }
+    }
+}
+
+.icon-hover {
+    &:hover {
+        .icon-content__inner {
+            .icon {
+                transition: transform 0.5s var(--ease-out-quart);
+                &:nth-child(1) {
+                    transform: translateX(101%);
+                }
+                &:nth-child(2) {
+                    transform: translateX(0%);
+                }
+            }
+        }
+    }
+    .icon-content__inner {
+        position: relative;
+        display: inline-block;
+        overflow: hidden;
+        .icon {
+            will-change: transform;
+            svg {
+                * {
+                  will-change: stroke;
+                  transition:
+                    stroke .5s var(--ease-out-quart);
+                }
+            }
+            &:nth-child(1) {
+                position: relative;
+                z-index: 1;
+                transform: translateX(0%);
+            }
+            &:nth-child(2) {
+                position: absolute;
+                top: 0;
+                left: 0;
+                transform: translateX(-101%);
             }
         }
     }
@@ -117,17 +159,18 @@
 .splitting-hover {
     .splitting-hover__inner {
         position: relative;
+        top: 2.5%;
         display: inline-block;
         overflow: hidden;
         .splitting-text {
             &:nth-child(1) {
                 .char {
-                    transform: translateY(0%);
+                    transform: translateY(-5%);
                 }
             }
             &:nth-child(2) {
                 .char {
-                    transform: translateY(101%);
+                    transform: translateY(107%);
                 }
             }
         }
@@ -140,16 +183,17 @@
         position: relative;
         display: inline-block;
         overflow: hidden;
+        line-height: 1;
         .splitting-text {
             &:nth-child(1) {
                 position: relative;
                 z-index: 1;
             }
-        &:nth-child(2) {
-            position: absolute;
-            top: 0;
-            left: 0;
+            &:nth-child(2) {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
         }
     }
-  }
 }
