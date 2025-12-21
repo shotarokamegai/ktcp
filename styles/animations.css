@@ -78,40 +78,62 @@
   }
 }
 
+/* 2枚重ねを “同じセル” に重ねる */
+.splitting-hover {
+  position: relative;
+}
+
+/* ここがキモ：inline-grid で2枚を同じセルへ */
+.splitting-hover__inner {
+  position: relative;
+  display: inline-grid;
+  grid-auto-flow: row;
+  overflow: hidden;
+  /* 行が詰まりすぎるなら 1.1〜1.25 に調整 */
+  line-height: 1.1;
+}
+
+/* 2枚とも同じセルに置く */
+.splitting-hover__inner > .splitting-text {
+  grid-area: 1 / 1;
+}
+
+/* ✅ lines 分割した “行” を行ごとにクリップする */
+.splitting-text .line {
+  display: block;
+  overflow: hidden;
+}
+
+/* char アニメの基本 */
 .splitting-text .char {
   display: inline-block;
   will-change: transform, opacity;
-  transform: translateY(0);
-    transition:
+  transition:
     opacity .5s var(--ease-out-quart),
     color .5s var(--ease-out-quart),
     transform .5s var(--ease-out-quart);
-
-  /* ★ ここが @for の代わり */
   transition-delay:
     calc(var(--char-index) * 0.01s),
     calc(var(--char-index) * 0.01s),
     calc(var(--char-index) * 0.01s);
 }
 
-.splitting-text .char {
+/* 初期位置（あなたの設計を踏襲） */
+.splitting-hover__inner > .splitting-text:nth-child(1) .char {
+  transform: translateY(-5%);
+}
+.splitting-hover__inner > .splitting-text:nth-child(2) .char {
+  transform: translateY(107%);
 }
 
-.splitting-hover:hover, .splitting-hover.stay {
-    .splitting-hover__inner {
-        .splitting-text {
-            &:nth-child(1) {
-                .char {
-                    transform: translateY(-107%);
-                }
-            }
-            &:nth-child(2) {
-                .char {
-                    transform: translateY(-5%);
-                }
-            }
-        }
-    }
+/* hover / stay で入れ替え */
+.splitting-hover:hover .splitting-hover__inner > .splitting-text:nth-child(1) .char,
+.splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(1) .char {
+  transform: translateY(-107%);
+}
+.splitting-hover:hover .splitting-hover__inner > .splitting-text:nth-child(2) .char,
+.splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(2) .char {
+  transform: translateY(-5%);
 }
 
 .icon-hover {

@@ -15,21 +15,50 @@ export const revalidate = 60;
 export default function ContactPage() {
   return (
     <main className="container pre:pt-[307px]">
-      <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between">
-        <div className="pre:w-[calc(339/1401*100%)]">
-          <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[106px] slide-in slide-out">Contact</h2>
-          <div>
-            <Image src="/illust_2.png" alt="" width={220} height={220} className="pre:w-[220px] slide-in slide-out" />
-          </div>
-          <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in slide-out">Transforming Your Content Like Ketchup<br/>
-          Transforms a Meal, The Perfect Condiment<br/>
-          for Your Business</p>
-          </div>
-        <div className="pre:w-[calc(870/1401*100%)] slide-in slide-out">
-          <ContactForm />
-        </div>
-      </section>
-      <Footer/>
-    </main>
+  <section
+    className="
+      pre:w-[calc(100%-40px)]
+      pre:mx-auto
+      pre:mb-[180px]
+      pre:grid
+      pre:items-start
+      pre:grid-cols-[calc(339/1401*100%)_1fr]
+      pre:gap-x-[calc(192/1401*100%)]
+    "
+  >
+    {/* sticky は内側に */}
+    <div className="pre:sticky pre:top-[96px]">
+      <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[106px] slide-in slide-out">
+        Contact
+      </h2>
+
+      <div>
+        <Image
+          src="/illust_2.png"
+          alt=""
+          width={220}
+          height={220}
+          className="pre:w-[220px] slide-in slide-out"
+        />
+      </div>
+
+      <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in slide-out pre:[overflow-wrap:anywhere]">
+        Transforming Your Content Like Ketchup
+        <br />
+        Transforms a Meal, The Perfect Condiment
+        <br />
+        for Your Business
+      </p>
+    </div>
+
+    {/* 右列：ここも w は付けない（1frに任せる） */}
+    <div className="slide-in slide-out">
+      <ContactForm />
+    </div>
+  </section>
+
+  <Footer />
+</main>
+
   );
 }

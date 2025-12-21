@@ -66,7 +66,7 @@ export default async function Home() {
               <FMLink
                 key={item.key}
                 href={`/works/${w.slug}`}
-                className={`${widthClass} pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:hover:text-ketchup pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))] pre:[&_.responsive-image-content]:scale-[1] pre:hover:[&_.responsive-image-content]:scale-[1.1] slide-in slide-out splitting-hover`}
+                className={`${widthClass} pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:hover:text-ketchup pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))] pre:[&_.responsive-image-content]:scale-[1] pre:hover:[&_.responsive-image-content]:scale-[1.1] slide-in slide-out text-hover`}
               >
                 <ResponsiveImage
                   pc={picked.pc}
@@ -80,7 +80,6 @@ export default async function Home() {
                   <p className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[70px]">
                     <span className="splitting-hover__inner">
                       <SplittingSpan text={w.acf.date} />
-                      <SplittingSpan text={w.acf.date} />
                     </span>
                   </p>
 
@@ -88,7 +87,6 @@ export default async function Home() {
                     className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-70px-105px)]"
                   >
                     <span className="splitting-hover__inner">
-                      <SplittingSpan text={w.title.rendered} />
                       <SplittingSpan text={w.title.rendered} />
                     </span>
                   </h2>

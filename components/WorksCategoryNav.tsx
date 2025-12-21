@@ -1,10 +1,11 @@
 // components/WorksCategoryNav.tsx
 import FMLink from "@/components/FMLink";
+import SplittingSpan from "@/components/SplittingSpan"
 import { fetchWorkCategories, type WorkTerm } from "@/lib/wp";
 
 export default async function WorksCategoryNav({
   activeSlug,
-  allHref = "/works",
+  allHref = "/",
   className = "",
 }: {
   /** 今アクティブなカテゴリslug（ALL の時は undefined / null でOK） */
@@ -28,10 +29,13 @@ export default async function WorksCategoryNav({
         href={allHref}
         className={[
           "pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:hover:text-black pre:transition-colors",
-          !activeSlug ? "pre:text-black" : "pre:text-gray-400",
+          !activeSlug ? "pre:text-black" : "pre:text-gray-400 splitting-hover pre:hover:text-ketchup",
         ].join(" ")}
       >
-        ALL
+        <span className="splitting-hover__inner">
+          <SplittingSpan text="ALL" />
+          <SplittingSpan text="ALL" />
+        </span>
       </FMLink>
 
       {categories.map((cat) => {
@@ -42,10 +46,13 @@ export default async function WorksCategoryNav({
             href={`/works/category/${cat.slug}`}
             className={[
               "pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:hover:text-black pre:transition-colors",
-              isActive ? "pre:text-black" : "pre:text-gray-400",
+              isActive ? "pre:text-black" : "pre:text-gray-400 splitting-hover pre:hover:text-ketchup",
             ].join(" ")}
           >
-            {cat.name}
+            <span className="splitting-hover__inner">
+              <SplittingSpan text={cat.name} />
+              <SplittingSpan text={cat.name} />
+            </span>
           </FMLink>
         );
       })}
