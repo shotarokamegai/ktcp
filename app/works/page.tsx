@@ -1,5 +1,6 @@
 import FMLink from "@/components/FMLink";
 import ResponsiveImage from "@/components/ResponsiveImage";
+
 import { fetchWorks, pickThumb, pickThumbSp } from "@/lib/wp";
 
 export const revalidate = 60;

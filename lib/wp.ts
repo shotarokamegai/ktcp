@@ -26,9 +26,12 @@ export type Work = {
       pattern3?: any;
       pattern4?: any;
     };
+    // ここは page.tsx 側で参照してるので型に残しておく
+    placeholder_color?: string | null;
+    date?: string;
   };
   _embedded?: any;
-  // ★ 追加: works_cat ターム配列
+  // ★ works_cat ターム配列（mapWorkFromApiで詰める）
   works_cat?: WorkTerm[];
 };
 
@@ -89,10 +92,11 @@ export async function fetchWorks(): Promise<Work[]> {
   return raw.map(mapWorkFromApi);
 }
 
-export async function fetchWorkCategories() {
-  const res = await fetch(`${API_BASE}/works_cat?per_page=100&_fields=id,name,slug`, {
-    next: { revalidate: 60 },
-  });
+export async function fetchWorkCategories(): Promise<WorkTerm[]> {
+  const res = await fetch(
+    `${API_BASE}/works_cat?per_page=100&_fields=id,name,slug,taxonomy`,
+    { next: { revalidate: 60 } }
+  );
   if (!res.ok) throw new Error("Failed to fetch work categories");
   return res.json();
 }
@@ -105,6 +109,32 @@ export async function fetchWorkBySlug(slug: string): Promise<Work | null> {
   ]);
   if (!raw[0]) return null;
   return mapWorkFromApi(raw[0]);
+}
+
+/**
+ * ★追加：カテゴリslugで works 一覧取得
+ * - works_cat を slug で検索して termId を得る
+ * - termId で works を絞り込む
+ */
+export async function fetchWorksByCategorySlug(slug: string): Promise<Work[]> {
+  const encoded = encodeURIComponent(slug);
+
+  // 1) works_cat term を slug で引く（存在しなければ空配列）
+  const termArr = await wpGet<any[]>(
+    `/works_cat?slug=${encoded}&per_page=1&_fields=id,slug`
+  );
+  const termId = termArr?.[0]?.id;
+  if (!termId) return [];
+
+  // 2) CPT 側を termId で絞り込み（works/work 両対応）
+  //    WP標準の挙動：taxonomy query は「タクソノミーのrest_base名=termId」で動くことが多い
+  //    もし動かない場合は「filter」やカスタム実装が必要（その時はエンドポイント仕様教えて）
+  const raw = await wpGetFirst<any[]>([
+    `/works?per_page=100&_embed&works_cat=${termId}`,
+    `/work?per_page=100&_embed&works_cat=${termId}`,
+  ]);
+
+  return raw.map(mapWorkFromApi);
 }
 
 // 固定ページ取得

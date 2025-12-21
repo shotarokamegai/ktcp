@@ -6,9 +6,9 @@ type Mode = "sp" | "pc";
 
 type Options = {
   smWidth?: number;
-  speedPxPerSec?: number;  // 例: 800
-  minDurationMs?: number;  // 例: 180
-  maxDurationMs?: number;  // 例: 900
+  speedPxPerSec?: number; // 例: 800
+  minDurationMs?: number; // 例: 180
+  maxDurationMs?: number; // 例: 900
 };
 
 export function useAccordionController(
@@ -23,12 +23,12 @@ export function useAccordionController(
     const speed = options.speedPxPerSec ?? 800;
     const minMs = options.minDurationMs ?? 180;
     const maxMs = options.maxDurationMs ?? 900;
-    
+
     const calcDurationMs = (px: number) => {
       const ms = (px / speed) * 1000;
       return Math.max(minMs, Math.min(maxMs, ms));
     };
-    
+
     const setHeightTransition = (inner: HTMLElement, durationMs: number) => {
       inner.style.transitionProperty = "height";
       inner.style.transitionTimingFunction = "cubic-bezier(0.4, 0, 0.2, 1)";
@@ -39,16 +39,37 @@ export function useAccordionController(
 
     const getTriggersById = (id: string) => {
       const sp = Array.from(
-        root.querySelectorAll<HTMLElement>(`.js-sp-accordion[data-target="${id}"]`)
+        root.querySelectorAll<HTMLElement>(
+          `.js-sp-accordion[data-target="${id}"]`
+        )
       );
       const pc = Array.from(
-        root.querySelectorAll<HTMLElement>(`.js-pc-accordion[data-target="${id}"]`)
+        root.querySelectorAll<HTMLElement>(
+          `.js-pc-accordion[data-target="${id}"]`
+        )
       );
       return { sp, pc, all: [...sp, ...pc] };
     };
 
+    // ✅ splitting-hover を持つ trigger だけ、open 状態のとき stay を付与
+    const toggleStayIfSplittingHover = (
+      trigger: HTMLElement,
+      isOpen: boolean
+    ) => {
+      if (!trigger.classList.contains("splitting-hover")) return;
+    
+      if (isOpen) {
+        trigger.classList.add("stay", "pre:text-ketchup");
+      } else {
+        trigger.classList.remove("stay", "pre:text-ketchup");
+      }
+    };
+
+
     const initInnerStyles = () => {
-      const allInner = Array.from(root.querySelectorAll<HTMLElement>(".accordion__inner"));
+      const allInner = Array.from(
+        root.querySelectorAll<HTMLElement>(".accordion__inner")
+      );
       allInner.forEach((inner) => {
         inner.style.overflow = "hidden";
         inner.style.willChange = "height";
@@ -64,7 +85,9 @@ export function useAccordionController(
       );
       wrappers.forEach((wrapper) => {
         const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
-        const content = wrapper.querySelector<HTMLElement>(".accordion__inner-content");
+        const content = wrapper.querySelector<HTMLElement>(
+          ".accordion__inner-content"
+        );
         if (!inner || !content) return;
         const h = content.scrollHeight;
         if (h > 0) inner.style.height = `${h}px`;
@@ -72,8 +95,12 @@ export function useAccordionController(
     };
 
     const applyMode = (mode: Mode) => {
-      const spTriggers = Array.from(root.querySelectorAll<HTMLElement>(".js-sp-accordion"));
-      const pcTriggers = Array.from(root.querySelectorAll<HTMLElement>(".js-pc-accordion"));
+      const spTriggers = Array.from(
+        root.querySelectorAll<HTMLElement>(".js-sp-accordion")
+      );
+      const pcTriggers = Array.from(
+        root.querySelectorAll<HTMLElement>(".js-pc-accordion")
+      );
 
       // いったん全部外す
       [...spTriggers, ...pcTriggers].forEach((el) =>
@@ -87,7 +114,9 @@ export function useAccordionController(
         if (!id) return;
 
         const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
-        const content = wrapper.querySelector<HTMLElement>(".accordion__inner-content");
+        const content = wrapper.querySelector<HTMLElement>(
+          ".accordion__inner-content"
+        );
         if (!inner || !content) return;
 
         const { all: triggers } = getTriggersById(id);
@@ -98,11 +127,17 @@ export function useAccordionController(
         if (isOpenState) {
           wrapper.classList.add("active");
           inner.style.height = `${content.scrollHeight}px`;
-          triggers.forEach((t) => t.classList.add("active"));
+          triggers.forEach((t) => {
+            t.classList.add("active");
+            toggleStayIfSplittingHover(t, true);
+          });
         } else {
           wrapper.classList.remove("active");
           inner.style.height = "0px";
-          triggers.forEach((t) => t.classList.remove("active"));
+          triggers.forEach((t) => {
+            t.classList.remove("active");
+            toggleStayIfSplittingHover(t, false);
+          });
         }
       });
 
@@ -147,7 +182,10 @@ export function useAccordionController(
           inner.style.height = "0px";
         });
 
-        triggers.forEach((t) => t.classList.remove("active"));
+        triggers.forEach((t) => {
+          t.classList.remove("active");
+          toggleStayIfSplittingHover(t, false);
+        });
       } else {
         wrapper.classList.add("active");
 
@@ -157,7 +195,10 @@ export function useAccordionController(
           inner.style.height = `${targetH}px`;
         });
 
-        triggers.forEach((t) => t.classList.add("active"));
+        triggers.forEach((t) => {
+          t.classList.add("active");
+          toggleStayIfSplittingHover(t, true);
+        });
       }
     };
 
@@ -220,8 +261,12 @@ export function useAccordionController(
       window.removeEventListener("resize", onResize);
       window.removeEventListener("load", refreshOpenHeights);
 
-      const spTriggers = Array.from(root.querySelectorAll<HTMLElement>(".js-sp-accordion"));
-      const pcTriggers = Array.from(root.querySelectorAll<HTMLElement>(".js-pc-accordion"));
+      const spTriggers = Array.from(
+        root.querySelectorAll<HTMLElement>(".js-sp-accordion")
+      );
+      const pcTriggers = Array.from(
+        root.querySelectorAll<HTMLElement>(".js-pc-accordion")
+      );
       [...spTriggers, ...pcTriggers].forEach((el) =>
         el.removeEventListener("click", onClick)
       );
@@ -229,5 +274,11 @@ export function useAccordionController(
       ros.forEach((ro) => ro.disconnect());
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [rootRef, options.smWidth]);
+  }, [
+    rootRef,
+    options.smWidth,
+    options.speedPxPerSec,
+    options.minDurationMs,
+    options.maxDurationMs,
+  ]);
 }

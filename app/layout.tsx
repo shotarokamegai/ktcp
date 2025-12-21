@@ -88,21 +88,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <nav className={NAV}>
             <FMLink href="/about" className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}>
-             <SplittingSpan text="ABOUT" />
-             <SplittingSpan text="ABOUT" />
+            <span className="splitting-hover__inner">
+              <SplittingSpan text="ABOUT" />
+              <SplittingSpan text="ABOUT" />
+            </span>
             </FMLink>
             <FMLink href="/contact" className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}>
+            <span className="splitting-hover__inner">
              <SplittingSpan text="CONTACT" />
              <SplittingSpan text="CONTACT" />
+            </span>
             </FMLink>
 
             <FMLink href="/careers" className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover`}>
               <div className="pre:absolute center-y pre:left-0 sm:center-y">
                 <Plus />
               </div>
-              <span className={CAREERS_TEXT}>
-                <SplittingSpan text="CAREERS" />
-                <SplittingSpan text="CAREERS" />
+              <span className="splitting-hover__inner">
+                <span className={CAREERS_TEXT}>
+                  <SplittingSpan text="CAREERS" />
+                  <SplittingSpan text="CAREERS" />
+                </span>
               </span>
               <div className="pre:absolute center-y pre:right-0 sm:center-y">
                 <Plus />

@@ -78,10 +78,6 @@
   }
 }
 
-.splitting-hover {
-    overflow: hidden;
-}
-
 .splitting-text .char {
   display: inline-block;
   will-change: transform, opacity;
@@ -93,39 +89,46 @@
 
   /* ★ ここが @for の代わり */
   transition-delay:
-    calc(var(--char-index) * 0.05s),
-    calc(var(--char-index) * 0.05s),
-    calc(var(--char-index) * 0.05s);
+    calc(var(--char-index) * 0.01s),
+    calc(var(--char-index) * 0.01s),
+    calc(var(--char-index) * 0.01s);
 }
 
 .splitting-text .char {
 }
 
-.splitting-hover:hover {
-    .splitting-text {
-        &:nth-child(1) {
-            .char {
-                transform: translateY(-101%);
+.splitting-hover:hover, .splitting-hover.stay {
+    .splitting-hover__inner {
+        .splitting-text {
+            &:nth-child(1) {
+                .char {
+                    transform: translateY(-101%);
+                }
             }
-        }
-        &:nth-child(2) {
-            .char {
-                transform: translateY(0%);
+            &:nth-child(2) {
+                .char {
+                    transform: translateY(0%);
+                }
             }
         }
     }
 }
 
 .splitting-hover {
-    .splitting-text {
-        &:nth-child(1) {
-            .char {
-                transform: translateY(0%);
+    .splitting-hover__inner {
+        position: relative;
+        display: inline-block;
+        overflow: hidden;
+        .splitting-text {
+            &:nth-child(1) {
+                .char {
+                    transform: translateY(0%);
+                }
             }
-        }
-        &:nth-child(2) {
-            .char {
-                transform: translateY(101%);
+            &:nth-child(2) {
+                .char {
+                    transform: translateY(101%);
+                }
             }
         }
     }
@@ -133,18 +136,20 @@
 
 .splitting-hover {
     position: relative;
-    .splitting-text {
-        &:nth-child(1) {
-            position: relative;
-            z-index: 1;
-        }
+    .splitting-hover__inner {
+        position: relative;
+        display: inline-block;
+        overflow: hidden;
+        .splitting-text {
+            &:nth-child(1) {
+                position: relative;
+                z-index: 1;
+            }
         &:nth-child(2) {
             position: absolute;
             top: 0;
             left: 0;
-            /* color: transparent;
-            -webkit-text-stroke: 1px currentColor;
-            z-index: 0; */
         }
     }
+  }
 }

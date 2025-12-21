@@ -1,14 +1,11 @@
 // app/works/category/[slug]/page.tsx
-import { fetchWorks, pickThumb, pickThumbSp } from "@/lib/wp";
 import { notFound } from "next/navigation";
 import FMLink from "@/components/FMLink";
 import Footer from "@/components/Footer";
 import ResponsiveImage from "@/components/ResponsiveImage";
-import {
-  fetchWorksByCategorySlug,
-  fetchWorkCategories,
-  pickEyecatchRandom,
-} from "@/lib/wp";
+import WorksCategoryNav from "@/components/WorksCategoryNav";
+
+import { fetchWorksByCategorySlug, fetchWorkCategories, pickEyecatchRandom } from "@/lib/wp";
 
 export const revalidate = 60;
 
@@ -19,67 +16,35 @@ export default async function WorksCategoryPage({
 }) {
   const slug = params.slug;
 
-  // カテゴリ一覧（上部フィルタ）と、カテゴリ絞り込み works を並列取得
+  // exists チェック用（※Nav側でもカテゴリは取るけど、404判定のためだけにここで取得）
   const [categories, works] = await Promise.all([
     fetchWorkCategories(),
     fetchWorksByCategorySlug(slug),
   ]);
 
-  // slug が存在しない（=カテゴリが無い）っぽい場合は 404
-  // ※ fetchWorksByCategorySlug 側で notFound してもOK。ここは安全策。
   const exists = categories?.some((c: any) => c.slug === slug);
   if (!exists) notFound();
 
-  // 表示件数：トップのUI踏襲なら最新9件に合わせる（必要なら外してOK）
   const latest = works.slice(0, 9);
 
   return (
     <main className="container pre:pt-[307px]">
-      {/* ▼ タクソノミー一覧 */}
-      <section className="pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] slide-in slide-out">
-        <FMLink
-          key="all"
-          href="/works"
-          className="pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:hover:text-black pre:transition-colors pre:text-gray-400"
-        >
-          ALL
-        </FMLink>
-
-        {categories.map((cat: any) => {
-          const isActive = cat.slug === slug;
-
-          return (
-            <FMLink
-              key={cat.id}
-              href={`/works/category/${cat.slug}`}
-              className={[
-                "pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:hover:text-black pre:transition-colors",
-                isActive ? "pre:text-black" : "pre:text-gray-400",
-              ].join(" ")}
-            >
-              {cat.name}
-            </FMLink>
-          );
-        })}
-      </section>
+      {/* ▼ タクソノミー一覧（共通コンポーネント） */}
+      <WorksCategoryNav activeSlug={slug} allHref="/works" />
 
       {/* ▼ Works一覧（UIはトップと同じ） */}
       <section className="pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]">
         {(() => {
-          // 1) works と illust を混在させた items
-          const items: { type: "work" | "illust"; work?: any; key: string }[] =
-            [];
+          const items: { type: "work" | "illust"; work?: any; key: string }[] = [];
 
           latest.forEach((w: any, i: number) => {
             items.push({ type: "work", work: w, key: `work-${w.id}` });
             if ((i + 1) % 3 === 0) items.push({ type: "illust", key: `illust-${i}` });
           });
 
-          // 2) ワイド位置を軽くランダム
           const firstRowBigIndex = Math.random() > 0.5 ? 0 : 1;
           let workIndex = 0;
 
-          // 3) 描画
           return items.map((item) => {
             if (item.type === "illust") {
               return (
@@ -109,9 +74,7 @@ export default async function WorksCategoryPage({
 
             workIndex++;
 
-            const widthClass = isWide
-              ? "pre:w-[calc(2/4*100%)]"
-              : "pre:w-[calc(1/4*100%)]";
+            const widthClass = isWide ? "pre:w-[calc(2/4*100%)]" : "pre:w-[calc(1/4*100%)]";
 
             return (
               <FMLink

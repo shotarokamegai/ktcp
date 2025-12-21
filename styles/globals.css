@@ -57,6 +57,7 @@
   --power4-ease-in-out: var(--ease-in-out-quint);
 
   --power0: linear;
+  --color-ketchup: #C80F2E;
 }
 
 body {
