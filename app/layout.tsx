@@ -6,6 +6,7 @@ import { gtAmerica } from "./fonts";
 import SplittingSpan from "@/components/SplittingSpan"
 import Image from "next/image";
 import FMLink from "@/components/FMLink";
+import HeaderNavLink from "@/components/HeaderNavLink";
 import Script from "next/script";
 import { LenisProvider } from "./../components/LenisProvider";
 import Plus from "../components/svg/Plus";
@@ -87,24 +88,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </FMLink>
 
           <nav className={NAV}>
-            <FMLink href="/about" className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}>
-            <span className="splitting-hover__inner">
-              <SplittingSpan text="ABOUT" />
-              <SplittingSpan text="ABOUT" />
-            </span>
-            </FMLink>
-            <FMLink href="/contact" className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}>
-            <span className="splitting-hover__inner">
-             <SplittingSpan text="CONTACT" />
-             <SplittingSpan text="CONTACT" />
-            </span>
-            </FMLink>
-
-            <FMLink href="/careers" className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover`}>
+            <HeaderNavLink
+              href="/about"
+              className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
+            >
+              <span className="splitting-hover__inner">
+                <SplittingSpan text="ABOUT" />
+                <SplittingSpan text="ABOUT" />
+              </span>
+            </HeaderNavLink>
+            <HeaderNavLink
+              href="/contact"
+              className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
+            >
+              <span className="splitting-hover__inner">
+                <SplittingSpan text="CONTACT" />
+                <SplittingSpan text="CONTACT" />
+              </span>
+            </HeaderNavLink>
+            <HeaderNavLink
+                href="/careers"
+                className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover`}
+              >
               <div className="pre:absolute center-y pre:left-0 sm:center-y">
                 <Plus />
               </div>
-              <span className="splitting-hover__inner">
+              <span className="splitting-hover__inner pre:mt-[2%]">
                 <span className={CAREERS_TEXT}>
                   <SplittingSpan text="CAREERS" />
                   <SplittingSpan text="CAREERS" />
@@ -113,7 +122,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="pre:absolute center-y pre:right-0 sm:center-y">
                 <Plus />
               </div>
-            </FMLink>
+            </HeaderNavLink>
           </nav>
         </header>
 

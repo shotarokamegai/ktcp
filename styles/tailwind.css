@@ -13,6 +13,24 @@
   --font-dnp: dnp-shuei-gothic-kin-std, sans-serif;
 }
 
+@layer components {
+  header nav a.active,
+  header nav a.is-transitioning {
+    color: var(--pre-color-ketchup);
+  }
+
+  header nav a.active .char,
+  header nav a.is-transitioning .char {
+    color: var(--pre-color-ketchup);
+  }
+
+  /* hoverより強くする */
+  header nav a.is-transitioning:hover {
+    color: var(--pre-color-ketchup);
+  }
+}
+
+
 .btn-submit {
   will-change: background-color;
   transition: background-color 0.5s var(--ease-out-quart); 

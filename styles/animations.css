@@ -120,7 +120,7 @@
 
 /* 初期位置（あなたの設計を踏襲） */
 .splitting-hover__inner > .splitting-text:nth-child(1) .char {
-  transform: translateY(-5%);
+  transform: translateY(-10%);
 }
 .splitting-hover__inner > .splitting-text:nth-child(2) .char {
   transform: translateY(107%);
@@ -133,7 +133,7 @@
 }
 .splitting-hover:hover .splitting-hover__inner > .splitting-text:nth-child(2) .char,
 .splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(2) .char {
-  transform: translateY(-5%);
+  transform: translateY(-10%);
 }
 
 .icon-hover {
@@ -187,7 +187,7 @@
         .splitting-text {
             &:nth-child(1) {
                 .char {
-                    transform: translateY(-5%);
+                    transform: translateY(-10%);
                 }
             }
             &:nth-child(2) {

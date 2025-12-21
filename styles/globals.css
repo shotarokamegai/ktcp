@@ -73,16 +73,19 @@ a {
 /* ▼ 離脱アニメ（leave）用 */
 .slide-out {
   opacity: 1;
+  filter: blur(0px);
   transform: translateY(0);
   transition:
-    opacity 1s var(--ease-in-out-quad),
+    opacity .5s var(--ease-in-out-quad) .5s,
+    filter 1s var(--ease-in-out-quad),
     transform 1s var(--ease-in-out-quad);
 }
 
 /* 消えた状態 */
 .slide-out.is-hidden {
   opacity: 0;
-  transform: translateY(-30px); /* 下に吸い込まれる感じ */
+  filter: blur(10px);
+  transform: translateY(0px);
 }
 
 /* ▼ 表示アニメ（enter）用 */

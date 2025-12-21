@@ -14,7 +14,7 @@ export const revalidate = 60;
 
 export default function ContactPage() {
   return (
-    <main className="container pre:pt-[307px]">
+    <main className="container pre:pt-[307px] slide-out">
   <section
     className="
       pre:w-[calc(100%-40px)]
@@ -28,7 +28,7 @@ export default function ContactPage() {
   >
     {/* sticky は内側に */}
     <div className="pre:sticky pre:top-24">
-      <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[106px] slide-in slide-out">
+      <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[106px] slide-in">
         Contact
       </h2>
 
@@ -38,11 +38,11 @@ export default function ContactPage() {
           alt=""
           width={220}
           height={220}
-          className="pre:w-[220px] slide-in slide-out"
+          className="pre:w-[220px] slide-in"
         />
       </div>
 
-      <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in slide-out pre:[overflow-wrap:anywhere]">
+      <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in pre:[overflow-wrap:anywhere]">
         Transforming Your Content Like Ketchup
         <br />
         Transforms a Meal, The Perfect Condiment
@@ -52,7 +52,7 @@ export default function ContactPage() {
     </div>
 
     {/* 右列：ここも w は付けない（1frに任せる） */}
-    <div className="slide-in slide-out">
+    <div className="slide-in">
       <ContactForm />
     </div>
   </section>

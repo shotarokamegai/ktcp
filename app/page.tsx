@@ -14,7 +14,7 @@ export default async function Home() {
   const latest = works.slice(0, 9);
 
   return (
-    <main className="container pre:pt-[307px]">
+    <main className="container pre:pt-[307px] slide-out">
       {/* ▼ タクソノミー一覧（共通コンポーネントに置換） */}
       <WorksCategoryNav activeSlug={null} allHref="/works" />
 
@@ -36,7 +36,7 @@ export default async function Home() {
               return (
                 <div
                   key={item.key}
-                  className="pre:w-1/4 pre:mb-5 pre:px-[calc(7.5/1401*100%)] slide-out"
+                  className="pre:w-1/4 pre:mb-5 pre:px-[calc(7.5/1401*100%)]"
                 >
                   <ResponsiveImage
                     pc={{ url: "/illust.png", width: 1200, height: 900 } as any}
@@ -66,7 +66,7 @@ export default async function Home() {
               <FMLink
                 key={item.key}
                 href={`/works/${w.slug}`}
-                className={`${widthClass} pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:hover:text-ketchup pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))] pre:[&_.responsive-image-content]:scale-[1] pre:hover:[&_.responsive-image-content]:scale-[1.1] slide-in slide-out text-hover`}
+                className={`${widthClass} pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:hover:text-ketchup pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)] pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))] pre:[&_.responsive-image-content]:scale-[1] pre:hover:[&_.responsive-image-content]:scale-[1.1] slide-in text-hover`}
               >
                 <ResponsiveImage
                   pc={picked.pc}
