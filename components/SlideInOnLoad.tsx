@@ -5,9 +5,12 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 // 表示アニメ用
-const IN_BASE_DELAY = 600;
+const IN_BASE_DELAY = 100;
 const IN_MIN_DELAY = 0;
-const IN_MAX_DELAY = 600;
+const IN_MAX_DELAY = 100;
+// const IN_BASE_DELAY = 600;
+// const IN_MIN_DELAY = 0;
+// const IN_MAX_DELAY = 600;
 
 // 離脱アニメ用
 const OUT_MIN_DELAY = 0;

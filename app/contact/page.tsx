@@ -34,7 +34,7 @@ export default function ContactPage() {
 
       <div>
         <Image
-          src="/illust_2.png"
+          src="/illust/contact.png"
           alt=""
           width={220}
           height={220}

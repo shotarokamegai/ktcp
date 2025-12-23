@@ -20,7 +20,7 @@ export default function WebDirector() {
           </div>
           <div className="accordion__inner careers-accordion__inner pre:grid-cols-[calc(436/1401*100%)_1fr] pre:gap-x-[calc(158/1401*100%)] pre:items-start">
             <div className="pre:sticky pre:top-0 careers-accordion-illust pre:pl-[calc(114/436*100%)]">
-              <Image src="/illust.png" alt="" width={372} height={279} className="" />
+              <Image src="/illust/web-director.png" alt="" width={372} height={279} className="" />
             </div>
             <div className="accordion__inner-content careers-accordion__inner-content">
               <div className="careers-accordion-box">

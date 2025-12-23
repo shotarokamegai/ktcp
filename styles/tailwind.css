@@ -128,3 +128,16 @@
     }
   }
 }
+@layer components {
+  .works-list {
+    transition:
+      opacity .35s var(--ease-out-quart),
+      transform .35s var(--ease-out-quart);
+    will-change: opacity, transform;
+  }
+
+  .works-list.is-changing {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+}

@@ -25,7 +25,7 @@ export default async function AboutPage() {
         <section className="pre:flex pre:justify-justify-between pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[98px]">
           <div className="pre:w-[calc(517/1400*100%)]">
             <h1 className="pre:text-[24px] pre:font-gt pre:font-light slide-in">About</h1>
-            <Image src="/illust.png" alt="" width={372} height={279} className="pre:w-[calc(372/450*100%)] pre:max-w-[372px] slide-in" />
+            <Image src="/illust/about.png" alt="" width={372} height={279} className="pre:w-[calc(372/450*100%)] pre:max-w-[372px] slide-in" />
             <h2 className="pre:text-[24px] pre:leading-[130%] pre:font-gt pre:font-light">
               <span className="pre:inline-block slide-in">
                 Transforming Your Content Like Ketchup 

@@ -1,51 +1,55 @@
-// components/WorksCategoryNav.tsx
-import FMLink from "@/components/FMLink";
-import SplittingSpan from "@/components/SplittingSpan"
-import { fetchWorkCategories, type WorkTerm } from "@/lib/wp";
+"use client";
 
-export default async function WorksCategoryNav({
+import SplittingSpan from "@/components/SplittingSpan";
+import type { WorkTerm } from "@/lib/wp";
+
+export default function WorksCategoryNav({
+  categories = [],   // ← ここ！
   activeSlug,
-  allHref = "/",
+  onChange,
   className = "",
+  allLabel = "ALL",
 }: {
-  /** 今アクティブなカテゴリslug（ALL の時は undefined / null でOK） */
-  activeSlug?: string | null;
-  /** 「ALL」リンクの飛び先（ページによって変えたい時用） */
-  allHref?: string;
-  /** section に追加したいクラス */
+  categories?: WorkTerm[]; // optional に
+  activeSlug: string | null;
+  onChange: (slug: string | null) => void;
   className?: string;
+  allLabel?: string;
 }) {
-  const categories: WorkTerm[] = await fetchWorkCategories();
+
+  const base =
+    "pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:hover:text-black pre:transition-colors pre:cursor-pointer";
 
   return (
     <section
       className={[
-        "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] slide-in slide-out",
+        "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] slide-in",
         className,
       ].join(" ")}
     >
-      <FMLink
-        key="all"
-        href={allHref}
+      <button
+        type="button"
+        onClick={() => onChange(null)}
         className={[
-          "pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:hover:text-black pre:transition-colors",
+          base,
           !activeSlug ? "pre:text-black" : "pre:text-gray-400 splitting-hover pre:hover:text-ketchup",
         ].join(" ")}
       >
         <span className="splitting-hover__inner">
-          <SplittingSpan text="ALL" />
-          <SplittingSpan text="ALL" />
+          <SplittingSpan text={allLabel} />
+          <SplittingSpan text={allLabel} />
         </span>
-      </FMLink>
+      </button>
 
       {categories.map((cat) => {
         const isActive = cat.slug === activeSlug;
         return (
-          <FMLink
+          <button
             key={cat.id}
-            href={`/works/category/${cat.slug}`}
+            type="button"
+            onClick={() => onChange(cat.slug)}
             className={[
-              "pre:font-gt pre:font-light pre:text-[10px] pre:mr-[25px] pre:last:mr-0 pre:hover:text-black pre:transition-colors",
+              base,
               isActive ? "pre:text-black" : "pre:text-gray-400 splitting-hover pre:hover:text-ketchup",
             ].join(" ")}
           >
@@ -53,7 +57,7 @@ export default async function WorksCategoryNav({
               <SplittingSpan text={cat.name} />
               <SplittingSpan text={cat.name} />
             </span>
-          </FMLink>
+          </button>
         );
       })}
     </section>
