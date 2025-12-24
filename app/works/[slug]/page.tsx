@@ -61,12 +61,12 @@ export default async function WorkDetail({
     .slice(0, 4);     
 
   return (
-    <main className="container pre:pt-[307px]">
+    <main className="container pre:pt-[307px] slide-out">
       <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between">
         <div className="pre:w-[calc(339/1401*100%)]">
           {/* 日付 */}
           {(dateTxt) && (
-            <div className="pre:mb-[14px] slide-in slide-out">
+            <div className="pre:mb-[14px] slide-in">
               {dateTxt && (
                 <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[1]">
                   {dateTxt}
@@ -75,10 +75,10 @@ export default async function WorkDetail({
             </div>
           )}
           {/* タイトル */}
-          <h1 dangerouslySetInnerHTML={{ __html: work.title.rendered }} className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[1] slide-in slide-out" />
+          <h1 dangerouslySetInnerHTML={{ __html: work.title.rendered }} className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[1] slide-in" />
           {/* カテゴリー */}
           {((categories && categories.length > 0)) && (
-            <div className="pre:mt-[426px] slide-in slide-out">
+            <div className="pre:mt-[426px] slide-in">
               {Array.isArray(categories) && categories.length > 0 && (
                 <p className="pre:text-[15px] pre:font-gt pre:font-light">
                   {categories.map((cat, i) => (
@@ -97,7 +97,7 @@ export default async function WorkDetail({
           {gallery.length > 0 && (
             <div>
               {gallery.map((src, i) => (
-                <div className="pre:mb-2.5 pre:last-child:mb-[10] slide-out">
+                <div className="pre:mb-2.5 pre:last-child:mb-[10]">
                   <ResponsiveImage
                     key={i}
                     pc={{ url: src }}
@@ -113,7 +113,7 @@ export default async function WorkDetail({
       {/* ▼ ここから Featured works セクションを追加 */}
       <section className="pre:mt-[160px] pre:mb-[180px]">
         <div className="pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[26px]">
-          <h2 className="pre:text-[24px] pre:font-gt pre:font-light slide-out">
+          <h2 className="pre:text-[24px] pre:font-gt pre:font-light">
             Featured works
           </h2>
         </div>
@@ -139,7 +139,6 @@ export default async function WorkDetail({
                     "pre:[&_.responsive-image-content]:scale-[1]",
                     "pre:hover:[&_.responsive-image-content]:scale-[1.1]",
                     "slide-in",
-                    "slide-out",
                   ].join(" ")
                 }
               >

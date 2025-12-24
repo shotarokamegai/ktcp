@@ -1,102 +1,109 @@
-// components/SlideInOnLoad.tsx
 "use client";
 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-// 表示アニメ用
-const IN_BASE_DELAY = 100;
+/* ===== 調整用 ===== */
+const IN_BASE_DELAY = 0;
 const IN_MIN_DELAY = 0;
-const IN_MAX_DELAY = 100;
-// const IN_BASE_DELAY = 600;
-// const IN_MIN_DELAY = 0;
-// const IN_MAX_DELAY = 600;
+const IN_MAX_DELAY = 300;
 
-// 離脱アニメ用
 const OUT_MIN_DELAY = 0;
 const OUT_MAX_DELAY = 300;
-const TRANSITION_DURATION = 600;
+const TRANSITION_DURATION = 350;
 
-// ▼ 追加：ランダム or 順番
 const IN_MODE: "random" | "sequence" = "sequence";
-// const IN_MODE: "random" | "sequence" = "random";
 const OUT_MODE: "random" | "sequence" = "sequence";
-// const OUT_MODE: "random" | "sequence" = "random";
+
+const REFRESH_EVENT = "slidein:refresh";
+
+/* ================= */
 
 export default function SlideInOnLoad() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // ▼ delay を mode ごとに返す関数
-  const getDelay = (index: number, min: number, max: number, mode: "random" | "sequence") => {
+  const getDelay = (
+    index: number,
+    count: number,
+    min: number,
+    max: number,
+    mode: "random" | "sequence"
+  ) => {
     if (mode === "sequence") {
-      // 順番パターン
-      const step = (max - min) /  (index + 1);
-      return min + step * index;
+      if (count <= 1) return min;
+      const t = index / (count - 1);
+      return Math.round(min + (max - min) * t);
     }
-
-    // ランダムパターン
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  // ① 表示アニメ
-  useEffect(() => {
-    const els = Array.from(document.querySelectorAll<HTMLElement>("#page .slide-in"));
+  /* ===== IN ===== */
+  const runIn = () => {
+    const els = Array.from(
+      document.querySelectorAll<HTMLElement>("#page .slide-in")
+    );
 
     els.forEach((el) => {
-      el.classList.remove("is-shown");
-      el.classList.remove("is-hidden");
+      el.classList.remove("is-shown", "is-hidden");
       el.style.transitionDelay = "0ms";
     });
 
-    const timer = setTimeout(() => {
-      els.forEach((el, i) => {
-        const delay = getDelay(i, IN_MIN_DELAY, IN_MAX_DELAY, IN_MODE);
-        el.style.transitionDelay = `${delay}ms`;
+    const count = els.length;
 
-        requestAnimationFrame(() => {
-          el.classList.add("is-shown");
-        });
+    setTimeout(() => {
+      els.forEach((el, i) => {
+        const delay = getDelay(i, count, IN_MIN_DELAY, IN_MAX_DELAY, IN_MODE);
+        el.style.transitionDelay = `${delay}ms`;
+        requestAnimationFrame(() => el.classList.add("is-shown"));
       });
     }, IN_BASE_DELAY);
+  };
 
-    return () => {
-      clearTimeout(timer);
-      els.forEach((el) => {
-        el.classList.remove("is-shown");
-        el.style.transitionDelay = "0ms";
-      });
-    };
+  /* ===== OUT ===== */
+  const runOutAndPush = (href: string) => {
+    const els = Array.from(
+      document.querySelectorAll<HTMLElement>("#page .slide-out")
+    );
+
+    if (els.length === 0) {
+      router.push(href);
+      return;
+    }
+
+    let maxDelay = 0;
+    const count = els.length;
+
+    els.forEach((el, i) => {
+      const delay = getDelay(i, count, OUT_MIN_DELAY, OUT_MAX_DELAY, OUT_MODE);
+      maxDelay = Math.max(maxDelay, delay);
+
+      el.style.transitionDelay = `${delay}ms`;
+      el.classList.remove("is-shown");
+      el.classList.add("is-hidden");
+    });
+
+    setTimeout(() => router.push(href), maxDelay + TRANSITION_DURATION + 50);
+  };
+
+  /* ===== pathname change ===== */
+  useEffect(() => {
+    runIn();
   }, [pathname]);
 
-  // ② 離脱アニメ
+  /* ===== 同一ページ差し替え ===== */
+  useEffect(() => {
+    const handler = () => runIn();
+    window.addEventListener(REFRESH_EVENT, handler);
+    return () => window.removeEventListener(REFRESH_EVENT, handler);
+  }, []);
+
+  /* ===== ページ遷移 OUT ===== */
   useEffect(() => {
     const handler = (e: Event) => {
       const href = (e as CustomEvent).detail?.href;
       if (!href) return;
-
-      const els = Array.from(document.querySelectorAll<HTMLElement>("#page .slide-out"));
-      if (els.length === 0) {
-        router.push(href);
-        return;
-      }
-
-      let maxDelay = 0;
-
-      els.forEach((el, i) => {
-        const delay = getDelay(i, OUT_MIN_DELAY, OUT_MAX_DELAY, OUT_MODE);
-        if (delay > maxDelay) maxDelay = delay;
-
-        el.style.transitionDelay = `${delay}ms`;
-        el.classList.remove("is-shown");
-        el.classList.add("is-hidden");
-      });
-
-      const total = maxDelay + TRANSITION_DURATION;
-
-      setTimeout(() => {
-        router.push(href);
-      }, total + 50);
+      runOutAndPush(href);
     };
 
     window.addEventListener("fm:start", handler);

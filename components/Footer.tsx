@@ -20,7 +20,7 @@ export default function Footer() {
         </p>
 
         <div className="pre:inline-block pre:relative pre:mr-[60px]">
-          <FMLink href="/" className="pre:text-[12px] pre:font-gt pre:font-light splitting-hover pre:hover:text-ketchup">
+          <FMLink href="/privacy-policy" className="pre:text-[12px] pre:font-gt pre:font-light splitting-hover pre:hover:text-ketchup">
             <span className="splitting-hover__inner">
               <SplittingSpan text="Privacy policy" />
               <SplittingSpan text="Privacy policy" />

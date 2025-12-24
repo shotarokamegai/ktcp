@@ -51,7 +51,7 @@ export default async function WorksCategoryPage({
               return (
                 <div
                   key={item.key}
-                  className="pre:w-[calc(1/4*100%)] pre:mb-[20px] pre:px-[calc(7.5/1401*100%)] slide-out"
+                  className="pre:w-[calc(1/4*100%)] pre:mb-[20px] pre:px-[calc(7.5/1401*100%)]"
                 >
                   <ResponsiveImage
                     pc={{ url: "/illust.png", width: 1200, height: 900 } as any}
@@ -82,7 +82,7 @@ export default async function WorksCategoryPage({
                 work={w}
                 widthClass={widthClass}
                 // このページだけ mb が 20px なので、上書きしたい場合は className で足す
-                className="pre:mb-[20px] slide-out"
+                className="pre:mb-[20px]"
               />
             );
           });

@@ -24,7 +24,7 @@ export default async function AboutPage() {
       <main className="container pre:pt-[307px] slide-out">
         <section className="pre:flex pre:justify-justify-between pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[98px]">
           <div className="pre:w-[calc(517/1400*100%)]">
-            <h1 className="pre:text-[24px] pre:font-gt pre:font-light slide-in">About</h1>
+            <h1 className="pre:text-[24px] pre:font-gt pre:font-light slide-in pre:mb-[180px]">About</h1>
             <Image src="/illust/about.png" alt="" width={372} height={279} className="pre:w-[calc(372/450*100%)] pre:max-w-[372px] slide-in" />
             <h2 className="pre:text-[24px] pre:leading-[130%] pre:font-gt pre:font-light">
               <span className="pre:inline-block slide-in">
@@ -38,7 +38,7 @@ export default async function AboutPage() {
               </span>
             </h2>
           </div>
-          <div className="pre:w-[calc(1/4*100%)] pre:mr-[calc(15/1400*100%)]">
+          <div className="pre:w-[calc(340/1400*100%)] pre:mr-[calc(15/1400*100%)]">
             <div>
               <p className="pre:text-[15px] pre:leading-[180%] pre:font-shuei">
                 <span className="pre:inline-block slide-in">
@@ -49,13 +49,13 @@ export default async function AboutPage() {
                   世の中には素晴らしいアイディア、コンテンツが無数に広がっています。私たちの力で少し味付けをして、さらにより良い形で届けられるように。
                 </span><br/><br/>
                 <span className="pre:inline-block slide-in">
-                  Ketchupはそんな想いで設立された、クリエイティブカンパニーです。
+                  Ketchupはそんな想いで設立された、<br/>クリエイティブカンパニーです。
                 </span>
               </p>
             </div>
           </div>
-          <div className="pre:w-[calc(1/4*100%)] pre:mt-[2px]">
-            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-[112px] pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px] pre:[&_div:last-child]:mb-0">
+          <div className="pre:w-[calc(340/1400*100%)] pre:mt-0.5">
+            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px] pre:[&_div:last-child]:mb-0">
               <div>
                 <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in">Company Name</p>
               </div>
@@ -63,7 +63,7 @@ export default async function AboutPage() {
                 <p className="pre:text-[12px] pre:font-shuei slide-in">株式会社Ketchup</p>
               </div>
             </div>
-            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-[112px] pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px] pre:[&_div:last-child]:mb-0">
+            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px] pre:[&_div:last-child]:mb-0">
               <div>
                 <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in">Year Established</p>
               </div>
@@ -71,7 +71,7 @@ export default async function AboutPage() {
                 <p className="pre:text-[12px] pre:font-shuei slide-in">2022年7月1日</p>
               </div>
             </div>
-            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-[112px] pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
+            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
               <div>
                 <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in">CEO</p>
               </div>
@@ -79,7 +79,7 @@ export default async function AboutPage() {
                 <p className="pre:text-[12px] pre:font-shuei slide-in">亀谷 晶太郎</p>
               </div>
             </div>
-            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-[112px] pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
+            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
               <div>
                 <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in">Office</p>
               </div>
@@ -90,7 +90,7 @@ export default async function AboutPage() {
                 </p>
               </div>
             </div>
-            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-[112px] pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
+            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
               <div>
                 <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in">Tel</p>
               </div>
@@ -98,7 +98,7 @@ export default async function AboutPage() {
                 <p className="pre:text-[12px] pre:font-shuei slide-in">03-5936-6477</p>
               </div>
             </div>
-            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-[112px] pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
+            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
               <div>
                 <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in">Capital</p>
               </div>
@@ -107,7 +107,7 @@ export default async function AboutPage() {
                 </p>
               </div>
             </div>
-            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-[112px] pre:[&_div:nth-child(2)]:w-[calc(100%-112px)]">
+            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)]">
               <div>
                 <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in">Field of<br/>
                 Activities</p>

@@ -32,12 +32,12 @@ export default function ContactPage() {
         Contact
       </h2>
 
-      <div>
+      <div className="pre:w-[256px] pre:mb-2.5">
         <Image
           src="/illust/contact.png"
           alt=""
-          width={220}
-          height={220}
+          width={256}
+          height={222}
           className="pre:w-[220px] slide-in"
         />
       </div>
