@@ -1,5 +1,4 @@
 // app/layout.tsx (or RootLayout)
-import "../styles/animations.css";
 import "../styles/globals.css";
 import "../styles/tailwind.css";
 import { gtAmerica } from "./fonts";
@@ -27,7 +26,7 @@ const HEADER =
 const LOGO_LINK = "pre:w-[104.4px] pre:h-11 pre:sm:sp-w-[65] pre:sm:h-auto pre:sm:block";
 
 const NAV =
-  "js-header-nav pre:[&_ul]:flex pre:[&_ul]:items-start pre:[&_ul]:justify-end " +
+  "js-header-nav pre:[&_ul]:flex pre:[&_ul]:items-start pre:[&_ul]:justify-end pre:sm:flex " +
   "pre:sm:fixed pre:sm:sp-w-[430] pre:sm:mx-auto pre:sm:bg-white " +
   "pre:sm:opacity-0 pre:sm:invisible pre:sm:h-screen pre:sm:w-screen pre:sm:top-0 pre:sm:left-0 pre:sm:[&_ul]:flex-col pre:sm:sp-pl-[20] pre:sm:sp-pb-[50]";
 
@@ -38,7 +37,7 @@ const NAV_LINK_BASE =
 const NAV_LINK_GAP = "pre:mr-[37px] pre:sm:mr-0";
 
 const CAREERS_LINK =
-  "pre:inline-flex pre:items-center pre:px-[17px] " +
+  "pre:inline-flex pre:items-center pre:px-[17px] pre:top-[-2px] pre:sm:top-auto" +
   "pre:text-ketchup pre:hover:text-black " +
   "pre:[&_svg]:relative " +
   "pre:hover:[&_svg]:rotate-[45deg] pre:sm:pl-0 pre:sm:sppr-[20]";
@@ -96,7 +95,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <nav className={NAV}>
             <ul className="pre:sm:mt-auto">
-              <div className="pre:hidden pre:sm:block pre:absolute sm:center-xy pre:sp-w-[340]">
+              <div className="pre:hidden pre:sm:block pre:absolute sm:center-xy pre:sp-w-[340] illust">
                 <Image src="/illust/about.png" alt="" width={372} height={279} className="pre:w-full" />
               </div>
               <li>
@@ -124,18 +123,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <li>
                 <HeaderNavLink
                     href="/careers"
-                    className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover`}
+                    className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover pre:sm:overflow-hidden`}
                   >
                   <div className="pre:absolute center-y pre:left-0 sm:center-y pre:sm:hidden">
                     <Plus />
                   </div>
-                  <span className="splitting-hover__inner pre:mt-[2%]">
-                    <span className={CAREERS_TEXT}>
+                  <span className={`${CAREERS_TEXT} splitting-hover__inner pre:mt-[3%]` }>
                       <SplittingSpan text="CAREERS" />
                       <SplittingSpan text="CAREERS" />
-                    </span>
                   </span>
-                  <div className="pre:absolute center-y pre:right-0 sm:center-y">
+                  <div className="pre:absolute center-y pre:right-0 sm:center-y plus">
                     <Plus />
                   </div>
                 </HeaderNavLink>
@@ -143,10 +140,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </ul>
           </nav>
 
-          <div className="menu-trigger pre:sm:sp-h-[14] pre:sm:sp-w-[30] pre:hidden pre:sm:block pre:sm:relative">
-            <div className="pre:absolute pre:right-0 pre:h-0.5 pre:w-full pre:bg-ketchup"></div>
-            <div className="pre:absolute pre:right-0 pre:h-0.5 pre:sp-w-[18] pre:bg-ketchup"></div>
-            <div className="pre:absolute pre:right-0 pre:h-0.5 pre:w-full pre:bg-ketchup"></div>
+          <div className="menu-trigger pre:hidden pre:sm:block pre:sm:relative pre:sm:sp-h-[14] pre:sm:sp-w-[30]">
+            <div className="menu-trigger-content pre:sm:relative pre:h-full pre:w-full">
+              <div className="pre:absolute pre:left-0 pre:h-0.5 pre:w-full pre:bg-ketchup"></div>
+              <div className="pre:absolute pre:right-0 pre:h-0.5 pre:sp-w-[18] pre:bg-ketchup"></div>
+              <div className="pre:absolute pre:left-0 pre:h-0.5 pre:w-full pre:bg-ketchup"></div>
+            </div>
+            <p className="pre:font-gt pre:font-light pre:sp-fs-[12] pre:text-ketchup pre:absolute sm:center-x pre:bottom-[calc(12/393*-100vw)] pre:leading-0 splitting-hover pre:w-[104%]">
+              <span className="splitting-hover__inner">
+                <SplittingSpan text="Close" />
+                <SplittingSpan text="Close" />
+              </span>
+            </p>
           </div>
         </header>
 

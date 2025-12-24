@@ -1,3 +1,4 @@
+@import "./animations.css";
 /* app/globals.css など */
 :root {
   --ease-in-sine: cubic-bezier(0.47, 0, 0.745, 0.715);
@@ -115,18 +116,87 @@ a {
 
 @media screen and (max-width: 749px) {
   .menu-trigger {
-    div {
-      &:nth-child(1) {
-        top: 0;
-      }
-      &:nth-child(2) {
-        top: 50%;
-        transform: translate3d(0, -50%, 0);
-      }
-      &:nth-child(3) {
-        top: 100%;
+    .splitting-hover {
+      .splitting-hover__inner {
+        .splitting-text {
+            &:nth-child(1) {
+                .char {
+                    transform: translateY(107%);
+                    /* transform: translateY(-10%); */
+                }
+            }
+            &:nth-child(2) {
+                .char {
+                    transform: translateY(107%);
+                }
+            }
+        }
       }
     }
+    &.is-open {
+      .splitting-text .char {
+        display: inline-block;
+        will-change: transform, opacity;
+        transition:
+          opacity .5s var(--ease-out-quart),
+          color .5s var(--ease-out-quart),
+          transform .5s var(--ease-out-quart);
+        transition-delay:
+          calc(var(--char-index) * 0.05s + .5s),
+          calc(var(--char-index) * 0.05s + .5s),
+          calc(var(--char-index) * 0.05s + .5s);
+      }
+      .splitting-hover {
+        .splitting-hover__inner {
+          .splitting-text {
+              &:nth-child(1) {
+                  .char {
+                      transform: translateY(-10%);
+                  }
+              }
+              &:nth-child(2) {
+                  .char {
+                      transform: translateY(107%);
+                  }
+              }
+          }
+        }
+      }
+      .menu-trigger-content {
+        div {
+        &:nth-child(1) {
+          animation: menu1Open .7s var(--ease-out-quart) forwards;
+        }
+        &:nth-child(2) {
+          animation: menu2Open .7s var(--ease-out-quart) forwards;
+        }
+        &:nth-child(3) {
+          animation: menu3Open .7s var(--ease-out-quart) forwards;
+        }
+        }
+      } 
+    }
+  }
+  .menu-trigger-content {
+      div {
+        transform-origin: 100% 50%; /* 右起点 */
+        &:nth-child(1) {
+          top: 0;
+          transform: translate3d(0,0, 0) rotateX(180deg);
+          transform-origin: right center;
+          animation: menu1Close .7s var(--ease-out-quart) forwards;
+        }
+        &:nth-child(2) {
+          top: 50%;
+          transform: translate3d(0, -50%, 0);
+          animation: menu2Close .7s var(--ease-out-quart) forwards;
+        }
+        &:nth-child(3) {
+          top: 100%;
+          transform: translate3d(0,0, 0) rotateX(180deg);
+          animation: menu3Close .7s var(--ease-out-quart) forwards;
+        }
+      }
   }
   .sm\:center-xy {
     top: 50%;

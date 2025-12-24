@@ -1,0 +1,214 @@
+/* components.css */
+@layer components {
+  /* =========================
+     Button
+  ========================= */
+  .btn-submit {
+    will-change: background-color;
+    transition: background-color 0.5s var(--ease-out-quart);
+    @apply pre:relative pre:h-20 pre:w-[340px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white;
+  }
+  .btn-submit:disabled { @apply pre:opacity-60 pre:cursor-not-allowed; }
+  .btn-submit__arrow { @apply pre:absolute pre:top-[50%] pre:right-[25px] pre:[transform:translate3d(0,-50%,0)]; }
+
+  /* =========================
+     Careers Accordion
+  ========================= */
+  .careers-accordion { @apply pre:mb-[110px] pre:last:mb-0; }
+
+  .careers-accordion-illust {
+    will-change: opacity, transform;
+    transition: .5s transform var(--ease-in-out-quart), .5s opacity var(--ease-in-out-quart);
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  .careers-accordion-illust.is-illust-in { opacity: 1; transform: scale(1); }
+  .careers-accordion-illust.is-illust-out { opacity: 0; transform: scale(1.05); }
+
+  /* title activeで illust をディレイ表示（元挙動復活） */
+  .careers-accordion-title.active .careers-accordion-illust {
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      .5s transform var(--ease-in-out-quart) .5s,
+      .5s opacity var(--ease-in-out-quart) .5s;
+  }
+
+  .careers-accordion.active .careers-accordion-title { @apply pre:border-ketchup; }
+  .careers-accordion.active .careers-accordion-icon div,
+  .careers-accordion:hover .careers-accordion-icon div { @apply pre:bg-ketchup; }
+
+  .careers-accordion .careers-accordion-icon div {
+    will-change: background-color;
+    transition: background-color 0.5s var(--ease-out-quart);
+  }
+
+  .careers-accordion-box {
+    @apply pre:flex pre:py-[30px] pre:pl-5 pre:pb-10 pre:border-b pre:border-lightGray pre:border-solid;
+  }
+  .careers-accordion-icon {
+    @apply pre:h-[22px] pre:w-[22px] pre:absolute pre:right-0 pre:top-[50%] pre:transform-[translate3d(0,-50%,0)];
+  }
+  .careers-accordion-title {
+    @apply pre:relative pre:h-[54px] pre:cursor-pointer pre:flex pre:items-center pre:z-10 pre:bg-white;
+  }
+  .careers-accordion__inner { @apply pre:relative pre:justify-end pre:grid; }
+  .careers-accordion__inner-content {
+    @apply pre:pt-[30px]
+      pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1
+      pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light;
+  }
+
+  .careers-accordion-title-line::before {
+    content: '';
+    height: 1px;
+    width: 100%;
+    background-color: black;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translate3d(0%, 0, 0);
+    will-change: transform;
+    transition: 1.5s transform var(--ease-in-out-quart);
+  }
+  .careers-accordion-title-line::after {
+    content: '';
+    height: 1px;
+    width: 100%;
+    background-color: var(--color-ketchup);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    transform: translate3d(-101%, 0, 0);
+    will-change: transform;
+    transition: 1s transform var(--ease-in-out);
+  }
+  .careers-accordion-title.active .careers-accordion-title-line::after,
+  .careers-accordion-title:hover  .careers-accordion-title-line::after {
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* =========================
+     Header (#header)
+  ========================= */
+  #header nav a:last-child svg {
+    will-change: rotate;
+    transition: rotate 0.4s var(--ease-out-quart);
+  }
+
+  /* =========================
+     Works list
+  ========================= */
+  .works-list {
+    transition:
+      opacity .35s var(--ease-out-quart),
+      transform .35s var(--ease-out-quart);
+    will-change: opacity, transform;
+  }
+  .works-list.is-changing {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+
+  /* =========================
+     Menu Trigger (SP) : 復活
+     - 元のglobalsにあったやつを“展開版”で戻してる :contentReference[oaicite:1]{index=1}
+  ========================= */
+  @media (max-width: 749px) {
+    .menu-trigger div:nth-child(1) { top: 0; transform: translate3d(-50%, 0, 0); }
+    .menu-trigger div:nth-child(2) { top: 50%; transform: translate3d(0, -50%, 0); }
+    .menu-trigger div:nth-child(3) { top: 100%; transform: translate3d(-50%, 0, 0); }
+
+    /* open：is-open / active どっちでも反応 */
+    .menu-trigger.is-open div:nth-child(1),
+    .menu-trigger.active  div:nth-child(1) { animation: menu1Open 1s var(--ease-out-quart) forwards; }
+
+    .menu-trigger.is-open div:nth-child(2),
+    .menu-trigger.active  div:nth-child(2) { animation: menu2Open 1s var(--ease-out-quart) forwards; }
+
+    .menu-trigger.is-open div:nth-child(3),
+    .menu-trigger.active  div:nth-child(3) { animation: menu3Open 1s var(--ease-out-quart) forwards; }
+
+    /* close */
+    .menu-trigger:not(.is-open):not(.active) div { animation: none; }
+  }
+
+  /* =========================
+     SP Header Nav (閉じ=デフォ / 開き)
+     ✅ “スマホで出現しない”対策で .active も open 扱いにする
+  ========================= */
+  @media (max-width: 749px) {
+    /* closed */
+    .js-header-nav {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      filter: blur(12px);
+      transition:
+        opacity .5s var(--ease-in-out-quart),
+        visibility 0ms linear .5s,
+        filter .5s var(--ease-in-out-quart),
+        transform .5s var(--ease-out-quart);
+      will-change: opacity, filter, transform;
+    }
+
+    /* open：is-open / active どっちでも */
+    .js-header-nav.is-open,
+    .js-header-nav.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      filter: blur(0);
+      transform: translateY(0);
+      transition:
+        opacity .5s var(--ease-in-out-quart),
+        visibility 0ms linear,
+        filter .5s var(--ease-in-out-quart),
+        transform .5s var(--ease-out-quart) .5s;
+    }
+
+    .js-header-nav .plus {
+      transform: translate3d(0, calc(-50% + 170%), 0);
+    }
+    .js-header-nav.is-open .plus,
+    .js-header-nav.active  .plus {
+      transform: translate3d(0, -50%, 0);
+      transition: transform .5s var(--ease-out-quart);
+      transition-delay: calc(8 * 0.05s + .1s);
+    }
+
+    .js-header-nav .illust {
+      opacity: 0;
+      transform: translate3d(-50%, -50%, 0) scale(1.05);
+      will-change: opacity, transform;
+      transition: .5s transform var(--ease-in-out-quart) .5s, .5s opacity var(--ease-in-out-quart) .5s;
+    }
+    .js-header-nav.is-open .illust,
+    .js-header-nav.active  .illust {
+      opacity: 1;
+      transform: translate3d(-50%, -50%, 0) scale(1);
+      transition: .5s transform var(--ease-in-out-quart) .3s, .5s opacity var(--ease-in-out-quart) .3s;
+    }
+
+    /* メニュー開いた直後：リンク単位の入口 */
+    .js-header-nav.is-open .splitting-hover,
+    .js-header-nav.active  .splitting-hover {
+      opacity: 0;
+      filter: blur(10px);
+      transform: translateY(10px);
+      will-change: opacity, filter, transform;
+      transition:
+        opacity 500ms var(--ease-out-quart),
+        filter 500ms var(--ease-out-quart),
+        transform 500ms var(--ease-out-quart);
+      transition-delay: calc(var(--stagger, 0) * 90ms);
+    }
+    .js-header-nav.is-open .splitting-hover.menu-enter,
+    .js-header-nav.active  .splitting-hover.menu-enter {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0);
+    }
+  }
+}

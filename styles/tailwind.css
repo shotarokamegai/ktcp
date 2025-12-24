@@ -54,11 +54,13 @@
 }
 
 .careers-accordion-illust {
-  opacity: 0;
-  transform: scale(1.05);
   will-change: opacity, transform;
   transition: .5s transform var(--ease-in-out-quart), .5s opacity var(--ease-in-out-quart);
 }
+
+.careers-accordion-illust { opacity:0; transform:scale(1.05); }
+.careers-accordion-illust.is-illust-in { opacity:1; transform:scale(1); }
+.careers-accordion-illust.is-illust-out { opacity:0; transform:scale(1.05); }
 
 .careers-accordion-title {
   &.active {
@@ -169,13 +171,45 @@
     visibility: hidden;
     pointer-events: none;
     filter: blur(12px);
-    transform: translateY(6px);
+    /* transform: translateY(6px); */
     transition:
-      opacity 240ms ease,
-      visibility 0ms linear 240ms,
-      filter 240ms ease,
-      transform 240ms ease;
-    will-change: opacity, filter, transform;
+      opacity .5s var(--ease-in-out-quart),
+      visibility 0ms linear .5s,
+      filter .5s var(--ease-in-out-quart),
+      transform .5s var(--ease-out-quart);
+       will-change: opacity, filter, transform;
+       .char {
+          transition:
+            opacity .5s var(--ease-out-quart),
+            color .5s var(--ease-out-quart),
+            transform .5s var(--ease-out-quart) .5s;
+       }
+      .plus {
+        transform: translate3d(0, calc(-50% + 170%), 0);
+      }
+      .illust {
+        opacity: 0;
+        transform: translate3d(-50%, -50%, 0) scale(1.05);
+        will-change: opacity, transform;
+        transition: .5s transform var(--ease-in-out-quart) .5s, .5s opacity var(--ease-in-out-quart) .5s;
+      }
+      .splitting-hover {
+      .splitting-hover__inner {
+          .splitting-text {
+              &:nth-child(1) {
+                  .char {
+                      transform: translateY(107%);
+                      /* transform: translateY(-10%); */
+                  }
+              }
+              &:nth-child(2) {
+                  .char {
+                      transform: translateY(107%);
+                  }
+              }
+          }
+      }
+  }
   }
 
   /* 「開き」状態 */
@@ -186,10 +220,54 @@
     filter: blur(0);
     transform: translateY(0);
     transition:
-      opacity 240ms ease,
-      visibility 0ms,
-      filter 240ms ease,
-      transform 240ms ease;
+      opacity .5s var(--ease-in-out-quart),
+      visibility 0ms linear,
+      filter .5s var(--ease-in-out-quart),
+      transform .5s var(--ease-out-quart) .5s;
+
+      .plus {
+        transform: translate3d(0, -50%, 0);
+        transition:
+          transform .5s var(--ease-out-quart);
+        transition-delay:
+          calc( 8 * 0.05s + .1s);
+      }
+
+      .illust {
+        opacity: 1;
+        transform: translate3d(-50%, -50%, 0) scale(1);
+        will-change: opacity, transform;
+        transition: .5s transform var(--ease-in-out-quart) .3s, .5s opacity var(--ease-in-out-quart) .3s;
+      }
+
+    .splitting-text .char {
+      display: inline-block;
+      will-change: transform, opacity;
+      transition:
+        opacity .5s var(--ease-out-quart),
+        color .5s var(--ease-out-quart),
+        transform .5s var(--ease-out-quart);
+      transition-delay:
+        calc(var(--char-index) * 0.05s + .1s),
+        calc(var(--char-index) * 0.05s + .1s),
+        calc(var(--char-index) * 0.05s + .1s);
+    }
+    .splitting-hover {
+    .splitting-hover__inner {
+        .splitting-text {
+            &:nth-child(1) {
+                .char {
+                    transform: translateY(-10%);
+                }
+            }
+            &:nth-child(2) {
+                .char {
+                    transform: translateY(107%);
+                }
+            }
+        }
+    }
+  }
   }
 }
 

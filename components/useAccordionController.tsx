@@ -2,13 +2,19 @@
 
 import { useEffect, RefObject } from "react";
 
-type Mode = "sp" | "pc";
-
 type Options = {
   smWidth?: number;
-  speedPxPerSec?: number; // 例: 800
-  minDurationMs?: number; // 例: 180
-  maxDurationMs?: number; // 例: 900
+  speedPxPerSec?: number;
+  minDurationMs?: number;
+  maxDurationMs?: number;
+
+  illustSelector?: string;
+  illustInClass?: string;
+  illustOutClass?: string;
+  illustFadeMs?: number;
+
+  // ★ 追加：初期に全部閉じる（デフォルト true）
+  forceCloseOnInit?: boolean;
 };
 
 export function useAccordionController(
@@ -19,296 +25,222 @@ export function useAccordionController(
     const root = rootRef.current;
     if (!root) return;
 
+    const SPEEDUP = 2;
+
     const smWidth = options.smWidth ?? 750;
     const speed = options.speedPxPerSec ?? 800;
     const minMs = options.minDurationMs ?? 180;
     const maxMs = options.maxDurationMs ?? 900;
 
+    const FORCE_CLOSE_ON_INIT = options.forceCloseOnInit ?? true;
+
+    const ILLUST_SELECTOR =
+      options.illustSelector ?? ".careers-accordion-illust";
+    const ILLUST_IN_CLASS = options.illustInClass ?? "is-illust-in";
+    const ILLUST_OUT_CLASS = options.illustOutClass ?? "is-illust-out";
+
+    const ILLUST_FADE_MS = Math.max(
+      1,
+      Math.round((options.illustFadeMs ?? 300) / SPEEDUP)
+    );
+
     const calcDurationMs = (px: number) => {
       const ms = (px / speed) * 1000;
-      return Math.max(minMs, Math.min(maxMs, ms));
+      const clamped = Math.max(minMs, Math.min(maxMs, ms));
+      return Math.max(1, Math.round(clamped / SPEEDUP));
     };
 
-    const setHeightTransition = (inner: HTMLElement, durationMs: number) => {
+    const setHeightTransition = (inner: HTMLElement, ms: number) => {
       inner.style.transitionProperty = "height";
       inner.style.transitionTimingFunction = "cubic-bezier(0.4, 0, 0.2, 1)";
-      inner.style.transitionDuration = `${durationMs}ms`;
+      inner.style.transitionDuration = `${ms}ms`;
     };
 
-    const getMode = (): Mode => (window.innerWidth <= smWidth ? "sp" : "pc");
+    const getIllusts = (wrapper: HTMLElement) =>
+      Array.from(wrapper.querySelectorAll<HTMLElement>(ILLUST_SELECTOR));
 
-    const getTriggersById = (id: string) => {
-      const sp = Array.from(
-        root.querySelectorAll<HTMLElement>(
-          `.js-sp-accordion[data-target="${id}"]`
-        )
-      );
-      const pc = Array.from(
-        root.querySelectorAll<HTMLElement>(
-          `.js-pc-accordion[data-target="${id}"]`
-        )
-      );
-      return { sp, pc, all: [...sp, ...pc] };
-    };
-
-    const toggleStayIfSplittingHover = (
-      trigger: HTMLElement,
-      isOpen: boolean
-    ) => {
-      if (!trigger.classList.contains("splitting-hover")) return;
-
-      if (isOpen) {
-        trigger.classList.add("stay", "pre:text-ketchup");
-      } else {
-        trigger.classList.remove("stay", "pre:text-ketchup");
-      }
-    };
-
-    const setOverflowHidden = (inner: HTMLElement) => {
-      inner.style.overflow = "hidden";
-    };
-
-    // ✅ 「開き終わり（height transitionend）」で overflow visible + illust top 付与（PCのみ）
-    const setOverflowVisibleAfterTransition = (
-      inner: HTMLElement,
-      wrapper: HTMLElement
-    ) => {
-      // 多重発火防止（毎回 1回だけ）
-      const onEnd = (ev: TransitionEvent) => {
-        if (ev.target !== inner) return;
-        if (ev.propertyName !== "height") return;
-
-        inner.style.overflow = "visible";
-
-        inner.removeEventListener("transitionend", onEnd);
-      };
-      inner.addEventListener("transitionend", onEnd);
-    };
-
-    const initInnerStyles = () => {
-      const allInner = Array.from(
-        root.querySelectorAll<HTMLElement>(".accordion__inner")
-      );
-      allInner.forEach((inner) => {
-        inner.style.overflow = "hidden";
-        inner.style.willChange = "height";
-        inner.style.transitionProperty = "height";
-        inner.style.transitionTimingFunction = "cubic-bezier(0.4, 0, 0.2, 1)";
-        inner.style.transitionDuration = "500ms";
+    const illustShow = (wrapper: HTMLElement) => {
+      getIllusts(wrapper).forEach((el) => {
+        el.classList.remove(ILLUST_OUT_CLASS);
+        el.classList.add(ILLUST_IN_CLASS);
       });
     };
 
-    const refreshOpenHeights = () => {
-      const wrappers = Array.from(
-        root.querySelectorAll<HTMLElement>(".accordion.active, .accordion.open")
-      );
-      wrappers.forEach((wrapper) => {
-        const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
-        const content = wrapper.querySelector<HTMLElement>(
-          ".accordion__inner-content"
+    const illustHide = (wrapper: HTMLElement) => {
+      getIllusts(wrapper).forEach((el) => {
+        el.classList.remove(ILLUST_IN_CLASS);
+        el.classList.add(ILLUST_OUT_CLASS);
+      });
+    };
+
+    const getCssFadeMs = (el: HTMLElement | null) => {
+      if (!el) return ILLUST_FADE_MS;
+
+      const st = getComputedStyle(el);
+
+      const toMs = (s: string) =>
+        s.trim().endsWith("ms")
+          ? parseFloat(s)
+          : s.trim().endsWith("s")
+          ? parseFloat(s) * 1000
+          : parseFloat(s) || 0;
+
+      const durs = st.transitionDuration.split(",").map(toMs);
+      const delays = st.transitionDelay.split(",").map(toMs);
+
+      let max = 0;
+      const len = Math.max(durs.length, delays.length);
+
+      for (let i = 0; i < len; i++) {
+        max = Math.max(
+          max,
+          (durs[i] ?? durs[durs.length - 1] ?? 0) +
+            (delays[i] ?? delays[delays.length - 1] ?? 0)
         );
-        if (!inner || !content) return;
+      }
 
-        const h = content.scrollHeight;
-        if (h > 0) inner.style.height = `${h}px`;
-
-        // すでに open 状態のものは visible & top 調整（PCのみ）
-        inner.style.overflow = "visible";
-      });
-
-      // 閉じてるやつは top 戻しておく（PCのみ）
-      const closed = Array.from(
-        root.querySelectorAll<HTMLElement>(".accordion:not(.active):not(.open)")
-      );
+      return Math.max(max, ILLUST_FADE_MS);
     };
 
-    const onClick = (e: Event) => {
-      const elm = e.currentTarget as HTMLElement | null;
-      if (!elm) return;
+    // timers
+    const timers = new WeakMap<HTMLElement, number[]>();
 
-      const id = elm.dataset.target;
+    const clearTimers = (w: HTMLElement) => {
+      timers.get(w)?.forEach(clearTimeout);
+      timers.set(w, []);
+    };
+
+    const pushTimer = (w: HTMLElement, id: number) => {
+      timers.set(w, [...(timers.get(w) ?? []), id]);
+    };
+
+    // open
+    const openAccordion = (
+      wrapper: HTMLElement,
+      inner: HTMLElement,
+      content: HTMLElement
+    ) => {
+      clearTimers(wrapper);
+
+      illustHide(wrapper);
+
+      const targetH = content.scrollHeight;
+      const currentH = inner.getBoundingClientRect().height;
+
+      const duration = calcDurationMs(Math.abs(targetH - currentH));
+      setHeightTransition(inner, duration);
+
+      wrapper.classList.add("active");
+
+      inner.style.overflow = "hidden";
+      inner.style.height = `${currentH}px`;
+
+      requestAnimationFrame(() => {
+        inner.style.height = `${targetH}px`;
+      });
+
+      const t = window.setTimeout(() => {
+        inner.style.overflow = "visible";
+        illustShow(wrapper);
+      }, Math.round(duration * 0.5));
+
+      pushTimer(wrapper, t);
+    };
+
+    // close
+    const closeAccordion = (wrapper: HTMLElement, inner: HTMLElement) => {
+      clearTimers(wrapper);
+
+      const currentH = inner.getBoundingClientRect().height;
+      illustHide(wrapper);
+
+      const fadeMs = getCssFadeMs(getIllusts(wrapper)[0]);
+
+      const t = window.setTimeout(() => {
+        wrapper.classList.remove("active");
+
+        const duration = calcDurationMs(currentH);
+        setHeightTransition(inner, duration);
+
+        inner.style.overflow = "hidden";
+        inner.style.height = `${currentH}px`;
+
+        requestAnimationFrame(() => {
+          inner.style.height = "0px";
+        });
+      }, fadeMs);
+
+      pushTimer(wrapper, t);
+    };
+
+    // click handler
+    const onClick = (e: Event) => {
+      const trigger = e.currentTarget as HTMLElement;
+      const id = trigger.dataset.target;
       if (!id) return;
 
       const wrapper = root.querySelector<HTMLElement>(`#${CSS.escape(id)}`);
       if (!wrapper) return;
 
       const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
-      const content = wrapper.querySelector<HTMLElement>(
-        ".accordion__inner-content"
-      );
+      const content =
+        wrapper.querySelector<HTMLElement>(".accordion__inner-content");
       if (!inner || !content) return;
 
-      const { all: triggers } = getTriggersById(id);
       const isOpen = wrapper.classList.contains("active");
 
-      const currentH = inner.getBoundingClientRect().height;
-      const targetH = isOpen ? 0 : content.scrollHeight;
-      const distance = Math.abs(targetH - currentH);
-
-      setHeightTransition(inner, calcDurationMs(distance));
-
-      if (isOpen) {
-        wrapper.classList.remove("active");
-
-        // ✅ 閉じる時：まず hidden / top を戻す（PCのみ）
-        setOverflowHidden(inner);
-
-        inner.style.height = `${currentH}px`;
-        requestAnimationFrame(() => {
-          inner.style.height = "0px";
-        });
-
-        triggers.forEach((t) => {
-          t.classList.remove("active");
-          toggleStayIfSplittingHover(t, false);
-        });
-      } else {
-        wrapper.classList.add("active");
-
-        // ✅ 開く時：hidden のままアニメ → 終了後 visible + top付与（PCのみ）
-        setOverflowHidden(inner);
-        setOverflowVisibleAfterTransition(inner, wrapper);
-
-        inner.style.height = `${currentH}px`;
-        requestAnimationFrame(() => {
-          inner.style.height = `${targetH}px`;
-        });
-
-        triggers.forEach((t) => {
-          t.classList.add("active");
-          toggleStayIfSplittingHover(t, true);
-        });
-      }
+      if (isOpen) closeAccordion(wrapper, inner);
+      else openAccordion(wrapper, inner, content);
     };
 
-    const applyMode = (mode: Mode) => {
-      const spTriggers = Array.from(
-        root.querySelectorAll<HTMLElement>(".js-sp-accordion")
-      );
-      const pcTriggers = Array.from(
-        root.querySelectorAll<HTMLElement>(".js-pc-accordion")
-      );
-
-      [...spTriggers, ...pcTriggers].forEach((el) =>
-        el.removeEventListener("click", onClick)
-      );
-
+    // ★ 追加：初期に全部閉じる（遷移アニメ無しで即閉じ）
+    const forceCloseAllInstant = () => {
       const wrappers = Array.from(root.querySelectorAll<HTMLElement>(".accordion"));
       wrappers.forEach((wrapper) => {
-        const id = wrapper.id;
-        if (!id) return;
+        clearTimers(wrapper);
+
+        // active/open を持ってても初期は閉じる
+        wrapper.classList.remove("active", "open");
+
+        // illust も必ず非表示へ
+        illustHide(wrapper);
 
         const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
-        const content = wrapper.querySelector<HTMLElement>(
-          ".accordion__inner-content"
-        );
-        if (!inner || !content) return;
+        if (!inner) return;
 
-        const { all: triggers } = getTriggersById(id);
+        // 初期化なので transition を一瞬切って 0 に固定
+        const prevTransition = inner.style.transition;
+        inner.style.transition = "none";
+        inner.style.overflow = "hidden";
+        inner.style.height = "0px";
 
-        const isOpenState =
-          wrapper.classList.contains("active") || wrapper.classList.contains("open");
+        // reflow
+        inner.getBoundingClientRect();
 
-        if (isOpenState) {
-          wrapper.classList.add("active");
-          inner.style.height = `${content.scrollHeight}px`;
-          inner.style.overflow = "visible";
-
-          triggers.forEach((t) => {
-            t.classList.add("active");
-            toggleStayIfSplittingHover(t, true);
-          });
-        } else {
-          wrapper.classList.remove("active");
-          inner.style.height = "0px";
-          inner.style.overflow = "hidden";
-
-          triggers.forEach((t) => {
-            t.classList.remove("active");
-            toggleStayIfSplittingHover(t, false);
-          });
-        }
-      });
-
-      if (mode === "sp") spTriggers.forEach((el) => el.addEventListener("click", onClick));
-      else pcTriggers.forEach((el) => el.addEventListener("click", onClick));
-
-      requestAnimationFrame(refreshOpenHeights);
-    };
-
-    // ResizeObserver（中身の高さ変化追従）
-    const ros: ResizeObserver[] = [];
-    const setupResizeObservers = () => {
-      ros.forEach((ro) => ro.disconnect());
-      ros.length = 0;
-      if (!("ResizeObserver" in window)) return;
-
-      const wrappers = Array.from(root.querySelectorAll<HTMLElement>(".accordion"));
-      wrappers.forEach((wrapper) => {
-        const content = wrapper.querySelector<HTMLElement>(".accordion__inner-content");
-        if (!content) return;
-
-        const ro = new ResizeObserver(() => {
-          if (wrapper.classList.contains("active") || wrapper.classList.contains("open")) {
-            const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
-            if (!inner) return;
-
-            const h = content.scrollHeight;
-            if (h > 0) inner.style.height = `${h}px`;
-            inner.style.overflow = "visible";
-          }
-        });
-
-        ro.observe(content);
-        ros.push(ro);
-      });
-    };
-
-    // resize は rAF でまとめる
-    let currentMode: Mode = getMode();
-    let raf: number | null = null;
-
-    const onResize = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const newMode = getMode();
-        if (newMode !== currentMode) {
-          currentMode = newMode;
-          applyMode(newMode);
-        } else {
-          refreshOpenHeights();
-        }
+        inner.style.transition = prevTransition;
       });
     };
 
     // init
-    initInnerStyles();
-    applyMode(currentMode);
-    window.addEventListener("resize", onResize);
+    const init = () => {
+      root.querySelectorAll<HTMLElement>(".accordion__inner").forEach((el) => {
+        el.style.overflow = "hidden";
+        el.style.willChange = "height";
+      });
 
-    if (document.fonts?.ready) document.fonts.ready.then(refreshOpenHeights);
-    window.addEventListener("load", refreshOpenHeights);
+      if (FORCE_CLOSE_ON_INIT) forceCloseAllInstant();
 
-    setupResizeObservers();
-    requestAnimationFrame(refreshOpenHeights);
+      root
+        .querySelectorAll<HTMLElement>(".js-sp-accordion, .js-pc-accordion")
+        .forEach((el) => el.addEventListener("click", onClick));
+    };
 
-    // cleanup
+    init();
+
     return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("load", refreshOpenHeights);
-
-      const spTriggers = Array.from(
-        root.querySelectorAll<HTMLElement>(".js-sp-accordion")
-      );
-      const pcTriggers = Array.from(
-        root.querySelectorAll<HTMLElement>(".js-pc-accordion")
-      );
-      [...spTriggers, ...pcTriggers].forEach((el) =>
-        el.removeEventListener("click", onClick)
-      );
-
-      ros.forEach((ro) => ro.disconnect());
-      if (raf) cancelAnimationFrame(raf);
+      root
+        .querySelectorAll<HTMLElement>(".js-sp-accordion, .js-pc-accordion")
+        .forEach((el) => el.removeEventListener("click", onClick));
     };
   }, [
     rootRef,
@@ -316,5 +248,10 @@ export function useAccordionController(
     options.speedPxPerSec,
     options.minDurationMs,
     options.maxDurationMs,
+    options.illustSelector,
+    options.illustInClass,
+    options.illustOutClass,
+    options.illustFadeMs,
+    options.forceCloseOnInit,
   ]);
 }

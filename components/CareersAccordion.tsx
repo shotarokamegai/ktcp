@@ -75,7 +75,7 @@ export default function CareersAccordion({
           </span>
         </h3>
 
-        <div className="pre:absolute pre:top-[120px] pre:left-0 pre:pl-[calc(114/1400*100%)] pre:w-[calc(387/1400*100%)] careers-accordion-illust">
+        {/* <div className="pre:absolute pre:top-[120px] pre:left-0 pre:pl-[calc(114/1400*100%)] pre:w-[calc(387/1400*100%)] careers-accordion-illust">
           <Image
             src={illustSrc}
             alt=""
@@ -83,7 +83,7 @@ export default function CareersAccordion({
             height={illustHeight}
             className=""
           />
-        </div>
+        </div> */}
 
         <div className="careers-accordion-title-line pre:absolute pre:bottom-0 pre:left-0 pre:h-px pre:w-full pre:overflow-hidden"></div>
 
@@ -94,7 +94,7 @@ export default function CareersAccordion({
       </div>
 
       <div className="accordion__inner careers-accordion__inner pre:grid-cols-[calc(436/1401*100%)_1fr] pre:gap-x-[calc(158/1401*100%)] pre:items-start">
-        <div className="pre:sticky pre:top-0 careers-accordion-illust pre:pl-[calc(114/436*100%)] pre:pt-[110px] pre:invisible">
+        <div className="pre:sticky pre:top-[140px] careers-accordion-illust pre:pl-[calc(114/436*100%)] pre:pt-[70px]">
           <Image
             src={illustSrc}
             alt=""
