@@ -28,7 +28,7 @@ export default function CareersPage() {
             こだわりたいと考えている仲間を探しています。</p>
           </div>
           <div className="">
-            <Image src="/illust/careers.png" alt="" width={220} height={220} className="pre:w-[220px] slide-in" />
+            <Image src="/illust/careers.png" alt="" width={175} height={210} className="pre:w-[175px] slide-in" />
           </div>
         </div>
         <div>

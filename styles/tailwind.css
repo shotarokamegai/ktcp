@@ -51,12 +51,30 @@
   @apply pre:mb-[110px] pre:last:mb-0
 }
 
+.careers-accordion-illust {
+  opacity: 0;
+  transform: scale(1.05);
+  will-change: opacity, transform;
+  transition: .5s transform var(--ease-in-out-quart), .5s opacity var(--ease-in-out-quart);
+}
+
 .careers-accordion-title {
-  &.active, &:hover {
-    &::after {
-      transform: translate3d(0, 0, 0);
+  &.active {
+    .careers-accordion-illust {
+      opacity: 1;
+      transform: scale(1);
+      transition: .5s transform var(--ease-in-out-quart) .5s, .5s opacity var(--ease-in-out-quart) .5s;
     }
   }
+  &.active, &:hover {
+    .careers-accordion-title-line {
+      &::after {
+        transform: translate3d(0, 0, 0);
+      }
+    }
+  }
+}
+.careers-accordion-title-line {
   &::before {
     content: '';
     height: 1px;
@@ -105,7 +123,7 @@
   @apply pre:h-[22px] pre:w-[22px] pre:absolute pre:right-0 pre:top-[50%] pre:transform-[translate3d(0,-50%,0)]
 }
 .careers-accordion-title {
-  @apply pre:relative pre:h-[54px] pre:cursor-pointer pre:flex pre:items-center pre:overflow-hidden pre:z-10 pre:bg-white
+  @apply pre:relative pre:h-[54px] pre:cursor-pointer pre:flex pre:items-center pre:z-10 pre:bg-white
 }
 .careers-accordion__inner {
    @apply pre:relative pre:justify-end pre:grid

@@ -64,23 +64,6 @@ export function useAccordionController(
       }
     };
 
-    // ✅ accordion 内の illust の top を PC のみで切り替える
-    const setIllustTopPc = (wrapper: HTMLElement, enable: boolean) => {
-      if (getMode() !== "pc") return;
-
-      const illust = wrapper.querySelector<HTMLElement>(
-        ".careers-accordion-illust"
-      );
-      if (!illust) return;
-
-      if (enable) {
-        illust.style.top = "calc(96px + 54px)";
-      } else {
-        // 元に戻す（あなたのデフォルトが pre:top-0 なので 0 に戻すのが安全）
-        illust.style.top = "0px";
-      }
-    };
-
     const setOverflowHidden = (inner: HTMLElement) => {
       inner.style.overflow = "hidden";
     };
@@ -96,7 +79,6 @@ export function useAccordionController(
         if (ev.propertyName !== "height") return;
 
         inner.style.overflow = "visible";
-        setIllustTopPc(wrapper, true);
 
         inner.removeEventListener("transitionend", onEnd);
       };
@@ -132,14 +114,12 @@ export function useAccordionController(
 
         // すでに open 状態のものは visible & top 調整（PCのみ）
         inner.style.overflow = "visible";
-        setIllustTopPc(wrapper, true);
       });
 
       // 閉じてるやつは top 戻しておく（PCのみ）
       const closed = Array.from(
         root.querySelectorAll<HTMLElement>(".accordion:not(.active):not(.open)")
       );
-      closed.forEach((wrapper) => setIllustTopPc(wrapper, false));
     };
 
     const onClick = (e: Event) => {
@@ -172,7 +152,6 @@ export function useAccordionController(
 
         // ✅ 閉じる時：まず hidden / top を戻す（PCのみ）
         setOverflowHidden(inner);
-        setIllustTopPc(wrapper, false);
 
         inner.style.height = `${currentH}px`;
         requestAnimationFrame(() => {
@@ -235,9 +214,6 @@ export function useAccordionController(
           inner.style.height = `${content.scrollHeight}px`;
           inner.style.overflow = "visible";
 
-          // ✅ PC のときだけ top を適用
-          setIllustTopPc(wrapper, true);
-
           triggers.forEach((t) => {
             t.classList.add("active");
             toggleStayIfSplittingHover(t, true);
@@ -246,9 +222,6 @@ export function useAccordionController(
           wrapper.classList.remove("active");
           inner.style.height = "0px";
           inner.style.overflow = "hidden";
-
-          // ✅ PC のときだけ top を戻す
-          setIllustTopPc(wrapper, false);
 
           triggers.forEach((t) => {
             t.classList.remove("active");
@@ -283,9 +256,6 @@ export function useAccordionController(
             const h = content.scrollHeight;
             if (h > 0) inner.style.height = `${h}px`;
             inner.style.overflow = "visible";
-
-            // ✅ open 中は PC なら top も維持
-            setIllustTopPc(wrapper, true);
           }
         });
 
