@@ -9,7 +9,7 @@ export default async function WorksPage() {
   const [works, categories] = await Promise.all([fetchWorks(), fetchWorkCategories()]);
 
   return (
-    <main className="container pre:pt-[307px] slide-out">
+    <main className="container pre:pt-[307px] pre:sm:sp-pt-[130] slide-out">
       <WorksBrowserClient
         initialWorks={works}
         categories={categories}

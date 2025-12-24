@@ -134,7 +134,7 @@ export default function WorksBrowserClient({
         return (
           <div
             key={item.key}
-            className="pre:w-[calc(1/4*100%)] pre:mb-5 pre:px-[calc(7.5/1401*100%)] slide-in slide-out pre:flex pre:items-center pre:justify-center"
+            className="pre:w-1/4 pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:w-full slide-in slide-out pre:flex pre:items-center pre:justify-center"
           >
             <img
               src="/illust/about.png"
@@ -183,7 +183,7 @@ export default function WorksBrowserClient({
           listRef.current = el;
         }}
         className={[
-          "pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]",
+          "pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:sm:sp-w-[360] pre:sm:sp-mb-[110]",
           isAnimating ? "works-list is-changing" : "works-list",
         ].join(" ")}
       >

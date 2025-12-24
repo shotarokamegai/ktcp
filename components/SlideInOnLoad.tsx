@@ -6,11 +6,11 @@ import { usePathname, useRouter } from "next/navigation";
 /* ===== 調整用 ===== */
 const IN_BASE_DELAY = 0;
 const IN_MIN_DELAY = 0;
-const IN_MAX_DELAY = 300;
+const IN_MAX_DELAY = 200;
 
 const OUT_MIN_DELAY = 0;
-const OUT_MAX_DELAY = 300;
-const TRANSITION_DURATION = 350;
+const OUT_MAX_DELAY = 200;
+const TRANSITION_DURATION = 200;
 
 const IN_MODE: "random" | "sequence" = "sequence";
 const OUT_MODE: "random" | "sequence" = "sequence";

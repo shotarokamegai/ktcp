@@ -114,6 +114,20 @@ a {
 }
 
 @media screen and (max-width: 749px) {
+  .menu-trigger {
+    div {
+      &:nth-child(1) {
+        top: 0;
+      }
+      &:nth-child(2) {
+        top: 50%;
+        transform: translate3d(0, -50%, 0);
+      }
+      &:nth-child(3) {
+        top: 100%;
+      }
+    }
+  }
   .sm\:center-xy {
     top: 50%;
     left: 50%;

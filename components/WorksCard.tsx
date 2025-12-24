@@ -21,7 +21,7 @@ export default function WorksCard({
       href={`/works/${w.slug}`}
       className={[
         widthClass,
-        "pre:mb-5 pre:px-[calc(7.5/1401*100%)]",
+        "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
 
         // hover text
         "pre:hover:[&_header_h2]:text-ketchup",
@@ -46,17 +46,17 @@ export default function WorksCard({
         fallbackRatio="4 / 3"
       />
 
-      <header className="pre:flex pre:mt-2.5">
-        <p className="pre:text-[15px] pre:font-gt pre:w-[70px]">
+      <header className="pre:flex pre:mt-2.5 pre:sm:sp-mt-[10] pre:sm:block">
+        {/* <p className="pre:text-[15px] pre:font-gt pre:w-[70px]">
           {w.acf?.date}
-        </p>
+        </p> */}
 
         <h2
-          className="pre:text-[15px] pre:font-gt pre:w-[calc(100%-70px-105px)] pre:truncate"
+          className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-105px)] pre:truncate pre:sm:sp-fs-[14] pre:truncate pre:sm:leading-[130%]"
           dangerouslySetInnerHTML={{ __html: w.title?.rendered ?? "" }}
         />
 
-        <p className="pre:text-[10px] pre:w-[105px] pre:text-right">
+        <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:sm:w-full pre:sm:text-left pre:sm:sp-fs-[10] pre:sm:sp-mt-[5]">
           {Array.isArray(w.works_cat)
             ? w.works_cat.map((c: any) => c.name).join(" / ")
             : ""}

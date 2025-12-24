@@ -1,4 +1,6 @@
+@config "./../tailwind.config.js";
 @import "tailwindcss" prefix(pre);
+@custom-variant sm (@media (width <= 749px));
 @theme {
   /* `pre:text-gray` を有効化（DEFAULTを作る）*/
   --color-gray: #959595;
@@ -7,7 +9,7 @@
   --color-ketchup: #C80F2E;
 
   /* 例: max幅の独自ブレークポイント */
-  --breakpoint-sm-max: 749px;
+  /* --breakpoint-sm-max: 749px; */
 
   --font-gt: var(--font-gt-america), system-ui, sans-serif;
   --font-dnp: dnp-shuei-gothic-kin-std, sans-serif;
@@ -130,7 +132,7 @@
    /* @apply pre:relative pre:overflow-hidden pre:flex pre:justify-end */
 }
 .careers-accordion__inner-content {
-   @apply pre:pt-[60px] pre:pb-[54px] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light
+   @apply pre:pt-[30px] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light
    /* @apply pre:pt-[60px] pre:pb-[54px] pre:w-[calc(693/1440*100%)] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light */
 }
 
@@ -157,5 +159,58 @@
   .works-list.is-changing {
     opacity: 0;
     transform: translate3d(0, 10px, 0);
+  }
+}
+
+/* SP の nav を「閉じ」状態（デフォ） */
+@media (max-width: 749px) {
+  .js-header-nav {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    filter: blur(12px);
+    transform: translateY(6px);
+    transition:
+      opacity 240ms ease,
+      visibility 0ms linear 240ms,
+      filter 240ms ease,
+      transform 240ms ease;
+    will-change: opacity, filter, transform;
+  }
+
+  /* 「開き」状態 */
+  .js-header-nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    filter: blur(0);
+    transform: translateY(0);
+    transition:
+      opacity 240ms ease,
+      visibility 0ms,
+      filter 240ms ease,
+      transform 240ms ease;
+  }
+}
+
+@media (max-width: 749px) {
+  /* メニューを開いた直後の入口アニメ（リンク単位） */
+  .js-header-nav.is-open .splitting-hover {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(10px);
+    will-change: opacity, filter, transform;
+    transition:
+      opacity 500ms var(--ease-out-quart),
+      filter 500ms var(--ease-out-quart),
+      transform 500ms var(--ease-out-quart);
+    transition-delay: calc(var(--stagger, 0) * 90ms);
+  }
+
+  /* 付与されたら「入る」 */
+  .js-header-nav.is-open .splitting-hover.menu-enter {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
   }
 }

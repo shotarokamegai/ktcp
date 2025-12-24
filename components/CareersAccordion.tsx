@@ -75,7 +75,7 @@ export default function CareersAccordion({
           </span>
         </h3>
 
-        <div className="pre:absolute pre:top-[164px] pre:left-0 pre:pl-[calc(114/1400*100%)] pre:w-[calc(387/1400*100%)] careers-accordion-illust">
+        <div className="pre:absolute pre:top-[120px] pre:left-0 pre:pl-[calc(114/1400*100%)] pre:w-[calc(387/1400*100%)] careers-accordion-illust">
           <Image
             src={illustSrc}
             alt=""
