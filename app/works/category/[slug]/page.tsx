@@ -31,7 +31,7 @@ export default async function WorksCategoryPage({
   return (
     <main className="container pre:pt-[307px]">
       {/* ▼ タクソノミー一覧（共通コンポーネント） */}
-      <WorksCategoryNav activeSlug={slug} allHref="/" />
+      <WorksCategoryNav activeSlug={slug} />
 
       {/* ▼ Works一覧（UIはトップと同じ） */}
       <section className="pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]">

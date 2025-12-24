@@ -58,7 +58,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={pathname}
-          variants={variants}
+          // variants={variants}
           initial={mounted.current ? "initial" : false}
           animate="animate"
           exit="exit"

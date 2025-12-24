@@ -11,8 +11,8 @@ export default function WorksCategoryNav({
   allLabel = "ALL",
 }: {
   categories?: WorkTerm[]; // optional に
+  onChange?: (slug: string | null) => void; // ← optional にする
   activeSlug: string | null;
-  onChange: (slug: string | null) => void;
   className?: string;
   allLabel?: string;
 }) {
@@ -29,7 +29,7 @@ export default function WorksCategoryNav({
     >
       <button
         type="button"
-        onClick={() => onChange(null)}
+        onClick={() => onChange?.(null)}
         className={[
           base,
           !activeSlug ? "pre:text-black" : "pre:text-gray-400 splitting-hover pre:hover:text-ketchup",
@@ -47,7 +47,7 @@ export default function WorksCategoryNav({
           <button
             key={cat.id}
             type="button"
-            onClick={() => onChange(cat.slug)}
+            onClick={() => onChange?.(cat.slug)}
             className={[
               base,
               isActive ? "pre:text-black" : "pre:text-gray-400 splitting-hover pre:hover:text-ketchup",
