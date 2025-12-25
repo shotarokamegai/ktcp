@@ -16,7 +16,7 @@ import SlideInOnLoad from "@/components/SlideInOnLoad";
 // ============================
 // Tailwind class presets
 // ============================
-const BODY = "pre:w-full pre:overflow-hidden";
+const BODY = "pre:w-full";
 
 const HEADER =
   "pre:fixed pre:top-0 pre:left-0 pre:z-[100] pre:sm:sp-h-[50] " +

@@ -51,168 +51,100 @@
     }
   }
 
-@keyframes menu1Open {
-  0% {
-    top: 0;
-    left: 0; /* ここは保険。常時center寄せが混ざってても潰す */
-    transform: translate3d(0, 0, 0) rotate(0deg) scaleX(1);
-    transform-origin: 100% 50%;
-  }
-  50% {
-    top: 0;
-    left: 0;
-    transform: translate3d(0, 0, 0) rotate(0deg) scaleX(0);
-    transform-origin: 100% 50%;
-  }
-  50.1% {
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0) rotate(45deg) scaleX(0);
-    transform-origin: 50% 50%;
-  }
-  100% {
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0) rotate(45deg) scaleX(1);
-    transform-origin: 50% 50%;
-  }
-}
-
-@keyframes menu2Open {
-  0% {
-    transform: translate3d(0, -50%, 0) scaleX(1); /* ※top:50%前提の初期と整合 */
-    transform-origin: 100% 50%;
-  }
-  50% {
-    transform: translate3d(0, -50%, 0) scaleX(0);
-    transform-origin: 100% 50%;
-  }
-  100% {
-    transform: translate3d(0, -50%, 0) scaleX(0);
-    transform-origin: 100% 50%;
-  }
-}
-
-@keyframes menu3Open {
-  0% {
-    top: 100%;
-    left: 0;
-    transform: translate3d(0, 0, 0) rotate(0deg) scaleX(1);
-    transform-origin: 100% 50%;
-  }
-  50% {
-    top: 100%;
-    left: 0;
-    transform: translate3d(0, 0, 0) rotate(0deg) scaleX(0);
-    transform-origin: 100% 50%;
-  }
-  50.1% {
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0) rotate(-45deg) scaleX(0);
-    transform-origin: 50% 50%;
-  }
-  100% {
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0) rotate(-45deg) scaleX(1);
-    transform-origin: 50% 50%;
-  }
-}
-
-@keyframes menu1Close {
-  0% {
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0) rotate(45deg) scaleX(1);
-    transform-origin: 50% 50%;
-  }
-  49.9% {
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0) rotate(45deg) scaleX(0);
-    transform-origin: 50% 50%;
-  }
-  50% {
-    top: 0;
-    left: 0;
-    transform: translate3d(0, 0, 0) rotate(0deg) scaleX(0);
-    transform-origin: 100% 50%;
-  }
-  100% {
-    top: 0;
-    left: 0;
-    transform: translate3d(0, 0, 0) rotate(0deg) scaleX(1);
-    transform-origin: 100% 50%;
-  }
-}
-
-@keyframes menu2Close {
-  0% {
-    transform: translate3d(0, -50%, 0) scaleX(0);
-    transform-origin: 100% 50%;
-  }
-  50% {
-    transform: translate3d(0, -50%, 0) scaleX(0);
-    transform-origin: 100% 50%;
-  }
-  100% {
-    transform: translate3d(0, -50%, 0) scaleX(1);
-    transform-origin: 100% 50%;
-  }
-}
-
-@keyframes menu3Close {
-  0% {
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0) rotate(-45deg) scaleX(1);
-    transform-origin: 50% 50%;
-  }
-  49.9% {
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0) rotate(-45deg) scaleX(0);
-    transform-origin: 50% 50%;
-  }
-  50% {
-    top: 100%;
-    left: 0;
-    transform: translate3d(0, 0, 0) rotate(0deg) scaleX(0);
-    transform-origin: 100% 50%;
-  }
-  100% {
-    top: 100%;
-    left: 0;
-    transform: translate3d(0, 0, 0) rotate(0deg) scaleX(1);
-    transform-origin: 100% 50%;
-  }
-}
-
-  @media (min-width: 750px) {
-    .careers-accordion .careers-accordion-icon div:nth-child(1) {
-      animation: accordionIconClose1 0.4s var(--ease-out-quart) forwards;
+  @keyframes menu1Open {
+    0% {
+      top: 0;
+      transform: translate3d(0,0, 0) scaleX(1);
     }
-    .careers-accordion .careers-accordion-icon div:nth-child(2) {
-      animation: accordionIconClose2 0.4s var(--ease-out-quart) forwards;
+    100% {
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0) rotate(45deg);
     }
-    .careers-accordion.active .careers-accordion-icon div:nth-child(1) {
-      animation: accordionIconOpen1 0.4s var(--ease-out-quart) forwards;
+  }
+
+  @keyframes menu2Open {
+    0% {
+      transform: translate3d(0,-50%, 0) scaleX(1);
     }
-    .careers-accordion.active .careers-accordion-icon div:nth-child(2) {
-      animation: accordionIconOpen2 0.4s var(--ease-out-quart) forwards;
+    50% {
+      transform: translate3d(0,-50%, 0) scaleX(0);
     }
-    .careers-accordion {
-        .careers-accordion-icon {
-            will-change: transform;
-            transition: transform 0.4s var(--ease-out-quart);
-        }
+    100% {
+      transform: translate3d(0,-50%, 0) scaleX(0);
     }
-    .careers-accordion.active {
-        .careers-accordion-icon {
-            transform: translate3d(0, -50%, 0) rotate(90deg);
-        }
+  }
+
+  @keyframes menu3Open {
+    0% {
+        top: calc(100% - 2px);
+        transform: translate3d(0,0, 0) scaleX(1);
     }
+    100% {
+        top: 50%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0) rotate(-45deg);
+    }
+  }
+  
+  @keyframes menu1Close {
+    0% {
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0) rotate(45deg);
+    }
+    100% {
+      top: 0;
+      transform: translate3d(0,0, 0) scaleX(1);
+    }
+  }
+
+  @keyframes menu2Close {
+    0% {
+      transform: translate3d(0,-50%, 0) scaleX(0);
+    }
+    50% {
+      transform: translate3d(0,-50%, 0) scaleX(1);
+    }
+    100% {
+      transform: translate3d(0,-50%, 0) scaleX(1);
+    }
+  }
+
+  @keyframes menu3Close {
+    0% {
+        top: 50%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0) rotate(-45deg);
+    }
+    100% {
+        top: calc(100% - 2px);
+        transform: translate3d(0,0, 0) scaleX(1);
+    }
+  }
+
+  .careers-accordion .careers-accordion-icon div:nth-child(1) {
+    animation: accordionIconClose1 0.4s var(--ease-out-quart) forwards;
+  }
+  .careers-accordion .careers-accordion-icon div:nth-child(2) {
+    animation: accordionIconClose2 0.4s var(--ease-out-quart) forwards;
+  }
+  .careers-accordion.active .careers-accordion-icon div:nth-child(1) {
+    animation: accordionIconOpen1 0.4s var(--ease-out-quart) forwards;
+  }
+  .careers-accordion.active .careers-accordion-icon div:nth-child(2) {
+    animation: accordionIconOpen2 0.4s var(--ease-out-quart) forwards;
+  }
+  .careers-accordion {
+      .careers-accordion-icon {
+          will-change: transform;
+          transition: transform 0.4s var(--ease-out-quart);
+      }
+  }
+  .careers-accordion.active {
+      .careers-accordion-icon {
+          transform: translate3d(0, -50%, 0) rotate(90deg);
+      }
   }
 }
 

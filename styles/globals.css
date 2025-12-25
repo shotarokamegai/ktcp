@@ -115,6 +115,20 @@ a {
 }
 
 @media screen and (max-width: 749px) {
+  .careers-accordion {
+    &.active {
+      .careers-accordion-icon {
+        div {
+          &:nth-child(1) {
+            animation: accordionIconOpen1 0.4s forwards;
+          }
+          &:nth-child(2) {
+            animation: accordionIconOpen2 0.4s forwards;
+          }
+        }
+      }
+    }
+  }
   .menu-trigger {
     .splitting-hover {
       .splitting-hover__inner {
@@ -163,37 +177,39 @@ a {
         }
       }
       .menu-trigger-content {
+        transform: rotate(180deg);
         div {
-        &:nth-child(1) {
-          animation: menu1Open .7s var(--ease-out-quart) forwards;
-        }
-        &:nth-child(2) {
-          animation: menu2Open .7s var(--ease-out-quart) forwards;
-        }
-        &:nth-child(3) {
-          animation: menu3Open .7s var(--ease-out-quart) forwards;
-        }
+          &:nth-child(1) {
+            animation: menu1Open .7s var(--ease-out-quart) forwards;
+          }
+          &:nth-child(2) {
+            animation: menu2Open .7s var(--ease-out-quart) forwards;
+          }
+          &:nth-child(3) {
+            animation: menu3Open .7s var(--ease-out-quart) forwards;
+          }
         }
       } 
     }
   }
   .menu-trigger-content {
+    will-change: transform;
+    transition: transform .5s var(--ease-in-out-quad);
       div {
-        transform-origin: 100% 50%; /* 右起点 */
         &:nth-child(1) {
           top: 0;
-          transform: translate3d(0,0, 0) rotateX(180deg);
-          transform-origin: right center;
+          transform: translate3d(0,0, 0) scaleX(1);
           animation: menu1Close .7s var(--ease-out-quart) forwards;
         }
         &:nth-child(2) {
+          transform-origin: right;
           top: 50%;
           transform: translate3d(0, -50%, 0);
           animation: menu2Close .7s var(--ease-out-quart) forwards;
         }
         &:nth-child(3) {
-          top: 100%;
-          transform: translate3d(0,0, 0) rotateX(180deg);
+          top: calc(100% - 2px);
+          transform: translate3d(0,0, 0) scaleX(1);
           animation: menu3Close .7s var(--ease-out-quart) forwards;
         }
       }

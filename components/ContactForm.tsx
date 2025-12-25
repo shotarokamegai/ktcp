@@ -20,11 +20,11 @@ type RowProps = {
 
 function Row({ label, htmlFor, required, error, children }: RowProps) {
   return (
-    <div style={{ marginBottom: 53 }}>
+    <div className="pre:mb-[50px] pre:sm:sp-mb-[50]">
       <label
         htmlFor={htmlFor}
         // tailwindで pre: を使ってないなら消してOK（ビルドエラーの原因にもなりがち）
-        className="font-dnp text-[12px] font-light block mt-[-3px]"
+        className="font-dnp pre:text-[12px] pre:font-light pre:block pre:mt-[-3px] pre:sm:sp-fs-[12]"
       >
         {label} {required && <span style={{ color: "#f55" }}>※</span>}
       </label>
@@ -145,6 +145,7 @@ export default function ContactForm() {
           onChange={(e) => setCompany(e.target.value)}
           placeholder="株式会社Ketchup"
           style={ipt}
+          className="pre:sm:sp-fs-[16] pre:sm:sp-mt-[20]"
         />
       </Row>
 
@@ -225,14 +226,14 @@ export default function ContactForm() {
 
       <input type="text" name="_gotcha" style={{ display: "none" }} tabIndex={-1} />
 
-      <div style={{ textAlign: "center", marginTop: 20 }}>
+      <div>
         <button type="submit" disabled={sending} className="btn-submit splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white">
           {/* {sending ? "Sending..." : "SEND"} */}
           <span className="splitting-hover__inner">
             <SplittingSpan text="SEND" />
             <SplittingSpan text="SEND" />
           </span>
-          <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center">
+          <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center pre:sm:sp-right-[15] sm:center-y">
             <span className="icon-content__inner">
               <div className="pre:p-[5px] icon">
                 <Arrow />

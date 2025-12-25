@@ -36,7 +36,7 @@
 .btn-submit {
   will-change: background-color;
   transition: background-color 0.5s var(--ease-out-quart); 
-  @apply pre:relative pre:h-20 pre:w-[340px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white;
+  @apply pre:relative pre:h-20 pre:w-[340px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white pre:sm:w-full pre:sm:sp-h-[80] pre:sm:sp-fs-[20];
 }
 
 /* 任意：disabledの見た目 */
@@ -50,7 +50,7 @@
 }
 
 .careers-accordion {
-  @apply pre:mb-[110px] pre:last:mb-0
+  @apply pre:mb-[110px] pre:last:mb-0 pre:sm:sp-mb-[20]
 }
 
 .careers-accordion-illust {
@@ -124,10 +124,10 @@
   @apply pre:flex pre:py-[30px] pre:pl-5 pre:pb-10 pre:border-b pre:border-lightGray pre:border-solid
 }
 .careers-accordion-icon {
-  @apply pre:h-[22px] pre:w-[22px] pre:absolute pre:right-0 pre:top-[50%] pre:transform-[translate3d(0,-50%,0)]
+  @apply pre:h-[22px] pre:w-[22px] pre:absolute pre:right-0 pre:top-[50%] pre:transform-[translate3d(0,-50%,0)] pre:sm:sp-h-[22] pre:sm:sp-w-[22]
 }
 .careers-accordion-title {
-  @apply pre:relative pre:h-[54px] pre:cursor-pointer pre:flex pre:items-center pre:z-10 pre:bg-white
+  @apply pre:relative pre:h-[54px] pre:cursor-pointer pre:flex pre:items-center pre:z-10 pre:bg-white pre:sm:sp-h-[37]
 }
 .careers-accordion__inner {
    @apply pre:relative pre:justify-end pre:grid

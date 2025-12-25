@@ -68,22 +68,12 @@ export default function CareersAccordion({
         className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup splitting-hover pre:sticky! pre:top-24"
         data-target={id}
       >
-        <h3 className="pre:text-[18px] pr:font-gt pre:font-light">
+        <h3 className="pre:text-[18px] pr:font-gt pre:font-light pre:sm:sp-fs-[18] pre:sm:leading-[1]">
           <span className="splitting-hover__inner">
             <SplittingSpan text={title} />
             <SplittingSpan text={title} />
           </span>
         </h3>
-
-        {/* <div className="pre:absolute pre:top-[120px] pre:left-0 pre:pl-[calc(114/1400*100%)] pre:w-[calc(387/1400*100%)] careers-accordion-illust">
-          <Image
-            src={illustSrc}
-            alt=""
-            width={illustWidth}
-            height={illustHeight}
-            className=""
-          />
-        </div> */}
 
         <div className="careers-accordion-title-line pre:absolute pre:bottom-0 pre:left-0 pre:h-px pre:w-full pre:overflow-hidden"></div>
 
@@ -93,8 +83,8 @@ export default function CareersAccordion({
         </div>
       </div>
 
-      <div className="accordion__inner careers-accordion__inner pre:grid-cols-[calc(436/1401*100%)_1fr] pre:gap-x-[calc(158/1401*100%)] pre:items-start">
-        <div className="pre:sticky pre:top-[140px] careers-accordion-illust pre:pl-[calc(114/436*100%)] pre:pt-[70px]">
+      <div className="accordion__inner careers-accordion__inner pre:grid-cols-[calc(436/1401*100%)_1fr] pre:gap-x-[calc(158/1401*100%)] pre:items-start pre:sm:!block pre:sm:w-full">
+        <div className="pre:sticky pre:top-[140px] careers-accordion-illust pre:pl-[calc(114/436*100%)] pre:pt-[70px] pre:sm:relative pre:sm:top-auto pre:sm:pt-0 pre:sm:pl-0">
           <Image
             src={illustSrc}
             alt=""

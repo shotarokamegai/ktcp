@@ -14,7 +14,7 @@ export const revalidate = 60;
 
 export default function ContactPage() {
   return (
-    <main className="container pre:pt-[307px] slide-out">
+    <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110]">
   <section
     className="
       pre:w-[calc(100%-40px)]
@@ -24,28 +24,31 @@ export default function ContactPage() {
       pre:items-start
       pre:grid-cols-[calc(339/1401*100%)_1fr]
       pre:gap-x-[calc(192/1401*100%)]
+      pre:sm:sp-w-[340]
+      pre:sm:block
+       pre:sm:sp-mb-[110]
     "
   >
     {/* sticky は内側に */}
-    <div className="pre:sticky pre:top-24">
-      <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[106px] slide-in">
+    <div className="pre:sticky pre:top-24 pre:sm:relative pre:sm:top-auto pre:sm:sp-mb-[40]">
+      <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[106px] slide-in pre:sm:sp-fs-[24] pre:sm:sp-mb-[25]">
         Contact
       </h2>
 
-      <div className="pre:w-[256px] pre:mb-2.5">
+      <div className="pre:w-[256px] pre:mb-2.5 pre:sm:sp-w-[212] pre:sm:sp-mb-[35] pre:sm:mr-0 pre:sm:ml-auto">
         <Image
           src="/illust/contact.png"
           alt=""
           width={256}
           height={222}
-          className="pre:w-[220px] slide-in"
+          className="pre:w-[220px] slide-in pre:sm:sp-w-[212]"
         />
       </div>
 
-      <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in pre:[overflow-wrap:anywhere]">
-        Transforming Your Content Like Ketchup
-        <br />
-        Transforms a Meal, The Perfect Condiment
+      <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in pre:wrap-anywhere pre:sm:sp-fs-[24]">
+        Transforming Your Content Like <br className="pre:hidden pre:sm:block" />Ketchup
+        <br className="pre:sm:hidden" />
+        Transforms a Meal, <br className="pre:hidden pre:sm:block" />The Perfect Condiment
         <br />
         for Your Business
       </p>
