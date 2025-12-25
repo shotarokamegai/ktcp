@@ -23,7 +23,7 @@ export default function WorksCategoryNav({
   return (
     <section
       className={[
-        "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] slide-in pre:sm:sp-w-[340] pre:sm:justify-start pre:sm:sp-mb-[30] pre:sm:pb-0",
+        "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] slide-in pre:sm:sp-w-[339] pre:sm:justify-start pre:sm:sp-mb-[30] pre:sm:pb-0",
         className,
       ].join(" ")}
     >

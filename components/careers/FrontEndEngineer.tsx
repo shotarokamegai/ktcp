@@ -6,6 +6,7 @@ export default function FrontEndEngineer() {
       id="front-end-enginner"
       title="Front End Engineer"
       illustSrc="/illust/engineer.png"
+      illustClassName="pre:block pre:w-[387px] pre:h-auto pre:sm:sp-w-[190]"
       sections={[
         {
           kind: "text",

@@ -6,7 +6,7 @@ export default function WebDirector() {
       id="web-director"
       title="Web Director"
       illustSrc="/illust/web-director.png"
-      // showTitleIllust={false} // ★この職種はタイトル側に出さない
+      illustClassName="pre:block pre:w-[302px] pre:h-auto pre:sm:sp-w-[149]"
       sections={[
         {
           kind: "text",

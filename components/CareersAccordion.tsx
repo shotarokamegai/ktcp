@@ -5,9 +5,9 @@ import SplittingSpan from "@/components/SplittingSpan";
 type ListItem = { text: string };
 
 type FlowItem = {
-  no: string;          // "01"
-  title: string;       // "書類選考"
-  desc?: string;       // 説明文
+  no: string;
+  title: string;
+  desc?: string;
 };
 
 type Section =
@@ -22,7 +22,7 @@ type Section =
       kind: "list";
       en: string;
       ja: string;
-      lead?: string; // "必須要件" など
+      lead?: string;
       items: ListItem[];
     }
   | {
@@ -33,18 +33,26 @@ type Section =
     };
 
 type Props = {
-  id: string;               // accordion の id & data-target に使う
-  title: string;            // "Front End Engineer"
-  illustSrc: string;        // "/illust/engineer.png"
-  illustWidth?: number;     // default: 372
-  illustHeight?: number;    // default: 279
+  id: string;
+  title: string;
+  illustSrc: string;
+
+  // intrinsic（比率・最適化のために保持）
+  illustWidth?: number;
+  illustHeight?: number;
+
+  // ★追加：表示サイズはclassで制御できるように
+  illustClassName?: string;
+  illustWrapClassName?: string;
 
   sections: Section[];
 
-  applyLabel?: string;      // default: "APPLY NOW"
-  applyHref?: string;       // aタグのリンク先（無ければ href無し）
+  applyLabel?: string;
+  applyHref?: string;
   applyOnClick?: () => void;
 };
+
+const cx = (...v: Array<string | undefined | false>) => v.filter(Boolean).join(" ");
 
 export default function CareersAccordion({
   id,
@@ -52,6 +60,11 @@ export default function CareersAccordion({
   illustSrc,
   illustWidth = 372,
   illustHeight = 279,
+
+  // デフォルト：親に合わせつつ最大幅だけPC/SPで分ける
+  illustClassName = "pre:block pre:w-full pre:h-auto pre:max-w-[372px] pre:sm:max-w-[240px]",
+  illustWrapClassName = "",
+
   sections,
   applyLabel = "APPLY NOW",
   applyHref,
@@ -65,7 +78,7 @@ export default function CareersAccordion({
   return (
     <div className="accordion careers-accordion group" id={id}>
       <div
-        className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup splitting-hover pre:sticky! pre:top-24"
+        className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup splitting-hover pre:sticky! pre:top-24 pre:sm:sp-top-[50]"
         data-target={id}
       >
         <h3 className="pre:text-[18px] pr:font-gt pre:font-light pre:sm:sp-fs-[18] pre:sm:leading-[1]">
@@ -83,21 +96,23 @@ export default function CareersAccordion({
         </div>
       </div>
 
-      <div className="accordion__inner careers-accordion__inner pre:grid-cols-[calc(436/1401*100%)_1fr] pre:gap-x-[calc(158/1401*100%)] pre:items-start pre:sm:!block pre:sm:w-full">
-        <div className="pre:sticky pre:top-[140px] careers-accordion-illust pre:pl-[calc(114/436*100%)] pre:pt-[70px] pre:sm:relative pre:sm:top-auto pre:sm:pt-0 pre:sm:pl-0">
-          <Image
-            src={illustSrc}
-            alt=""
-            width={illustWidth}
-            height={illustHeight}
-            className=""
-          />
+      <div className="accordion__inner careers-accordion__inner pre:grid-cols-[calc(436/1401*100%)_1fr] pre:gap-x-[calc(158/1401*100%)] pre:items-start pre:sm:!block">
+        <div className="pre:sticky pre:top-[140px] careers-accordion-illust pre:pl-[calc(114/436*100%)] pre:pt-[70px] pre:sm:relative pre:sm:top-auto pre:sm:pt-0 pre:sm:p-0 pre:sm:sp-mt-[50]">
+          <div className={cx("pre:w-full pre:sm:sp-pl-[89] pre:sm:flex pre:sm:justify-center", illustWrapClassName)}>
+            <Image
+              src={illustSrc}
+              alt=""
+              width={illustWidth}
+              height={illustHeight}
+              className={illustClassName}
+            />
+          </div>
         </div>
 
         <div className="accordion__inner-content careers-accordion__inner-content">
           {sections.map((sec, idx) => (
             <div className="careers-accordion-box" key={`${sec.en}-${idx}`}>
-              <div className="pre:w-[142px]">
+              <div className="pre:w-[142px] pre:sm:w-full pre:sm:sp-mb-[60]">
                 <h4
                   dangerouslySetInnerHTML={{
                     __html: sec.en.replace(/\n/g, "<br/>"),
@@ -106,22 +121,18 @@ export default function CareersAccordion({
                 <h5>{sec.ja}</h5>
               </div>
 
-              <div className="pre:w-[calc(100%-142px-15px)]">
+              <div className="pre:w-[calc(100%-142px-15px)] pre:sm:w-full">
                 {sec.kind === "text" && (
                   <>
-                    <p className="pre:text-[14px] pre:leading-[180%]">
-                      {sec.text}
-                    </p>
-                    {sec.textNote && (
-                      <p className="pre:text-[12px]">{sec.textNote}</p>
-                    )}
+                    <p className="pre:text-[14px] pre:leading-[180%] pre:sm:sp-fs-[14]">{sec.text}</p>
+                    {sec.textNote && <p className="pre:text-[12px] pre:sm:sp-fs-[12]">{sec.textNote}</p>}
                   </>
                 )}
 
                 {sec.kind === "list" && (
                   <>
                     {sec.lead && (
-                      <p className="pre:text-[14px] pre:leading-[180%] pre:mb-10">
+                      <p className="pre:text-[14px] pre:leading-[180%] pre:mb-10 pre:sm:sp-fs-[14] pre:sm:sp-mb-[26]">
                         {sec.lead}
                       </p>
                     )}
@@ -138,14 +149,10 @@ export default function CareersAccordion({
                     {sec.items.map((it, i) => (
                       <li key={i}>
                         <div className="pre:w-[calc(71/496*100%)]">
-                          <p className="pre:text-[20px] pre:font-gt pre:font-light">
-                            {it.no}
-                          </p>
+                          <p className="pre:text-[20px] pre:font-gt pre:font-light">{it.no}</p>
                         </div>
                         <div className="pre:w-[calc(106/496*100%)]">
-                          <p className="pre:text-[14px] pre:font-dnp pre:font-light">
-                            {it.title}
-                          </p>
+                          <p className="pre:text-[14px] pre:font-dnp pre:font-light">{it.title}</p>
                         </div>
                         <div className="pre:w-[calc(319/496*100%)]">
                           <p className="pre:text-[12px] pre:leading-[180%] pre:font-dnp pre:font-light">
@@ -161,7 +168,7 @@ export default function CareersAccordion({
           ))}
 
           <a
-            className="btn-submit pre:mt-[30px] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white"
+            className="btn-submit pre:mt-[30px] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white pre:sm:sp-mt-[12]"
             {...applyProps}
           >
             <span className="splitting-hover__inner">

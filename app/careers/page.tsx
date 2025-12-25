@@ -19,7 +19,7 @@ export const revalidate = 60;
 export default function CareersPage() {
   return (
     <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110]">
-      <section className="pre:relative pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[230px]">
+      <section className="pre:relative pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[230px] pre:sm:sp-w-[339]">
         <div className="pre:flex pre:justify-between pre:items-center pre:pb-[30px] pre:sm:sp-pb-[70]">
           <div className="pre:w-[calc(339/1401*100%)] pre:min-w-[339px]">
             <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[30px] slide-in pre:sm:sp-fs-[24] pre:sm:sp-mb-[240]">Careers</h2>
@@ -32,10 +32,10 @@ export default function CareersPage() {
           </div>
         </div>
         <div>
-        <AccordionClient smWidth={750}>
-          <FrontEndEngineer />
-          <WebDirector />
-        </AccordionClient>
+          <AccordionClient smWidth={750}>
+            <FrontEndEngineer />
+            <WebDirector />
+          </AccordionClient>
         </div>
       </section>
       <Footer/>

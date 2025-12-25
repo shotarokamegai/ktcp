@@ -22,7 +22,7 @@ export default async function AboutPage() {
   if (!page) {
     return (
       <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110]">
-        <section className="pre:flex pre:justify-justify-between pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[98px] pre:sm:block pre:sm:sp-w-[340] pre:sm:sp-mb-[110]">
+        <section className="pre:flex pre:justify-justify-between pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[98px] pre:sm:block pre:sm:sp-w-[339] pre:sm:sp-mb-[110]">
           <div className="pre:w-[calc(517/1400*100%)] pre:sm:w-full pre:sm:sp-mb-[40]">
             <h1 className="pre:text-[24px] pre:font-gt pre:font-light slide-in pre:mb-[180px] pre:sm:sp-fs-[24] pre:sm:sp-mb-[50]">About</h1>
             <Image src="/illust/about.png" alt="" width={372} height={279} className="pre:w-[calc(372/450*100%)] pre:max-w-[372px] slide-in pre:sm:w-full pre:sm:sp-mb-[30]" />
@@ -38,7 +38,7 @@ export default async function AboutPage() {
               </span>
             </h2>
           </div>
-          <div className="pre:w-[calc(340/1400*100%)] pre:mr-[calc(15/1400*100%)] pre:sm:sp-w-[250] pre:sm:mr-0 pre:sm:ml-auto pre:sm:sp-mb-[110]">
+          <div className="pre:w-[calc(339/1400*100%)] pre:mr-[calc(15/1400*100%)] pre:sm:sp-w-[250] pre:sm:mr-0 pre:sm:ml-auto pre:sm:sp-mb-[110]">
             <div>
               <p className="pre:text-[15px] pre:leading-[180%] pre:font-shuei pre:sm:sp-fs-[14]">
                 <span className="pre:inline-block slide-in">
@@ -54,7 +54,7 @@ export default async function AboutPage() {
               </p>
             </div>
           </div>
-          <div className="pre:w-[calc(340/1400*100%)] pre:mt-0.5 pre:sm:w-full pre:sm:mt-0">
+          <div className="pre:w-[calc(339/1400*100%)] pre:mt-0.5 pre:sm:w-full pre:sm:mt-0">
             <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px] pre:[&_div:last-child]:mb-0">
               <div>
                 <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[130%]">Company Name</p>

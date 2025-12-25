@@ -6,7 +6,7 @@
   .btn-submit {
     will-change: background-color;
     transition: background-color 0.5s var(--ease-out-quart);
-    @apply pre:relative pre:h-20 pre:w-[340px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white;
+    @apply pre:relative pre:h-20 pre:w-[339px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white;
   }
   .btn-submit:disabled { @apply pre:opacity-60 pre:cursor-not-allowed; }
   .btn-submit__arrow { @apply pre:absolute pre:top-[50%] pre:right-[25px] pre:[transform:translate3d(0,-50%,0)]; }
