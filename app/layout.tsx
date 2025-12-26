@@ -141,10 +141,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
 
           <div className="menu-trigger pre:hidden pre:sm:block pre:sm:relative pre:sm:sp-h-[14] pre:sm:sp-w-[30]">
-            <div className="menu-trigger-content pre:sm:relative pre:h-full pre:w-full">
-              <div className="pre:absolute pre:left-0 pre:h-0.5 pre:w-full pre:bg-ketchup"></div>
-              <div className="pre:absolute pre:right-0 pre:h-0.5 pre:sp-w-[18] pre:bg-ketchup"></div>
-              <div className="pre:absolute pre:left-0 pre:h-0.5 pre:w-full pre:bg-ketchup"></div>
+            <div className="menu-trigger-content pre:sm:relative pre:h-full pre:w-full pre:[&_div]:absolute pre:[&_div]:h-0.5 pre:[&_div]:bg-ketchup">
+              <div className="menu1 pre:w-full pre:left-0"></div>
+              <div className="menu2 pre:sp-w-[18]"></div>
+              <div className="menu3 pre:w-full pre:left-0"></div>
+              <div className="menu4"></div>
+              <div className="menu5"></div>
             </div>
             <p className="pre:font-gt pre:font-light pre:sp-fs-[12] pre:text-ketchup pre:absolute sm:center-x pre:bottom-[calc(12/393*-100vw)] pre:leading-0 splitting-hover pre:w-[104%]">
               <span className="splitting-hover__inner">
