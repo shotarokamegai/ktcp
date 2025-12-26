@@ -81,7 +81,7 @@ export default function FrontEndEngineer() {
         },
       ]}
       applyLabel="APPLY NOW"
-      applyHref="/careers/apply"
+      applyHref="/application"
     />
   );
 }

@@ -118,8 +118,7 @@ export default function ContactForm() {
     }
   };
 
-  if (true) {
-  // if (sent) {
+  if (sent) {
     return (
       <div>
         <div></div>

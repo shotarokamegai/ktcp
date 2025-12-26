@@ -80,7 +80,7 @@ export default function WebDirector() {
         },
       ]}
       applyLabel="APPLY NOW"
-      applyHref="/careers/apply"
+      applyHref="/application"
     />
   );
 }
