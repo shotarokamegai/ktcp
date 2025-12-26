@@ -13,7 +13,6 @@ type Options = {
   illustOutClass?: string;
   illustFadeMs?: number;
 
-  // 初期に全部閉じる
   forceCloseOnInit?: boolean;
 };
 
@@ -30,6 +29,11 @@ export function useAccordionController(
     ========================= */
 
     const SPEEDUP = 2;
+
+    const smWidth = options.smWidth ?? 750;
+    const isSP = () => window.innerWidth < smWidth;
+
+    const SP_SLOW_MULT = 2;
 
     const speed = options.speedPxPerSec ?? 800;
     const minMs = options.minDurationMs ?? 180;
@@ -54,7 +58,8 @@ export function useAccordionController(
     const calcDurationMs = (px: number) => {
       const ms = (px / speed) * 1000;
       const clamped = Math.max(minMs, Math.min(maxMs, ms));
-      return Math.max(1, Math.round(clamped / SPEEDUP));
+      const base = Math.max(1, Math.round(clamped / SPEEDUP));
+      return isSP() ? base * SP_SLOW_MULT : base;
     };
 
     const setHeightTransition = (inner: HTMLElement, ms: number) => {
@@ -80,7 +85,14 @@ export function useAccordionController(
       });
     };
 
-    /* ★ careers-accordion-title active 管理 */
+    const resetIllustInline = (wrapper: HTMLElement) => {
+      getIllusts(wrapper).forEach((el) => {
+        el.style.transition = "";
+        el.style.opacity = "";
+        el.style.transform = "";
+      });
+    };
+
     const setTitleActive = (wrapper: HTMLElement, on: boolean) => {
       const title = wrapper.querySelector<HTMLElement>(
         ".careers-accordion-title"
@@ -93,7 +105,6 @@ export function useAccordionController(
       if (!el) return ILLUST_FADE_MS;
 
       const st = getComputedStyle(el);
-
       const toMs = (s: string) =>
         s.trim().endsWith("ms")
           ? parseFloat(s)
@@ -106,7 +117,6 @@ export function useAccordionController(
 
       let max = 0;
       const len = Math.max(durs.length, delays.length);
-
       for (let i = 0; i < len; i++) {
         max = Math.max(
           max,
@@ -114,7 +124,6 @@ export function useAccordionController(
             (delays[i] ?? delays[delays.length - 1] ?? 0)
         );
       }
-
       return Math.max(max, ILLUST_FADE_MS);
     };
 
@@ -137,16 +146,12 @@ export function useAccordionController(
        OPEN
     ========================= */
 
-    const openAccordion = (
-      wrapper: HTMLElement,
-      inner: HTMLElement,
-      content: HTMLElement
-    ) => {
+    const openAccordion = (wrapper: HTMLElement, inner: HTMLElement) => {
       clearTimers(wrapper);
 
+      resetIllustInline(wrapper);
       illustHide(wrapper);
 
-      // ★ SP対応：illustも含めた実高さ
       const targetH = inner.scrollHeight;
       const currentH = inner.getBoundingClientRect().height;
 
@@ -178,14 +183,45 @@ export function useAccordionController(
     const closeAccordion = (wrapper: HTMLElement, inner: HTMLElement) => {
       clearTimers(wrapper);
 
+      // title は即OFF
+      setTitleActive(wrapper, false);
+
       const currentH = inner.getBoundingClientRect().height;
+
+      /* ---- SP ---- */
+      if (isSP()) {
+        wrapper.classList.remove("active");
+
+        const duration = calcDurationMs(currentH);
+        setHeightTransition(inner, duration);
+
+        inner.style.overflow = "hidden";
+        inner.style.height = `${currentH}px`;
+
+        requestAnimationFrame(() => {
+          inner.style.height = "0px";
+        });
+
+        const t = window.setTimeout(() => {
+          getIllusts(wrapper).forEach((el) => {
+            el.style.transition = "none";
+            el.style.opacity = "0";
+            el.style.transform = "scale(0)";
+            el.classList.remove(ILLUST_IN_CLASS, ILLUST_OUT_CLASS);
+          });
+        }, duration + 30);
+
+        pushTimer(wrapper, t);
+        return;
+      }
+
+      /* ---- PC ---- */
       illustHide(wrapper);
 
       const fadeMs = getCssFadeMs(getIllusts(wrapper)[0]);
 
       const t = window.setTimeout(() => {
         wrapper.classList.remove("active");
-        setTitleActive(wrapper, false);
 
         const duration = calcDurationMs(currentH);
         setHeightTransition(inner, duration);
@@ -202,7 +238,7 @@ export function useAccordionController(
     };
 
     /* =========================
-       CLICK HANDLER
+       CLICK
     ========================= */
 
     const onClick = (e: Event) => {
@@ -214,49 +250,34 @@ export function useAccordionController(
       if (!wrapper) return;
 
       const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
-      const content =
-        wrapper.querySelector<HTMLElement>(".accordion__inner-content");
-      if (!inner || !content) return;
+      if (!inner) return;
 
       const isOpen = wrapper.classList.contains("active");
-
-      if (isOpen) closeAccordion(wrapper, inner);
-      else openAccordion(wrapper, inner, content);
-    };
-
-    /* =========================
-       初期強制クローズ
-    ========================= */
-
-    const forceCloseAllInstant = () => {
-      const wrappers = Array.from(
-        root.querySelectorAll<HTMLElement>(".accordion")
-      );
-
-      wrappers.forEach((wrapper) => {
-        clearTimers(wrapper);
-
-        wrapper.classList.remove("active", "open");
-        setTitleActive(wrapper, false);
-
-        illustHide(wrapper);
-
-        const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
-        if (!inner) return;
-
-        const prevTransition = inner.style.transition;
-        inner.style.transition = "none";
-        inner.style.overflow = "hidden";
-        inner.style.height = "0px";
-
-        inner.getBoundingClientRect(); // reflow
-        inner.style.transition = prevTransition;
-      });
+      isOpen ? closeAccordion(wrapper, inner) : openAccordion(wrapper, inner);
     };
 
     /* =========================
        INIT
     ========================= */
+
+    const forceCloseAllInstant = () => {
+      root.querySelectorAll<HTMLElement>(".accordion").forEach((wrapper) => {
+        clearTimers(wrapper);
+
+        wrapper.classList.remove("active", "open");
+        setTitleActive(wrapper, false);
+        illustHide(wrapper);
+
+        const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
+        if (!inner) return;
+
+        inner.style.transition = "none";
+        inner.style.overflow = "hidden";
+        inner.style.height = "0px";
+        inner.getBoundingClientRect();
+        inner.style.transition = "";
+      });
+    };
 
     const init = () => {
       root.querySelectorAll<HTMLElement>(".accordion__inner").forEach((el) => {
@@ -280,6 +301,7 @@ export function useAccordionController(
     };
   }, [
     rootRef,
+    options.smWidth,
     options.speedPxPerSec,
     options.minDurationMs,
     options.maxDurationMs,
