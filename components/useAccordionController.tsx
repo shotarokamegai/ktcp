@@ -13,7 +13,7 @@ type Options = {
   illustOutClass?: string;
   illustFadeMs?: number;
 
-  // ★ 追加：初期に全部閉じる（デフォルト true）
+  // 初期に全部閉じる
   forceCloseOnInit?: boolean;
 };
 
@@ -25,9 +25,12 @@ export function useAccordionController(
     const root = rootRef.current;
     if (!root) return;
 
+    /* =========================
+       基本設定
+    ========================= */
+
     const SPEEDUP = 2;
 
-    const smWidth = options.smWidth ?? 750;
     const speed = options.speedPxPerSec ?? 800;
     const minMs = options.minDurationMs ?? 180;
     const maxMs = options.maxDurationMs ?? 900;
@@ -43,6 +46,10 @@ export function useAccordionController(
       1,
       Math.round((options.illustFadeMs ?? 300) / SPEEDUP)
     );
+
+    /* =========================
+       Utility
+    ========================= */
 
     const calcDurationMs = (px: number) => {
       const ms = (px / speed) * 1000;
@@ -71,6 +78,15 @@ export function useAccordionController(
         el.classList.remove(ILLUST_IN_CLASS);
         el.classList.add(ILLUST_OUT_CLASS);
       });
+    };
+
+    /* ★ careers-accordion-title active 管理 */
+    const setTitleActive = (wrapper: HTMLElement, on: boolean) => {
+      const title = wrapper.querySelector<HTMLElement>(
+        ".careers-accordion-title"
+      );
+      if (!title) return;
+      title.classList.toggle("active", on);
     };
 
     const getCssFadeMs = (el: HTMLElement | null) => {
@@ -102,7 +118,10 @@ export function useAccordionController(
       return Math.max(max, ILLUST_FADE_MS);
     };
 
-    // timers
+    /* =========================
+       Timer 管理
+    ========================= */
+
     const timers = new WeakMap<HTMLElement, number[]>();
 
     const clearTimers = (w: HTMLElement) => {
@@ -114,7 +133,10 @@ export function useAccordionController(
       timers.set(w, [...(timers.get(w) ?? []), id]);
     };
 
-    // open
+    /* =========================
+       OPEN
+    ========================= */
+
     const openAccordion = (
       wrapper: HTMLElement,
       inner: HTMLElement,
@@ -124,13 +146,15 @@ export function useAccordionController(
 
       illustHide(wrapper);
 
-      const targetH = content.scrollHeight;
+      // ★ SP対応：illustも含めた実高さ
+      const targetH = inner.scrollHeight;
       const currentH = inner.getBoundingClientRect().height;
 
       const duration = calcDurationMs(Math.abs(targetH - currentH));
       setHeightTransition(inner, duration);
 
       wrapper.classList.add("active");
+      setTitleActive(wrapper, true);
 
       inner.style.overflow = "hidden";
       inner.style.height = `${currentH}px`;
@@ -147,7 +171,10 @@ export function useAccordionController(
       pushTimer(wrapper, t);
     };
 
-    // close
+    /* =========================
+       CLOSE
+    ========================= */
+
     const closeAccordion = (wrapper: HTMLElement, inner: HTMLElement) => {
       clearTimers(wrapper);
 
@@ -158,6 +185,7 @@ export function useAccordionController(
 
       const t = window.setTimeout(() => {
         wrapper.classList.remove("active");
+        setTitleActive(wrapper, false);
 
         const duration = calcDurationMs(currentH);
         setHeightTransition(inner, duration);
@@ -173,7 +201,10 @@ export function useAccordionController(
       pushTimer(wrapper, t);
     };
 
-    // click handler
+    /* =========================
+       CLICK HANDLER
+    ========================= */
+
     const onClick = (e: Event) => {
       const trigger = e.currentTarget as HTMLElement;
       const id = trigger.dataset.target;
@@ -193,35 +224,40 @@ export function useAccordionController(
       else openAccordion(wrapper, inner, content);
     };
 
-    // ★ 追加：初期に全部閉じる（遷移アニメ無しで即閉じ）
+    /* =========================
+       初期強制クローズ
+    ========================= */
+
     const forceCloseAllInstant = () => {
-      const wrappers = Array.from(root.querySelectorAll<HTMLElement>(".accordion"));
+      const wrappers = Array.from(
+        root.querySelectorAll<HTMLElement>(".accordion")
+      );
+
       wrappers.forEach((wrapper) => {
         clearTimers(wrapper);
 
-        // active/open を持ってても初期は閉じる
         wrapper.classList.remove("active", "open");
+        setTitleActive(wrapper, false);
 
-        // illust も必ず非表示へ
         illustHide(wrapper);
 
         const inner = wrapper.querySelector<HTMLElement>(".accordion__inner");
         if (!inner) return;
 
-        // 初期化なので transition を一瞬切って 0 に固定
         const prevTransition = inner.style.transition;
         inner.style.transition = "none";
         inner.style.overflow = "hidden";
         inner.style.height = "0px";
 
-        // reflow
-        inner.getBoundingClientRect();
-
+        inner.getBoundingClientRect(); // reflow
         inner.style.transition = prevTransition;
       });
     };
 
-    // init
+    /* =========================
+       INIT
+    ========================= */
+
     const init = () => {
       root.querySelectorAll<HTMLElement>(".accordion__inner").forEach((el) => {
         el.style.overflow = "hidden";
@@ -244,7 +280,6 @@ export function useAccordionController(
     };
   }, [
     rootRef,
-    options.smWidth,
     options.speedPxPerSec,
     options.minDurationMs,
     options.maxDurationMs,

@@ -4,6 +4,7 @@
 @theme {
   /* `pre:text-gray` を有効化（DEFAULTを作る）*/
   --color-gray: #959595;
+  --color-darkGray: #939393;
   --color-lightGray: #D8D8D8;
   --color-placeholder: #ADADAD;
   --color-ketchup: #C80F2E;
@@ -64,6 +65,13 @@
 
 .careers-accordion-title {
   &.active {
+    color: var(--pre-color-ketchup);
+    .splitting-hover__inner > .splitting-text:nth-child(1) .char {
+      transform: translateY(-107%);
+    }
+    .splitting-hover__inner > .splitting-text:nth-child(2) .char {
+      transform: translateY(-10%);
+    }
     .careers-accordion-illust {
       opacity: 1;
       transform: scale(1);

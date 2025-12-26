@@ -136,7 +136,7 @@ export default function CareersAccordion({
                         {sec.lead}
                       </p>
                     )}
-                    <ul className="pre:[&>li]:text-[12px] pre:[&>li]:pb-3 pre:[&>li]:mb-3 pre:[&>li:last-child]:mb-0 pre:[&>li:last-child]:border-b-0 pre:[&>li]:border-b pre:[&>li]:border-lightGray pre:[&>li]:border-solid">
+                    <ul className="pre:[&>li]:text-[12px] pre:[&>li]:pb-3 pre:[&>li]:mb-3 pre:[&>li:last-child]:mb-0 pre:[&>li:last-child]:border-b-0 pre:[&>li]:border-b pre:[&>li]:border-darkGray pre:[&>li]:border-solid">
                       {sec.items.map((it, i) => (
                         <li key={i}>{it.text}</li>
                       ))}
@@ -145,7 +145,7 @@ export default function CareersAccordion({
                 )}
 
                 {sec.kind === "flow" && (
-                  <ul className="pre:[&>li]:text-[12px] pre:[&>li]:pb-3 pre:[&>li]:mb-3 pre:[&>li:last-child]:mb-0 pre:[&>li:last-child]:border-b-0 pre:[&>li]:border-b pre:[&>li]:border-lightGray pre:[&>li]:border-solid pre:[&>li]:flex pre:[&>li]:items-center">
+                  <ul className="pre:[&>li]:text-[12px] pre:[&>li]:pb-3 pre:[&>li]:mb-3 pre:[&>li:last-child]:mb-0 pre:[&>li:last-child]:border-b-0 pre:[&>li]:border-b pre:[&>li]:border-darkGray pre:[&>li]:border-solid pre:[&>li]:flex pre:[&>li]:items-center">
                     {sec.items.map((it, i) => (
                       <li key={i}>
                         <div className="pre:w-[calc(71/496*100%)]">
