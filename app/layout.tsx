@@ -37,7 +37,7 @@ const NAV_LINK_BASE =
 const NAV_LINK_GAP = "pre:mr-[37px] pre:sm:mr-0";
 
 const CAREERS_LINK =
-  "pre:inline-flex pre:items-center pre:px-[17px] pre:top-[-2px] pre:sm:top-auto " +
+  "pre:inline-flex pre:items-center pre:px-[17px] pre:sm:top-auto " +
   "pre:text-ketchup pre:hover:text-black " +
   "pre:[&_svg]:relative " +
   "pre:hover:[&_svg]:rotate-[45deg] pre:sm:pl-0 pre:sm:sppr-[20]";
@@ -100,7 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <nav className={NAV}>
             <ul className="pre:sm:mt-auto">
-              <div className="pre:hidden pre:sm:block pre:absolute sm:center-xy pre:sp-w-[339] illust">
+              <div className="pre:hidden pre:sm:block pre:absolute sm:center-xy pre:sp-w-[375] illust">
                 <Image
                   src="/illust/about.png"
                   alt=""
@@ -110,7 +110,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 />
               </div>
 
-              <li>
+              <li className="pre:leading-none">
                 <HeaderNavLink
                   href="/about"
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
@@ -122,7 +122,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </HeaderNavLink>
               </li>
 
-              <li>
+              <li className="pre:leading-none">
                 <HeaderNavLink
                   href="/contact"
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
@@ -134,7 +134,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </HeaderNavLink>
               </li>
 
-              <li>
+              <li className="pre:leading-none">
                 <HeaderNavLink
                   href="/careers"
                   className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover pre:sm:overflow-hidden`}

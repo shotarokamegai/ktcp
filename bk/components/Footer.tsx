@@ -4,7 +4,7 @@ import SplittingSpan from "@/components/SplittingSpan"
 
 export default function Footer() {
   return (
-    <footer className="pre:flex pre:items-center pre:justify-between pre:px-5 pre:pb-[33px] pre:leading-none slide-in slide-out pre:sm:block pre:sm:sp-pb-[40]">
+    <footer className="pre:flex pre:items-center pre:justify-between pre:px-5 pre:pb-[33px]  slide-in slide-out pre:sm:block pre:sm:sp-pb-[40]">
       <a
         href="mailto:info@ktcp.jp"
         className="pre:text-[24px] pre:font-gt pre:font-light pre:hover:text-ketchup splitting-hover pre:sm:sp-fs-[14] pre:sm:sp-mb-[10]"

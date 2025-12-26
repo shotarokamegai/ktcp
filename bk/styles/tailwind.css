@@ -37,7 +37,7 @@
 .btn-submit {
   will-change: background-color;
   transition: background-color 0.5s var(--ease-out-quart); 
-  @apply pre:relative pre:h-20 pre:w-[339px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white pre:sm:w-full pre:sm:sp-h-[80] pre:sm:sp-fs-[20];
+  @apply pre:relative pre:h-20 pre:w-[375px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white pre:sm:w-full pre:sm:sp-h-[80] pre:sm:sp-fs-[20];
 }
 
 /* 任意：disabledの見た目 */

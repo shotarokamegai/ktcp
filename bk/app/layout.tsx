@@ -101,7 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <nav className={NAV}>
             <ul className="pre:sm:mt-auto">
-              <div className="pre:hidden pre:sm:block pre:absolute sm:center-xy pre:sp-w-[339] illust">
+              <div className="pre:hidden pre:sm:block pre:absolute sm:center-xy pre:sp-w-[375] illust">
                 <Image
                   src="/illust/about.png"
                   alt=""

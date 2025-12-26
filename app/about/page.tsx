@@ -38,7 +38,7 @@ export default async function AboutPage() {
               </span>
             </h2>
           </div>
-          <div className="pre:w-[calc(339/1400*100%)] pre:mr-[calc(15/1400*100%)] pre:sm:sp-w-[250] pre:sm:mr-0 pre:sm:ml-auto pre:sm:sp-mb-[110]">
+          <div className="pre:w-[calc(375/1400*100%)] pre:mr-[calc(15/1400*100%)] pre:sm:sp-w-[250] pre:sm:mr-0 pre:sm:ml-auto pre:sm:sp-mb-[110]">
             <div>
               <p className="pre:text-[15px] pre:leading-[180%] pre:font-shuei pre:sm:sp-fs-[14]">
                 <span className="pre:inline-block slide-in">
@@ -54,7 +54,7 @@ export default async function AboutPage() {
               </p>
             </div>
           </div>
-          <div className="pre:w-[calc(339/1400*100%)] pre:mt-0.5 pre:sm:w-full pre:sm:mt-0">
+          <div className="pre:w-[calc(375/1400*100%)] pre:mt-0.5 pre:sm:w-full pre:sm:mt-0">
             <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px] pre:[&_div:last-child]:mb-0">
               <div>
                 <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[130%]">Company Name</p>

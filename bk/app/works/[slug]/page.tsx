@@ -63,7 +63,7 @@ export default async function WorkDetail({
   return (
     <main className="container pre:pt-[307px] slide-out">
       <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between">
-        <div className="pre:w-[calc(339/1401*100%)]">
+        <div className="pre:w-[calc(375/1401*100%)]">
           {/* 日付 */}
           {(dateTxt) && (
             <div className="pre:mb-[14px] slide-in">

@@ -139,7 +139,7 @@ export default function WorksBrowserClient({
             <img
               src="/illust/about.png"
               alt=""
-              className="pre:w-[calc(304/339*100%)]"
+              className="pre:w-[calc(304/375*100%)]"
             />
           </div>
         );

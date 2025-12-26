@@ -190,7 +190,8 @@
 
 /* 初期位置（あなたの設計を踏襲） */
 .splitting-hover__inner > .splitting-text:nth-child(1) .char {
-  transform: translateY(-10%);
+  transform: translateY(0%);
+  /* transform: translateY(-10%); */
 }
 .splitting-hover__inner > .splitting-text:nth-child(2) .char {
   transform: translateY(107%);
@@ -202,14 +203,16 @@
   transform: translateY(-107%);
 }
 .splitting-hover:hover .splitting-hover__inner > .splitting-text:nth-child(2) .char {
-  transform: translateY(-10%);
+  /* transform: translateY(-10%); */
+  transform: translateY(0%);
 }
 
 .splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(1) .char {
   transform: translateY(-107%);
 }
 .splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(2) .char {
-  transform: translateY(-10%);
+  /* transform: translateY(-10%); */
+  transform: translateY(0%);
 }
 
 .icon-hover {
