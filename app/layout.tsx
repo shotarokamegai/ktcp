@@ -37,7 +37,7 @@ const NAV_LINK_BASE =
 const NAV_LINK_GAP = "pre:mr-[37px] pre:sm:mr-0";
 
 const CAREERS_LINK =
-  "pre:inline-flex pre:items-center pre:px-[17px] pre:top-[-2px] pre:sm:top-auto" +
+  "pre:inline-flex pre:items-center pre:px-[17px] pre:top-[-2px] pre:sm:top-auto " +
   "pre:text-ketchup pre:hover:text-black " +
   "pre:[&_svg]:relative " +
   "pre:hover:[&_svg]:rotate-[45deg] pre:sm:pl-0 pre:sm:sppr-[20]";

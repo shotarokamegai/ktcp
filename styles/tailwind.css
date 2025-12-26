@@ -191,7 +191,7 @@
             transform .5s var(--ease-out-quart) .5s;
        }
       .plus {
-        transform: translate3d(0, calc(-50% + 170%), 0);
+        transform: translate3d(0, calc(-50% + 230%), 0);
         transition:
           opacity .5s var(--ease-out-quart),
           color .5s var(--ease-out-quart),
