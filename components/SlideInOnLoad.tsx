@@ -16,7 +16,6 @@ const IN_MODE: "random" | "sequence" = "sequence";
 const OUT_MODE: "random" | "sequence" = "sequence";
 
 const REFRESH_EVENT = "slidein:refresh";
-
 /* ================= */
 
 export default function SlideInOnLoad() {
@@ -36,6 +35,13 @@ export default function SlideInOnLoad() {
       return Math.round(min + (max - min) * t);
     }
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  // 遷移後は必ず先頭へ
+  const scrollToTop = () => {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
   };
 
   /* ===== IN ===== */
@@ -67,7 +73,7 @@ export default function SlideInOnLoad() {
     );
 
     if (els.length === 0) {
-      router.push(href);
+      router.push(href, { scroll: true });
       return;
     }
 
@@ -83,11 +89,20 @@ export default function SlideInOnLoad() {
       el.classList.add("is-hidden");
     });
 
-    setTimeout(() => router.push(href), maxDelay + TRANSITION_DURATION + 50);
+    setTimeout(() => {
+      router.push(href, { scroll: true });
+    }, maxDelay + TRANSITION_DURATION + 50);
   };
 
   /* ===== pathname change ===== */
   useEffect(() => {
+    // ★ 新ページに来たタイミングで、マスク解除（SPの “うっすら見え” 対策の後始末）
+    document.documentElement.classList.remove("is-page-masked");
+
+    // ★ 常に先頭
+    scrollToTop();
+    requestAnimationFrame(() => scrollToTop());
+
     runIn();
   }, [pathname]);
 

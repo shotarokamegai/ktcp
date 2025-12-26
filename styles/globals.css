@@ -115,6 +115,20 @@ a {
 }
 
 @media screen and (max-width: 749px) {
+  #page-mask {
+  position: fixed;
+  inset: 0;
+  background: #fff; /* サイト背景色に合わせて */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+  z-index: 99; /* pageより上 / header(100)より下 */
+}
+
+html.is-page-masked #page-mask {
+  opacity: 1;
+  pointer-events: auto;
+}
   .careers-accordion {
     &.active {
       .careers-accordion-icon {

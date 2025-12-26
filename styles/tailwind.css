@@ -171,10 +171,10 @@
     filter: blur(12px);
     /* transform: translateY(6px); */
     transition:
-      opacity .5s var(--ease-in-out-quart),
-      visibility 0ms linear .5s,
-      filter .5s var(--ease-in-out-quart),
-      transform .5s var(--ease-out-quart);
+      opacity .5s var(--ease-in-out-quart) 1s,
+      visibility 0ms linear 1.5s,
+      filter .5s var(--ease-in-out-quart) 1s,
+      transform .5s var(--ease-out-quart) 1s;
        will-change: opacity, filter, transform;
        .char {
           transition:

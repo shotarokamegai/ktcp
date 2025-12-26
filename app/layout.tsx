@@ -3,7 +3,7 @@ import "../styles/globals.css";
 import "../styles/tailwind.css";
 import { gtAmerica } from "./fonts";
 import MenuToggle from "@/components/MenuToggle";
-import SplittingSpan from "@/components/SplittingSpan"
+import SplittingSpan from "@/components/SplittingSpan";
 import Image from "next/image";
 import FMLink from "@/components/FMLink";
 import HeaderNavLink from "@/components/HeaderNavLink";
@@ -23,7 +23,8 @@ const HEADER =
   "pre:flex pre:justify-between " +
   "pre:w-full pre:px-5 pre:py-[26px] pre:bg-white pre:sm:py-0 pre:sm:sp-px-[20] pre:sm:flex pre:sm:items-center pre:sm:justify-between";
 
-const LOGO_LINK = "pre:w-[104.4px] pre:h-11 pre:sm:sp-w-[65] pre:sm:h-auto pre:sm:block";
+const LOGO_LINK =
+  "pre:w-[104.4px] pre:h-11 pre:sm:sp-w-[65] pre:sm:h-auto pre:sm:block";
 
 const NAV =
   "js-header-nav pre:[&_ul]:flex pre:[&_ul]:items-start pre:[&_ul]:justify-end pre:sm:flex " +
@@ -89,15 +90,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className={HEADER} id="header">
           <h1 className="pre:relative pre:z-100">
             <FMLink href="/" className={LOGO_LINK}>
-              <Image src="/logo.svg" alt="Ketchup Logo" width={104.4} height={44}/>
+              <Image
+                src="/logo.svg"
+                alt="Ketchup Logo"
+                width={104.4}
+                height={44}
+              />
             </FMLink>
           </h1>
 
           <nav className={NAV}>
             <ul className="pre:sm:mt-auto">
               <div className="pre:hidden pre:sm:block pre:absolute sm:center-xy pre:sp-w-[339] illust">
-                <Image src="/illust/about.png" alt="" width={372} height={279} className="pre:w-full" />
+                <Image
+                  src="/illust/about.png"
+                  alt=""
+                  width={372}
+                  height={279}
+                  className="pre:w-full"
+                />
               </div>
+
               <li>
                 <HeaderNavLink
                   href="/about"
@@ -109,6 +122,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </span>
                 </HeaderNavLink>
               </li>
+
               <li>
                 <HeaderNavLink
                   href="/contact"
@@ -120,18 +134,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </span>
                 </HeaderNavLink>
               </li>
+
               <li>
                 <HeaderNavLink
-                    href="/careers"
-                    className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover pre:sm:overflow-hidden`}
-                  >
+                  href="/careers"
+                  className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover pre:sm:overflow-hidden`}
+                >
                   <div className="pre:absolute center-y pre:left-0 sm:center-y pre:sm:hidden">
                     <Plus />
                   </div>
-                  <span className={`${CAREERS_TEXT} splitting-hover__inner pre:mt-[3%]` }>
-                      <SplittingSpan text="CAREERS" />
-                      <SplittingSpan text="CAREERS" />
+
+                  <span
+                    className={`${CAREERS_TEXT} splitting-hover__inner pre:mt-[3%]`}
+                  >
+                    <SplittingSpan text="CAREERS" />
+                    <SplittingSpan text="CAREERS" />
                   </span>
+
                   <div className="pre:absolute center-y pre:right-0 sm:center-y plus">
                     <Plus />
                   </div>
@@ -156,6 +175,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </p>
           </div>
         </header>
+
+        {/* ★ 追加：メニューが消えるまで下のページを見せないマスク */}
+        <div id="page-mask" aria-hidden="true" />
 
         <main id="page">
           {children}
