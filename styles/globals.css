@@ -64,6 +64,7 @@
 
 body {
     margin: 0;
+    font-family: dnp-shuei-gothic-kin-std, sans-serif;
 }
 body::selection {
     color: #fff;  

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import FMLink from "@/components/FMLink";
 import Image from "next/image";
 import Arrow from "@/components/svg/Arrow";
 import SplittingSpan from "@/components/SplittingSpan"
@@ -117,19 +118,34 @@ export default function ContactForm() {
     }
   };
 
-  if (sent) {
+  if (true) {
+  // if (sent) {
     return (
-      <div
-        style={{
-          background: "#111",
-          border: "1px solid #222",
-          borderRadius: 12,
-          padding: 24,
-          lineHeight: 1.7,
-        }}
-      >
-        <p style={{ fontSize: 18, marginBottom: 6 }}>送信ありがとうございました。</p>
-        <p>内容を確認のうえ、担当より折り返しご連絡いたします。</p>
+      <div>
+        <div></div>
+        <h2 className="pre:text-[24px] pre:text-center pre:font-gt pre:font-light pre:mb-[50px]">Message Sent</h2>
+        <h3 className="pre:text-[16px] pre:font-bold pre:mb-5 pre:text-center">応募受付完了</h3>
+        <p className="pre:text-center pre:text-[16px] pre:leading-[180%]">このたびはご応募いただき、誠にありがとうございます。<br/>
+        入力内容を確認し、選考に進む場合は担当者よりご連絡いたします。</p>
+            <FMLink
+            href="/"
+            className="btn-submit pre:mt-[30px] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white pre:sm:sp-mt-[12]"
+            >
+              <span className="splitting-hover__inner">
+                <SplittingSpan text="BACK TO TOP" />
+                <SplittingSpan text="BACK TO TOP" />
+              </span>
+              <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center">
+              <span className="icon-content__inner">
+                <div className="pre:p-[5px] icon">
+                  <Arrow />
+                </div>
+                <div className="pre:p-[5px] icon">
+                  <Arrow />
+                </div>
+              </span>
+            </div>
+            </FMLink>
       </div>
     );
   }
