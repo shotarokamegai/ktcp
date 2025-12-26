@@ -1,0 +1,300 @@
+@import "./animations.css";
+/* app/globals.css など */
+:root {
+  --ease-in-sine: cubic-bezier(0.47, 0, 0.745, 0.715);
+  --ease-out-sine: cubic-bezier(0.39, 0.575, 0.565, 1);
+  --ease-in-out-sine: cubic-bezier(0.39, 0.575, 0.565, 1);
+
+  --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-in-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+
+  --ease-in-quart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-in-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+  --ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+
+  --ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+
+  --ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+  --ease-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+  --ease-in-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+
+  --ease-in-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  /* 元のコメントに合わせて強めの back */
+  --ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.45);
+  --ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  --ease-in-out-fast: cubic-bezier(1, 0, 0, 1);
+
+  --ease-authentic-motion: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --ease-a: cubic-bezier(0.22, 0.61, 0.32, 1.15);
+
+  /* Power 系の alias（Sass の再代入相当） */
+  --power1-ease-in: var(--ease-in-quad);
+  --power1-ease-out: var(--ease-out-quad);
+  --power1-ease-in-out: var(--ease-in-out-quad);
+
+  --power2-ease-in: var(--ease-in-cubic);
+  --power2-ease-out: var(--ease-out-cubic);
+  --power2-ease-in-out: var(--ease-in-out-cubic);
+
+  --power3-ease-in: var(--ease-in-quart);
+  --power3-ease-out: var(--ease-out-quart);
+  --power3-ease-in-out: var(--ease-in-out-quart);
+
+  --power4-ease-in: var(--ease-in-quint);
+  --power4-ease-out: var(--ease-out-quint);
+  --power4-ease-in-out: var(--ease-in-out-quint);
+
+  --power0: linear;
+  --color-ketchup: #C80F2E;
+  --color-darkGray: #939393;
+}
+
+body {
+    margin: 0;
+    font-family: dnp-shuei-gothic-kin-std, sans-serif;
+}
+body::selection {
+    color: #fff;  
+    background-color: #C80F2E;
+}
+a {
+    text-decoration: initial;
+}
+/* ▼ 離脱アニメ（leave）用 */
+.slide-out {
+  opacity: 1;
+  filter: blur(0px);
+  transform: translateY(0);
+  transition:
+    opacity .5s var(--ease-in-out-quad) .5s,
+    filter 1s var(--ease-in-out-quad),
+    transform 1s var(--ease-in-out-quad);
+}
+
+/* 消えた状態 */
+.slide-out.is-hidden {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(0px);
+}
+
+/* ▼ 表示アニメ（enter）用 */
+.slide-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 1.5s var(--ease-in-out-quint),
+    transform 1.5s var(--ease-in-out-quint);
+}
+
+/* 表示された状態 */
+.slide-in.is-shown {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.responsive-image {
+  transition:
+    clip-path 1.5s var(--ease-in-out-quint);
+}
+
+.responsive-image-content {
+  transition:
+    all 1.1s var(--ease-in-out-quint);
+}
+
+@media screen and (max-width: 749px) {
+  #page-mask {
+  position: fixed;
+  inset: 0;
+  background: #fff; /* サイト背景色に合わせて */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+  z-index: 99; /* pageより上 / header(100)より下 */
+}
+
+html.is-page-masked #page-mask {
+  opacity: 1;
+  pointer-events: auto;
+}
+  .careers-accordion {
+    &.active {
+      .careers-accordion-icon {
+        div {
+          &:nth-child(1) {
+            animation: accordionIconOpen1 0.4s forwards;
+          }
+          &:nth-child(2) {
+            animation: accordionIconOpen2 0.4s forwards;
+          }
+        }
+      }
+    }
+  }
+  .menu-trigger {
+    .splitting-hover {
+      .splitting-hover__inner {
+        .splitting-text {
+            &:nth-child(1) {
+                .char {
+                    transform: translateY(107%);
+                    /* transform: translateY(-10%); */
+                }
+            }
+            &:nth-child(2) {
+                .char {
+                    transform: translateY(107%);
+                }
+            }
+        }
+      }
+    }
+    &.is-open {
+      .splitting-text .char {
+        display: inline-block;
+        will-change: transform, opacity;
+        transition:
+          opacity .5s var(--ease-out-quart),
+          color .5s var(--ease-out-quart),
+          transform .5s var(--ease-out-quart);
+        transition-delay:
+          calc(var(--char-index) * 0.05s + .5s),
+          calc(var(--char-index) * 0.05s + .5s),
+          calc(var(--char-index) * 0.05s + .5s);
+      }
+      .splitting-hover {
+        .splitting-hover__inner {
+          .splitting-text {
+              &:nth-child(1) {
+                  .char {
+                      transform: translateY(-10%);
+                  }
+              }
+              &:nth-child(2) {
+                  .char {
+                      transform: translateY(107%);
+                  }
+              }
+          }
+        }
+      }
+      .menu-trigger-content {
+        /* transform: rotate(180deg); */
+        div {
+          &.menu1 {
+            transform: translate3d(0,0, 0) scaleX(0);
+            transition: transform .3s var(--ease-in-out-quad), width .3s var(--ease-in-out-quad);
+          }
+          &.menu2 {
+            width: 0;
+            transition: transform .3s var(--ease-in-out-quad) .1s, width .3s var(--ease-in-out-quad) .1s;
+          }
+          &.menu3 {
+            transform: translate3d(0,0, 0) scaleX(0);
+            transition: transform .3s var(--ease-in-out-quad) .2s, width .3s var(--ease-in-out-quad) .2s;
+          }
+          &.menu4 {
+            width: 100%;
+            transition: width .5s var(--ease-in-out-quad) .4s;
+          }
+          &.menu5 {
+            width: 100%;
+            transition: width .5s var(--ease-in-out-quad) .4s;
+          }
+        }
+      } 
+    }
+  }
+  .menu-trigger-content {
+      div {
+        will-change: transform, width;
+        &.menu1 {
+          top: 0;
+          transform: translate3d(0,0, 0) scaleX(1);
+          transform-origin: right;
+          transition: transform .3s var(--ease-in-out-quad) .3s, width .3s var(--ease-in-out-quad) .3s;
+        }
+        &.menu2 {
+          top: 50%;
+          right: 0;
+          transform: translate3d(0,-50%, 0);
+          transition: transform .3s var(--ease-in-out-quad) .2s, width .3s var(--ease-in-out-quad) .2s;
+        }
+        &.menu3 {
+          top: calc(100% - 2px);
+          transform-origin: right;
+          transition: transform .3s var(--ease-in-out-quad) .1s, width .3s var(--ease-in-out-quad) .1s;
+        }
+        &.menu4 {
+          top: 50%;
+          left: 50%;
+          width: 0;
+          transform: translate3d(-50%, -50%, 0) rotate(45deg);
+          transition: transform .3s var(--ease-in-out-quad), width .3s var(--ease-in-out-quad);
+        }
+        &.menu5 {
+          top: 50%;
+          left: 50%;
+          width: 0;
+          transform: translate3d(-50%, -50%, 0) rotate(-45deg);
+          transition: transform .3s var(--ease-in-out-quad), width .3s var(--ease-in-out-quad);
+        }
+      }
+  }
+  .sm\:center-xy {
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0)
+  }
+  .sm\:center-y {
+    top: 50%;
+    transform: translate3d(0, -50%, 0)
+  }
+  .sm\:center-x {
+    left: 50%;
+    transform: translate3d(-50%, 0, 0)
+  }
+}
+@media screen and (min-width: 750px) {
+  .careers-accordion {
+    &.active {
+      .careers-accordion-icon {
+        div {
+          &:nth-child(1) {
+            animation: accordionIconOpen1 0.4s forwards;
+          }
+          &:nth-child(2) {
+            animation: accordionIconOpen2 0.4s forwards;
+          }
+        }
+      }
+    }
+  }
+    .center-xy {
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0)
+  }
+  .center-y {
+    top: 50%;
+    transform: translate3d(0, -50%, 0)
+  }
+  .center-x {
+    left: 50%;
+    transform: translate3d(-50%, 0, 0)
+  }
+}

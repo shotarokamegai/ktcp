@@ -38,6 +38,16 @@ export default function WebDirector() {
           kind: "list",
           en: "Application<br/>\nConditions",
           ja: "応募条件",
+          lead: "必須要件",
+          items: [
+            { text: "プロジェクトの提案資料作成やプレゼンテーション経験" },
+            { text: "社内チームメンバーとの円滑なコミュニケーションスキル" },
+          ],
+        },
+        {
+          kind: "list",
+          en: "Application<br/>\nConditions",
+          ja: "応募条件",
           lead: "歓迎要件",
           items: [
             { text: "Webディレクターとしての実務経験" },

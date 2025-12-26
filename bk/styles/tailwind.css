@@ -1,0 +1,315 @@
+@config "./../tailwind.config.js";
+@import "tailwindcss" prefix(pre);
+@custom-variant sm (@media (width <= 749px));
+@theme {
+  /* `pre:text-gray` を有効化（DEFAULTを作る）*/
+  --color-gray: #959595;
+  --color-darkGray: #939393;
+  --color-lightGray: #D8D8D8;
+  --color-placeholder: #ADADAD;
+  --color-ketchup: #C80F2E;
+
+  /* 例: max幅の独自ブレークポイント */
+  /* --breakpoint-sm-max: 749px; */
+
+  --font-gt: var(--font-gt-america), system-ui, sans-serif;
+  --font-dnp: dnp-shuei-gothic-kin-std, sans-serif;
+}
+
+@layer components {
+  header nav a.active,
+  header nav a.is-transitioning {
+    color: var(--pre-color-ketchup);
+  }
+
+  header nav a.active .char,
+  header nav a.is-transitioning .char {
+    color: var(--pre-color-ketchup);
+  }
+
+  /* hoverより強くする */
+  header nav a.is-transitioning:hover {
+    color: var(--pre-color-ketchup);
+  }
+}
+
+
+.btn-submit {
+  will-change: background-color;
+  transition: background-color 0.5s var(--ease-out-quart); 
+  @apply pre:relative pre:h-20 pre:w-[339px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white pre:sm:w-full pre:sm:sp-h-[80] pre:sm:sp-fs-[20];
+}
+
+/* 任意：disabledの見た目 */
+.btn-submit:disabled {
+  @apply pre:opacity-60 pre:cursor-not-allowed;
+}
+
+/* 任意：矢印用（毎回同じなら） */
+.btn-submit__arrow {
+  @apply pre:absolute pre:top-[50%] pre:right-[25px] pre:[transform:translate3d(0,-50%,0)];
+}
+
+.careers-accordion {
+  @apply pre:mb-[110px] pre:last:mb-0 pre:sm:sp-mb-[20]
+}
+
+.careers-accordion-illust {
+  will-change: opacity, transform;
+  transition: .5s transform var(--ease-in-out-quart), .5s opacity var(--ease-in-out-quart);
+}
+
+.careers-accordion-illust { opacity:0; transform:scale(1.05); }
+.careers-accordion-illust.is-illust-in { opacity:1; transform:scale(1); }
+.careers-accordion-illust.is-illust-out { opacity:0; transform:scale(1.05); }
+
+.careers-accordion-title {
+  &.active {
+    color: var(--pre-color-ketchup);
+    .splitting-hover__inner > .splitting-text:nth-child(1) .char {
+      transform: translateY(-107%);
+    }
+    .splitting-hover__inner > .splitting-text:nth-child(2) .char {
+      transform: translateY(-10%);
+    }
+    .careers-accordion-illust {
+      opacity: 1;
+      transform: scale(1);
+      transition: .5s transform var(--ease-in-out-quart) .5s, .5s opacity var(--ease-in-out-quart) .5s;
+    }
+  }
+  &.active, &:hover {
+    .careers-accordion-title-line {
+      &::after {
+        transform: translate3d(0, 0, 0);
+      }
+    }
+  }
+}
+.careers-accordion-title-line {
+  &::before {
+    content: '';
+    height: 1px;
+    width: 100%;
+    background-color: black;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translate3d(0%, 0, 0);
+    will-change: transform;
+    transition: 1.5s transform var(--ease-in-out-quart);
+  }
+  &::after {
+    content: '';
+    height: 1px;
+    width: 100%;
+    background-color: var(--color-ketchup);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    transform: translate3d(-101%, 0, 0);
+    will-change: transform;
+    transition: 1s transform var(--ease-in-out);
+  }
+}
+
+.careers-accordion.active .careers-accordion-title {
+  @apply pre:border-ketchup
+}
+.careers-accordion.active .careers-accordion-icon div, .careers-accordion:hover .careers-accordion-icon div {
+  @apply pre:bg-ketchup;
+}
+.careers-accordion .careers-accordion-icon div {
+  will-change: background-color;
+  transition: background-color 0.5s var(--ease-out-quart); 
+}
+.careers-accordion.active .careers-accordion-icon {
+  @apply pre:border-ketchup;
+  transform: translate3d(0, -50%, 0) rotate(90deg);
+}
+.careers-accordion-box {
+  @apply pre:flex pre:py-[30px] pre:pl-5 pre:pb-10 pre:border-b pre:border-lightGray pre:border-solid pre:sm:sp-py-[30] pre:sm:block pre:sm:border-none pre:sm:relative pre:sm:sp-pl-[89] pre:sm:mr-0 pre:sm:ml-auto
+}
+.careers-accordion-icon {
+  @apply pre:h-[22px] pre:w-[22px] pre:absolute pre:right-0 pre:top-[50%] pre:transform-[translate3d(0,-50%,0)] pre:sm:sp-h-[22] pre:sm:sp-w-[22]
+}
+.careers-accordion-title {
+  @apply pre:relative pre:h-[54px] pre:cursor-pointer pre:flex pre:items-center pre:z-10 pre:bg-white pre:sm:sp-h-[37]
+}
+.careers-accordion__inner {
+   @apply pre:relative pre:justify-end pre:grid
+}
+.careers-accordion__inner-content {
+   @apply pre:pt-[30px] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light
+}
+
+#header {
+  nav {
+    a {
+      &:last-child {
+        svg {
+            will-change: rotate;
+            transition: rotate 0.4s var(--ease-out-quart);
+        }
+      }
+    }
+  }
+}
+@layer components {
+  .works-list {
+    transition:
+      opacity .35s var(--ease-out-quart),
+      transform .35s var(--ease-out-quart);
+    will-change: opacity, transform;
+  }
+
+  .works-list.is-changing {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+}
+
+/* SP の nav を「閉じ」状態（デフォ） */
+@media (max-width: 749px) {
+  .js-header-nav {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    filter: blur(12px);
+    /* transform: translateY(6px); */
+    transition:
+      opacity .5s var(--ease-in-out-quart) 1s,
+      visibility 0ms linear 1.5s,
+      filter .5s var(--ease-in-out-quart) 1s,
+      transform .5s var(--ease-out-quart) 1s;
+       will-change: opacity, filter, transform;
+       .char {
+          transition:
+            opacity .5s var(--ease-out-quart),
+            color .5s var(--ease-out-quart),
+            transform .5s var(--ease-out-quart) .5s;
+       }
+      .plus {
+        transform: translate3d(0, calc(-50% + 170%), 0);
+        transition:
+          opacity .5s var(--ease-out-quart),
+          color .5s var(--ease-out-quart),
+          transform .5s var(--ease-out-quart) .5s;
+      }
+      .illust {
+        opacity: 0;
+        transform: translate3d(-50%, -50%, 0) scale(1.05);
+        will-change: opacity, transform;
+        transition: .5s transform var(--ease-in-out-quart) .5s, .5s opacity var(--ease-in-out-quart) .5s;
+      }
+      .splitting-hover {
+      .splitting-hover__inner {
+          .splitting-text {
+              &:nth-child(1) {
+                  .char {
+                      transform: translateY(107%);
+                      /* transform: translateY(-10%); */
+                  }
+              }
+              &:nth-child(2) {
+                  .char {
+                      transform: translateY(107%);
+                  }
+              }
+          }
+      }
+  }
+  }
+
+  /* 「開き」状態 */
+  .js-header-nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    filter: blur(0);
+    transform: translateY(0);
+    transition:
+      opacity .5s var(--ease-in-out-quart),
+      visibility 0ms linear,
+      filter .5s var(--ease-in-out-quart),
+      transform .5s var(--ease-out-quart) .5s;
+
+      .plus {
+        transform: translate3d(0, -50%, 0);
+        transition:
+          transform .5s var(--ease-out-quart);
+        transition-delay:
+          calc( 8 * 0.05s + .1s);
+      }
+
+      .illust {
+        opacity: 1;
+        transform: translate3d(-50%, -50%, 0) scale(1);
+        will-change: opacity, transform;
+        transition: .5s transform var(--ease-in-out-quart) .3s, .5s opacity var(--ease-in-out-quart) .3s;
+      }
+
+    .splitting-text .char {
+      display: inline-block;
+      will-change: transform, opacity;
+      transition:
+        opacity .5s var(--ease-out-quart),
+        color .5s var(--ease-out-quart),
+        transform .5s var(--ease-out-quart);
+      transition-delay:
+        calc(var(--char-index) * 0.05s + .1s),
+        calc(var(--char-index) * 0.05s + .1s),
+        calc(var(--char-index) * 0.05s + .1s);
+    }
+    .splitting-hover {
+    .splitting-hover__inner {
+        .splitting-text {
+            &:nth-child(1) {
+                .char {
+                    transform: translateY(-10%);
+                }
+            }
+            &:nth-child(2) {
+                .char {
+                    transform: translateY(107%);
+                }
+            }
+        }
+    }
+  }
+  }
+  .careers-accordion-box {
+    &::after {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      content: '';
+      width: 100%;
+      background-color: #D8D8D8;
+      height: 1px;
+    }
+  }
+}
+
+@media (max-width: 749px) {
+  /* メニューを開いた直後の入口アニメ（リンク単位） */
+  .js-header-nav.is-open .splitting-hover {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(10px);
+    will-change: opacity, filter, transform;
+    transition:
+      opacity 500ms var(--ease-out-quart),
+      filter 500ms var(--ease-out-quart),
+      transform 500ms var(--ease-out-quart);
+    transition-delay: calc(var(--stagger, 0) * 90ms);
+  }
+
+  /* 付与されたら「入る」 */
+  .js-header-nav.is-open .splitting-hover.menu-enter {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}

@@ -81,7 +81,7 @@ export default function CareersAccordion({
         className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup splitting-hover pre:sticky! pre:top-24 pre:sm:sp-top-[50]"
         data-target={id}
       >
-        <h3 className="pre:text-[18px] pr:font-gt pre:font-light">
+        <h3 className="pre:text-[18px] pr:font-gt pre:font-light pre:sm:sp-fs-[18] pre:sm:leading-[1]">
           <span className="splitting-hover__inner">
             <SplittingSpan text={title} />
             <SplittingSpan text={title} />

@@ -10,6 +10,7 @@ import HeaderNavLink from "@/components/HeaderNavLink";
 import Script from "next/script";
 import { LenisProvider } from "./../components/LenisProvider";
 import Plus from "../components/svg/Plus";
+import TransitionCover from "@/components/TransitionCover";
 import SlideInOnLoad from "@/components/SlideInOnLoad";
 
 // ============================
@@ -166,7 +167,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="menu4"></div>
               <div className="menu5"></div>
             </div>
-            <p className="pre:font-gt pre:font-light pre:sp-fs-[12] pre:text-ketchup pre:absolute sm:center-x pre:bottom-[calc(12/393*-100vw)] splitting-hover pre:w-[104%] pre:invisible pre:in-[.is-open]:visible">
+            <p className="pre:font-gt pre:font-light pre:sp-fs-[12] pre:text-ketchup pre:absolute sm:center-x pre:bottom-[calc(12/393*-100vw)] pre:leading-0 splitting-hover pre:w-[104%]">
               <span className="splitting-hover__inner">
                 <SplittingSpan text="Close" />
                 <SplittingSpan text="Close" />
@@ -179,7 +180,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div id="page-mask" aria-hidden="true" />
 
         <main id="page">
-          {children}<SlideInOnLoad />
+          {children}
+          <TransitionCover />
+          <SlideInOnLoad />
         </main>
       </body>
     </html>
