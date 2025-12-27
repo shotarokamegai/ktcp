@@ -159,12 +159,12 @@ export default function ContactForm() {
             <SplittingSpan text="BACK TO TOP" />
             <SplittingSpan text="BACK TO TOP" />
           </span>
-          <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center">
+          <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center pre:sm:sp-right-[15] sm:center-y">
             <span className="icon-content__inner">
-              <div className="pre:p-[5px] icon">
+              <div className="pre:p-[5px] icon pre:sm:p-0">
                 <Arrow />
               </div>
-              <div className="pre:p-[5px] icon">
+              <div className="pre:p-[5px] icon pre:sm:p-0">
                 <Arrow />
               </div>
             </span>
@@ -205,7 +205,7 @@ export default function ContactForm() {
           />
         </div>
     
-        <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in pre:wrap-anywhere pre:sm:sp-fs-[24]">
+        <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in pre:wrap-anywhere pre:sm:sp-fs-[24] pre:sm:whitespace-nowrap">
           Transforming Your Content Like <br className="pre:hidden pre:sm:block" />Ketchup
           <br className="pre:sm:hidden" />
           Transforms a Meal, <br className="pre:hidden pre:sm:block" />The Perfect Condiment

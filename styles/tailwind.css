@@ -323,6 +323,43 @@
     filter: blur(0);
     transform: translateY(0);
   }
+  /* ======================================
+   Custom Checkbox (Privacy Policy)
+   ====================================== */
+
+  .form-checkbox {
+    position: relative;
+    /* margin-right: calc(20 / 375 * 100vw); */
+    width: calc(25 / 375 * 100vw);
+    height: calc(25 / 375 * 100vw);
+    border: 1px solid var(--color-lightGray);
+    background: var(--color-beige);
+    /* cursor: pointer; */
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .form-checkbox:checked::before {
+    position: absolute;
+    top: calc(1 / 375 * 100vw);
+    left: calc(7 / 375 * 100vw);
+    width: calc(8 / 375 * 100vw);
+    height: calc(16 / 375 * 100vw);
+    border-right: 2px solid #000;
+    border-bottom: 2px solid #000;
+    transform: rotate(50deg);
+    content: "";
+  }
+
+  /* error 時（必要なら） */
+  .form-checkbox.is-error {
+    border-color: #f55;
+  }
+  .form-checkbox.is-error:checked::before {
+    border-color: #f55;
+  }
 }
 
 @media (min-width: 750px) {

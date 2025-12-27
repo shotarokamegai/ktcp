@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import Footer from "@/components/Footer";
 import ApplicationForm from "@/components/ApplicationForm";
-import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Application | Ketchup Portfolio",
@@ -20,14 +19,12 @@ export default function ContactPage() {
         pre:w-[693px]
         pre:mb-[180px]
         pre:mx-auto
+        pre:sm:sp-w-[339]
+        pre:sm:sp-mb-[100]
       "
     >
     {/* sticky は内側に */}
     <div className="pre:sm:relative">
-      <Image src="/illust/engineer.png" alt="" width={323} height={177} className="pre:w-[323px] pre:mb-[70px] pre:mx-auto slide-in" />
-      <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-14 slide-in pre:sm:sp-fs-[24] pre:sm:sp-mb-[25] pre:text-center">
-        Application Form
-      </h2>
       <ApplicationForm />
     </div>
   </section>

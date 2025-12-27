@@ -67,7 +67,6 @@ const onNavClick = (e: Event) => {
 
     // ★ ここが重要：Next.js Link の onClick より先に止める
     e.preventDefault();
-    // @ts-expect-error: stopImmediatePropagation exists on Event in browsers
     e.stopImmediatePropagation?.();
     ev.stopPropagation();
 
