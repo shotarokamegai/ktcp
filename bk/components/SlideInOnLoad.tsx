@@ -37,11 +37,14 @@ export default function SlideInOnLoad() {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  // 遷移後は必ず先頭へ
   const scrollToTop = () => {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant" as ScrollBehavior,
+    });
   };
 
   /* ===== IN ===== */
@@ -96,10 +99,10 @@ export default function SlideInOnLoad() {
 
   /* ===== pathname change ===== */
   useEffect(() => {
-    // ★ 新ページに来たタイミングで、マスク解除（SPの “うっすら見え” 対策の後始末）
+    // SPでメニュー遷移時に被せたマスクの後始末（もし使ってる場合）
     document.documentElement.classList.remove("is-page-masked");
 
-    // ★ 常に先頭
+    // 常に先頭
     scrollToTop();
     requestAnimationFrame(() => scrollToTop());
 
@@ -118,6 +121,27 @@ export default function SlideInOnLoad() {
     const handler = (e: Event) => {
       const href = (e as CustomEvent).detail?.href;
       if (!href) return;
+
+      // ★ 追加：同一ページ遷移（Nextがpushを無視）なら OUT しない
+      const next = new URL(href, window.location.href);
+      const curr = new URL(window.location.href);
+
+      const sameRoute =
+        next.pathname === curr.pathname && next.search === curr.search;
+
+      if (sameRoute) {
+        // hashだけ違うならスクロールだけ反映（必要なら）
+        if (next.hash && next.hash !== curr.hash) {
+          window.history.pushState({}, "", next.hash);
+          const el = document.querySelector(next.hash);
+          el?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        // もし何かで見え方が崩れてても IN をやり直す
+        window.dispatchEvent(new Event(REFRESH_EVENT));
+        return;
+      }
+
       runOutAndPush(href);
     };
 

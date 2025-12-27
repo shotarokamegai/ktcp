@@ -24,7 +24,7 @@ export default function ContactPage() {
       pre:items-start
       pre:grid-cols-[calc(375/1401*100%)_1fr]
       pre:gap-x-[calc(192/1401*100%)]
-      pre:sm:sp-w-[375]
+      pre:sm:sp-w-[339]
       pre:sm:block
        pre:sm:sp-mb-[110]
     "

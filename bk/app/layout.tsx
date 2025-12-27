@@ -10,7 +10,6 @@ import HeaderNavLink from "@/components/HeaderNavLink";
 import Script from "next/script";
 import { LenisProvider } from "./../components/LenisProvider";
 import Plus from "../components/svg/Plus";
-import TransitionCover from "@/components/TransitionCover";
 import SlideInOnLoad from "@/components/SlideInOnLoad";
 
 // ============================
@@ -38,7 +37,7 @@ const NAV_LINK_BASE =
 const NAV_LINK_GAP = "pre:mr-[37px] pre:sm:mr-0";
 
 const CAREERS_LINK =
-  "pre:inline-flex pre:items-center pre:px-[17px] pre:top-[-2px] pre:sm:top-auto" +
+  "pre:inline-flex pre:items-center pre:px-[17px] pre:sm:top-auto " +
   "pre:text-ketchup pre:hover:text-black " +
   "pre:[&_svg]:relative " +
   "pre:hover:[&_svg]:rotate-[45deg] pre:sm:pl-0 pre:sm:sppr-[20]";
@@ -111,7 +110,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 />
               </div>
 
-              <li>
+              <li className="pre:leading-none">
                 <HeaderNavLink
                   href="/about"
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
@@ -123,7 +122,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </HeaderNavLink>
               </li>
 
-              <li>
+              <li className="pre:leading-none">
                 <HeaderNavLink
                   href="/contact"
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
@@ -135,7 +134,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </HeaderNavLink>
               </li>
 
-              <li>
+              <li className="pre:leading-none">
                 <HeaderNavLink
                   href="/careers"
                   className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover pre:sm:overflow-hidden`}
@@ -167,7 +166,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="menu4"></div>
               <div className="menu5"></div>
             </div>
-            <p className="pre:font-gt pre:font-light pre:sp-fs-[12] pre:text-ketchup pre:absolute sm:center-x pre:bottom-[calc(12/393*-100vw)] pre:leading-0 splitting-hover pre:w-[104%]">
+            <p className="pre:font-gt pre:font-light pre:sp-fs-[12] pre:text-ketchup pre:absolute sm:center-x pre:bottom-[calc(12/393*-100vw)] splitting-hover pre:w-[104%] pre:invisible pre:in-[.is-open]:visible">
               <span className="splitting-hover__inner">
                 <SplittingSpan text="Close" />
                 <SplittingSpan text="Close" />
@@ -180,9 +179,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div id="page-mask" aria-hidden="true" />
 
         <main id="page">
-          {children}
-          <TransitionCover />
-          <SlideInOnLoad />
+          {children}<SlideInOnLoad />
         </main>
       </body>
     </html>

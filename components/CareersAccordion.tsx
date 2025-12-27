@@ -1,4 +1,5 @@
 import Image from "next/image";
+import FMLink from "@/components/FMLink";
 import Arrow from "@/components/svg/Arrow";
 import SplittingSpan from "@/components/SplittingSpan";
 
@@ -167,7 +168,7 @@ export default function CareersAccordion({
             </div>
           ))}
 
-          <a
+          <FMLink
             className="btn-submit pre:mt-[30px] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white pre:sm:sp-mt-[12] pre:sm:sp-w-[320]"
             {...applyProps}
           >
@@ -186,7 +187,7 @@ export default function CareersAccordion({
                 </div>
               </span>
             </div>
-          </a>
+          </FMLink>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ export default async function AboutPage() {
   if (!page) {
     return (
       <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110]">
-        <section className="pre:flex pre:justify-justify-between pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[98px] pre:sm:block pre:sm:sp-w-[375] pre:sm:sp-mb-[110]">
+        <section className="pre:flex pre:justify-justify-between pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[98px] pre:sm:block pre:sm:sp-w-[339] pre:sm:sp-mb-[110]">
           <div className="pre:w-[calc(517/1400*100%)] pre:sm:w-full pre:sm:sp-mb-[40]">
             <h1 className="pre:text-[24px] pre:font-gt pre:font-light slide-in pre:mb-[180px] pre:sm:sp-fs-[24] pre:sm:sp-mb-[50]">About</h1>
             <Image src="/illust/about.png" alt="" width={372} height={279} className="pre:w-[calc(372/450*100%)] pre:max-w-[372px] slide-in pre:sm:w-full pre:sm:sp-mb-[30]" />

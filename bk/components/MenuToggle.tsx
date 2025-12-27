@@ -11,8 +11,15 @@ export default function MenuToggle() {
     const ACTIVE_CLASS = "is-open"; // trigger / nav 共通
     const CLOSE_DURATION = 200; // ★ navのフェードアウト所要ms（CSSと合わせる）
 
+    // nav 内の splitting-hover（メニュー項目）
     const items = Array.from(
       nav.querySelectorAll<HTMLElement>(".splitting-hover")
+    );
+
+    // ★追加：ヘッダー内 Close（menu-trigger 内の splitting-hover）
+    // これが今まで制御されていなかったので、OPEN時に表示されなくなっていた
+    const closeLabels = Array.from(
+      trigger.querySelectorAll<HTMLElement>(".splitting-hover")
     );
 
     // stagger index（1回でOK）
@@ -24,6 +31,9 @@ export default function MenuToggle() {
     const open = () => {
       nav.classList.add(ACTIVE_CLASS);
       trigger.classList.add(ACTIVE_CLASS);
+
+      // ★追加：Close を強制表示（hover不要に）
+      closeLabels.forEach((el) => el.classList.add("stay"));
 
       // 入口アニメを毎回リスタート
       items.forEach((el) => el.classList.remove("menu-enter"));
@@ -38,6 +48,9 @@ export default function MenuToggle() {
     const close = () => {
       nav.classList.remove(ACTIVE_CLASS);
       trigger.classList.remove(ACTIVE_CLASS);
+
+      // ★追加：Close を初期状態に戻す
+      closeLabels.forEach((el) => el.classList.remove("stay"));
 
       items.forEach((el) => el.classList.remove("menu-enter"));
     };

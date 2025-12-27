@@ -6,6 +6,7 @@
   --color-gray: #959595;
   --color-darkGray: #939393;
   --color-lightGray: #D8D8D8;
+  --color-beige: #F5F5F5;
   --color-placeholder: #ADADAD;
   --color-ketchup: #C80F2E;
 
@@ -56,12 +57,15 @@
 
 .careers-accordion-illust {
   will-change: opacity, transform;
-  transition: .5s transform var(--ease-in-out-quart), .5s opacity var(--ease-in-out-quart);
+  transition: 1s transform var(--ease-in-out-quart), 1s opacity var(--ease-in-out-quart);
 }
 
 .careers-accordion-illust { opacity:0; transform:scale(1.05); }
 .careers-accordion-illust.is-illust-in { opacity:1; transform:scale(1); }
-.careers-accordion-illust.is-illust-out { opacity:0; transform:scale(1.05); }
+.careers-accordion-illust.is-illust-out { 
+  opacity:0; transform:scale(1.05); 
+  transition: .5s transform var(--ease-in-out-quart), .5s opacity var(--ease-in-out-quart);
+}
 
 .careers-accordion-title {
   &.active {
@@ -70,7 +74,8 @@
       transform: translateY(-107%);
     }
     .splitting-hover__inner > .splitting-text:nth-child(2) .char {
-      transform: translateY(-10%);
+      transform: translateY(0%);
+      /* transform: translateY(-10%); */
     }
     .careers-accordion-illust {
       opacity: 1;
@@ -191,7 +196,7 @@
             transform .5s var(--ease-out-quart) .5s;
        }
       .plus {
-        transform: translate3d(0, calc(-50% + 170%), 0);
+        transform: translate3d(0, calc(-50% + 230%), 0);
         transition:
           opacity .5s var(--ease-out-quart),
           color .5s var(--ease-out-quart),
@@ -267,7 +272,8 @@
         .splitting-text {
             &:nth-child(1) {
                 .char {
-                    transform: translateY(-10%);
+                    /* transform: translateY(-10%); */
+                  transform: translateY(0%);
                 }
             }
             &:nth-child(2) {
@@ -311,5 +317,45 @@
     opacity: 1;
     filter: blur(0);
     transform: translateY(0);
+  }
+}
+
+@media (min-width: 750px) {
+  /* ======================================
+   Custom Checkbox (Privacy Policy)
+   ====================================== */
+
+  .form-checkbox {
+    position: relative;
+    margin-right: 10px;
+    width: 25px;
+    height: 25px;
+    border: 1px solid var(--color-lightGray);
+    background: var(--color-beige);
+    cursor: pointer;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .form-checkbox:checked::before {
+    position: absolute;
+    top: 1px;
+    left: 7px;
+    width: 8px;
+    height: 16px;
+    border-right: 2px solid #000;
+    border-bottom: 2px solid #000;
+    transform: rotate(50deg);
+    content: "";
+  }
+
+  /* error 時（必要なら） */
+  .form-checkbox.is-error {
+    border-color: #f55;
+  }
+  .form-checkbox.is-error:checked::before {
+    border-color: #f55;
   }
 }

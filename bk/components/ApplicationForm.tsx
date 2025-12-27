@@ -21,8 +21,7 @@ type RowProps = {
   error?: string;
   children: React.ReactNode;
 
-  // ▼ Rowごとに差し替え可能
-  className?: string; // root
+  className?: string;
   labelClassName?: string;
   bodyClassName?: string;
   errorClassName?: string;
@@ -47,12 +46,7 @@ function Row({
   errorPlacement = "below",
 }: RowProps) {
   return (
-    <div
-      className={cx(
-        "pre:flex pre:flex-col pre:gap-[10px]",
-        className
-      )}
-    >
+    <div className={cx("pre:flex pre:flex-col pre:gap-[10px]", className)}>
       <label
         htmlFor={htmlFor}
         className={cx(
@@ -85,12 +79,7 @@ function Row({
       </div>
 
       {error && errorPlacement === "inline" && (
-        <p
-          className={cx(
-            "pre:mt-[6px] pre:text-[#f55] pre:text-[12px]",
-            errorClassName
-          )}
-        >
+        <p className={cx("pre:mt-[6px] pre:text-[#f55] pre:text-[12px]", errorClassName)}>
           {error}
         </p>
       )}
@@ -100,7 +89,6 @@ function Row({
 
 /* =========================
    Field styles
-   input / textarea / select を分離
    ========================= */
 
 const fieldBase =
@@ -115,7 +103,10 @@ const textareaClass = cx(
   fieldBase,
   "pre:min-h-[244px] pre:px-[12px] pre:py-[10px] pre:resize-y pre:bg-beige"
 );
-const selectClass = cx(fieldBase, "pre:h-[40px] pre:px-[12px] pre:border pre:border-solid pre:border-darkGray");
+const selectClass = cx(
+  fieldBase,
+  "pre:h-[40px] pre:px-[12px] pre:border pre:border-solid pre:border-darkGray"
+);
 
 const fieldErrorClass =
   "pre:border-[#f55] pre:text-[#f55] pre:placeholder:text-[#f55]";
@@ -140,54 +131,37 @@ const STATUS_OPTIONS = [
 ] as const;
 
 const PREFS = [
-  "北海道",
-  "青森県",
-  "岩手県",
-  "宮城県",
-  "秋田県",
-  "山形県",
-  "福島県",
-  "茨城県",
-  "栃木県",
-  "群馬県",
-  "埼玉県",
-  "千葉県",
-  "東京都",
-  "神奈川県",
-  "新潟県",
-  "富山県",
-  "石川県",
-  "福井県",
-  "山梨県",
-  "長野県",
-  "岐阜県",
-  "静岡県",
-  "愛知県",
-  "三重県",
-  "滋賀県",
-  "京都府",
-  "大阪府",
-  "兵庫県",
-  "奈良県",
-  "和歌山県",
-  "鳥取県",
-  "島根県",
-  "岡山県",
-  "広島県",
-  "山口県",
-  "徳島県",
-  "香川県",
-  "愛媛県",
-  "高知県",
-  "福岡県",
-  "佐賀県",
-  "長崎県",
-  "熊本県",
-  "大分県",
-  "宮崎県",
-  "鹿児島県",
+  "北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",
+  "茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県",
+  "新潟県","富山県","石川県","福井県","山梨県","長野県",
+  "岐阜県","静岡県","愛知県","三重県",
+  "滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県",
+  "鳥取県","島根県","岡山県","広島県","山口県",
+  "徳島県","香川県","愛媛県","高知県",
+  "福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県",
   "沖縄県",
 ];
+
+/* =========================
+   Default job from previous page
+   ========================= */
+
+const LS_JOB_KEY = "ktcp:apply_job";
+
+// 「遷移前画面が front engineer / web director」みたいな slug を入れても動くようにする保険
+const slugToJob: Record<string, (typeof JOB_OPTIONS)[number]["value"]> = {
+  "front-engineer": "front_end_engineer",
+  "front-end-engineer": "front_end_engineer",
+  "front-end": "front_end_engineer",
+  "frontend-engineer": "front_end_engineer",
+  "front": "front_end_engineer",
+
+  "web-director": "web_director",
+  "director": "web_director",
+
+  "web-designer": "web_designer",
+  "designer": "web_designer",
+};
 
 /* =========================
    Component
@@ -196,22 +170,6 @@ const PREFS = [
 export default function ApplicationForm() {
   // job
   const [job, setJob] = useState<(typeof JOB_OPTIONS)[number]["value"] | "">("");
-  // /application#front_end_engineer などの hash から応募職種を初期選択
-  useEffect(() => {
-    const applyFromHash = () => {
-      const raw = window.location.hash || "";
-      const hash = decodeURIComponent(raw).replace(/^#/, "").trim(); // "front_end_engineer"
-
-      if (!hash) return;
-
-      const exists = JOB_OPTIONS.some((o) => o.value === hash);
-      if (exists) setJob(hash as any);
-    };
-
-    applyFromHash(); // 初回
-    window.addEventListener("hashchange", applyFromHash);
-    return () => window.removeEventListener("hashchange", applyFromHash);
-  }, []);
 
   // basic
   const [name, setName] = useState("");
@@ -231,7 +189,8 @@ export default function ApplicationForm() {
   const [email2, setEmail2] = useState("");
 
   // status / pr
-  const [status, setStatus] = useState<(typeof STATUS_OPTIONS)[number]["value"]>("");
+  const [status, setStatus] =
+    useState<(typeof STATUS_OPTIONS)[number]["value"]>("");
   const [pr, setPr] = useState("");
 
   // files / url
@@ -248,10 +207,38 @@ export default function ApplicationForm() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
+  // ★ 初期：localStorage から応募職種を復元
+  useEffect(() => {
+    // ユーザーがすでに選んでいたら上書きしない
+    if (job) return;
+
+    try {
+      const raw = window.localStorage.getItem(LS_JOB_KEY);
+      if (!raw) return;
+
+      // 1) value が入ってるケース
+      const byValue = JOB_OPTIONS.find((o) => o.value === raw)?.value;
+      if (byValue) {
+        setJob(byValue);
+        return;
+      }
+
+      // 2) slug が入ってるケース
+      const bySlug = slugToJob[raw];
+      if (bySlug) {
+        setJob(bySlug);
+      }
+    } catch {
+      // noop
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const emailRegex = useMemo(
     () => /^([a-z0-9+_\-]+)(\.[a-z0-9+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,}$/i,
     []
   );
+
   const telRegex = useMemo(
     () => /^\(?\d{2,5}\)?[-.\s]?\d{1,4}[-.\s]?\d{3,4}$/,
     []
@@ -267,7 +254,8 @@ export default function ApplicationForm() {
     if (!gender) e.gender = "選択してください";
 
     if (!postal.trim()) e.postal = "入力してください";
-    else if (!/^\d{3}-?\d{4}$/.test(postal)) e.postal = "郵便番号をご確認ください";
+    else if (!/^\d{3}-?\d{4}$/.test(postal))
+      e.postal = "郵便番号をご確認ください";
 
     if (!pref) e.pref = "選択してください";
     if (!address1.trim()) e.address1 = "入力してください";
@@ -345,6 +333,11 @@ export default function ApplicationForm() {
         mode: "no-cors",
       });
 
+      // ★ 次回に引きずらない
+      try {
+        window.localStorage.removeItem(LS_JOB_KEY);
+      } catch {}
+
       setSent(true);
 
       // reset
@@ -369,7 +362,9 @@ export default function ApplicationForm() {
       setAgree(false);
       setErrors({});
     } catch {
-      setErrors({ submit: "送信に失敗しました。時間をおいて再度お試しください。" });
+      setErrors({
+        submit: "送信に失敗しました。時間をおいて再度お試しください。",
+      });
     } finally {
       setSending(false);
     }
@@ -482,7 +477,11 @@ export default function ApplicationForm() {
             type="date"
             value={birthday}
             onChange={(e) => setBirthday(e.target.value)}
-            className={cx(inputClass, ' pre:border pre:border-solid pre:border-darkGray ', errors.birthday && fieldErrorClass)}
+            className={cx(
+              inputClass,
+              "pre:border pre:border-solid pre:border-darkGray",
+              errors.birthday && fieldErrorClass
+            )}
             required
           />
         </Row>
@@ -654,7 +653,11 @@ export default function ApplicationForm() {
             type="file"
             accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
             onChange={(e) => setResume(e.target.files?.[0] ?? null)}
-            className={cx(inputClass, "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray", errors.resume && fieldErrorClass)}
+            className={cx(
+              inputClass,
+              "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray",
+              errors.resume && fieldErrorClass
+            )}
             required
           />
         </Row>
@@ -666,7 +669,11 @@ export default function ApplicationForm() {
             type="file"
             accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
             onChange={(e) => setWorkHistory(e.target.files?.[0] ?? null)}
-            className={cx(inputClass, "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray", errors.workHistory && fieldErrorClass)}
+            className={cx(
+              inputClass,
+              "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray",
+              errors.workHistory && fieldErrorClass
+            )}
             required
           />
         </Row>
@@ -678,7 +685,10 @@ export default function ApplicationForm() {
             type="file"
             accept=".pdf,.png,.jpg,.jpeg,.zip"
             onChange={(e) => setPortfolioFile(e.target.files?.[0] ?? null)}
-            className={cx(inputClass, "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray")}
+            className={cx(
+              inputClass,
+              "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray"
+            )}
           />
         </Row>
 
@@ -701,7 +711,9 @@ export default function ApplicationForm() {
           <p className="pre:mb-[8px] pre:text-[#f55] pre:text-[12px]">{errors.agree}</p>
         )}
 
-        <p className="pre:text-[12px] pre:text-center pre:mb-[15px]">プライバシーポリシー同意チェック</p>
+        <p className="pre:text-[12px] pre:text-center pre:mb-[15px]">
+          プライバシーポリシー同意チェック
+        </p>
 
         <label className="pre:flex pre:items-center pre:justify-center pre:gap-[10px] pre:cursor-pointer">
           <input

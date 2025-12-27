@@ -160,7 +160,7 @@
   grid-auto-flow: row;
   overflow: hidden;
   /* 行が詰まりすぎるなら 1.1〜1.25 に調整 */
-  line-height: 1.1;
+  /* line-height: 1.1; */
 }
 
 /* 2枚とも同じセルに置く */
@@ -190,7 +190,8 @@
 
 /* 初期位置（あなたの設計を踏襲） */
 .splitting-hover__inner > .splitting-text:nth-child(1) .char {
-  transform: translateY(-10%);
+  transform: translateY(0%);
+  /* transform: translateY(-10%); */
 }
 .splitting-hover__inner > .splitting-text:nth-child(2) .char {
   transform: translateY(107%);
@@ -202,14 +203,16 @@
   transform: translateY(-107%);
 }
 .splitting-hover:hover .splitting-hover__inner > .splitting-text:nth-child(2) .char {
-  transform: translateY(-10%);
+  /* transform: translateY(-10%); */
+  transform: translateY(0%);
 }
 
 .splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(1) .char {
   transform: translateY(-107%);
 }
 .splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(2) .char {
-  transform: translateY(-10%);
+  /* transform: translateY(-10%); */
+  transform: translateY(0%);
 }
 
 .icon-hover {
@@ -255,44 +258,3 @@
 }
 }
 
-.splitting-hover {
-    .splitting-hover__inner {
-        position: relative;
-        top: 2.5%;
-        display: inline-block;
-        overflow: hidden;
-        .splitting-text {
-            &:nth-child(1) {
-                .char {
-                    transform: translateY(-10%);
-                }
-            }
-            &:nth-child(2) {
-                .char {
-                    transform: translateY(107%);
-                }
-            }
-        }
-    }
-}
-
-.splitting-hover {
-    position: relative;
-    .splitting-hover__inner {
-        position: relative;
-        display: inline-block;
-        overflow: hidden;
-        line-height: 1;
-        .splitting-text {
-            &:nth-child(1) {
-                position: relative;
-                z-index: 1;
-            }
-            &:nth-child(2) {
-                position: absolute;
-                top: 0;
-                left: 0;
-            }
-        }
-    }
-}

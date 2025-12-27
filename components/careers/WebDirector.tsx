@@ -70,7 +70,7 @@ export default function WebDirector() {
         },
       ]}
       applyLabel="APPLY NOW"
-      applyHref="/application"
+      applyHref="/application#web_director"
     />
   );
 }

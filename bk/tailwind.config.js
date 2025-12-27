@@ -17,7 +17,7 @@ module.exports = {
 
 	plugins: [
 		plugin(function ({ matchUtilities }) {
-			const SP_BASE = 393;
+			const SP_BASE = 375;
 			const TB_BASE = 1100;
 
 			const sp = (v) => `calc(${v} / ${SP_BASE} * 100vw)`;

@@ -58,8 +58,12 @@
   --power4-ease-in-out: var(--ease-in-out-quint);
 
   --power0: linear;
-  --color-ketchup: #C80F2E;
+  --color-gray: #959595;
   --color-darkGray: #939393;
+  --color-lightGray: #D8D8D8;
+  --color-beige: #F5F5F5;
+  --color-placeholder: #ADADAD;
+  --color-ketchup: #C80F2E;
 }
 
 body {
@@ -94,15 +98,18 @@ a {
 /* ▼ 表示アニメ（enter）用 */
 .slide-in {
   opacity: 0;
+  filter: blur(10px);
   transform: translateY(30px);
   transition:
     opacity 1.5s var(--ease-in-out-quint),
-    transform 1.5s var(--ease-in-out-quint);
+    transform 1.5s var(--ease-in-out-quint),
+    filter 1s var(--ease-in-out-quad);
 }
 
 /* 表示された状態 */
 .slide-in.is-shown {
   opacity: 1;
+  filter: blur(0px);
   transform: translateY(0);
 }
 
@@ -181,7 +188,8 @@ html.is-page-masked #page-mask {
           .splitting-text {
               &:nth-child(1) {
                   .char {
-                      transform: translateY(-10%);
+                      transform: translateY(0%);
+                      /* transform: translateY(-10%); */
                   }
               }
               &:nth-child(2) {

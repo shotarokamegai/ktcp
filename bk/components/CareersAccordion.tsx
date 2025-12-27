@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Arrow from "@/components/svg/Arrow";
 import SplittingSpan from "@/components/SplittingSpan";
+import FMLink from "@/components/FMLink";
+import { setApplyJob } from "@/lib/applyJob";
 
 type ListItem = { text: string };
 
@@ -81,7 +83,7 @@ export default function CareersAccordion({
         className="careers-accordion-title accordion-trigger js-pc-accordion pre:hover:text-ketchup splitting-hover pre:sticky! pre:top-24 pre:sm:sp-top-[50]"
         data-target={id}
       >
-        <h3 className="pre:text-[18px] pr:font-gt pre:font-light pre:sm:sp-fs-[18] pre:sm:leading-[1]">
+        <h3 className="pre:text-[18px] pr:font-gt pre:font-light">
           <span className="splitting-hover__inner">
             <SplittingSpan text={title} />
             <SplittingSpan text={title} />
@@ -167,8 +169,10 @@ export default function CareersAccordion({
             </div>
           ))}
 
-          <a
-            className="btn-submit pre:mt-[30px] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white pre:sm:sp-mt-[12]"
+          <FMLink
+            href="/careers/application"
+            onClick={() => setApplyJob("front_end_engineer")}
+            className="btn-submit pre:mt-[30px] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white pre:sm:sp-mt-[12] pre:sm:sp-w-[320]"
             {...applyProps}
           >
             <span className="splitting-hover__inner">
@@ -186,7 +190,7 @@ export default function CareersAccordion({
                 </div>
               </span>
             </div>
-          </a>
+          </FMLink>
         </div>
       </div>
     </div>
