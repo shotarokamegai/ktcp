@@ -135,7 +135,7 @@ export default function CareersAccordion({
                         {sec.lead}
                       </p>
                     )}
-                    <ul className="pre:[&>li]:text-[12px] pre:[&>li]:pb-3 pre:[&>li]:mb-3 pre:[&>li:last-child]:mb-0 pre:[&>li:last-child]:border-b-0 pre:[&>li]:border-b pre:[&>li]:border-darkGray pre:[&>li]:border-solid">
+                    <ul className="pre:[&>li]:text-[12px] pre:[&>li]:pb-3 pre:[&>li]:mb-3 pre:[&>li:last-child]:mb-0 pre:[&>li:last-child]:border-b-0 pre:[&>li]:border-b pre:[&>li]:border-darkGray pre:[&>li]:border-solid pre:[&>li]:sm:sp-fs[12] pre:[&>li]:sm:sp-pb-[6] pre:[&>li]:sm:sp-mb-[6]">
                       {sec.items.map((it, i) => (
                         <li key={i}>{it.text}</li>
                       ))}
@@ -144,17 +144,17 @@ export default function CareersAccordion({
                 )}
 
                 {sec.kind === "flow" && (
-                  <ul className="pre:[&>li]:text-[12px] pre:[&>li]:pb-3 pre:[&>li]:mb-3 pre:[&>li:last-child]:mb-0 pre:[&>li:last-child]:border-b-0 pre:[&>li]:border-b pre:[&>li]:border-darkGray pre:[&>li]:border-solid pre:[&>li]:flex pre:[&>li]:items-center">
+                  <ul className="pre:[&>li]:text-[12px] pre:[&>li]:pb-3 pre:[&>li]:sm:sp-pb-[25] pre:[&>li]:mb-3 pre:[&>li]:sm:sp-mb-[25] pre:[&>li:last-child]:mb-0 pre:[&>li:last-child]:border-b-0 pre:[&>li]:border-b pre:[&>li]:border-darkGray pre:[&>li]:border-solid pre:[&>li]:flex pre:[&>li]:items-center pre:[&>li]:sm:flex-wrap pre:[&>li]:sm:justify-between">
                     {sec.items.map((it, i) => (
-                      <li key={i}>
-                        <div className="pre:w-[calc(71/496*100%)]">
-                          <p className="pre:text-[20px] pre:font-gt pre:font-light">{it.no}</p>
+                      <li key={i} className="pre:sm:sp-pl-[72] pre:sm:relative">
+                        <div className="pre:w-[calc(71/496*100%)] pre:sm:absolute pre:sm:top-0 pre:sm:left-0 pre:sm:sp-w-[72]">
+                          <p className="pre:text-[20px] pre:font-gt pre:font-light pre:sm:sp-fs-[20] pre:leading-none">{it.no}</p>
                         </div>
-                        <div className="pre:w-[calc(106/496*100%)]">
-                          <p className="pre:text-[14px] pre:font-dnp pre:font-light">{it.title}</p>
+                        <div className="pre:w-[calc(106/496*100%)] pre:sm:sp-w-[177] pre:sm:sp-mb-[20]">
+                          <p className="pre:text-[14px] pre:font-dnp pre:font-light pre:sm:sp-fs-[14] pre:leading-none">{it.title}</p>
                         </div>
-                        <div className="pre:w-[calc(319/496*100%)]">
-                          <p className="pre:text-[12px] pre:leading-[180%] pre:font-dnp pre:font-light">
+                        <div className="pre:w-[calc(319/496*100%)] pre:sm:sp-w-[177]">
+                          <p className="pre:text-[12px] pre:leading-[180%] pre:font-dnp pre:font-light pre:sm:sp-fs-[12]">
                             {it.desc ?? ""}
                           </p>
                         </div>
@@ -176,12 +176,12 @@ export default function CareersAccordion({
               <SplittingSpan text={applyLabel} />
             </span>
 
-            <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center">
+            <div className="icon-content pre:absolute center-y sm:center-y pre:right-[25px] pre:flex pre:items-center pre:sm:sp-right-[30]">
               <span className="icon-content__inner">
-                <div className="pre:p-[5px] icon">
+                <div className="pre:p-[5px] icon pre:sm:p-0">
                   <Arrow />
                 </div>
-                <div className="pre:p-[5px] icon">
+                <div className="pre:p-[5px] icon pre:sm:p-0">
                   <Arrow />
                 </div>
               </span>

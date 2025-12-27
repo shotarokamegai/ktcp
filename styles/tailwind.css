@@ -38,7 +38,7 @@
 .btn-submit {
   will-change: background-color;
   transition: background-color 0.5s var(--ease-out-quart); 
-  @apply pre:relative pre:h-20 pre:w-[375px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white pre:sm:w-full pre:sm:sp-h-[80] pre:sm:sp-fs-[20];
+  @apply pre:relative pre:h-20 pre:w-[375px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white pre:sm:sp-h-[80] pre:sm:sp-fs-[20] pre:sm:sp-w-[320];
 }
 
 /* 任意：disabledの見た目 */
@@ -134,7 +134,7 @@
   transform: translate3d(0, -50%, 0) rotate(90deg);
 }
 .careers-accordion-box {
-  @apply pre:flex pre:py-[30px] pre:pl-5 pre:pb-10 pre:border-b pre:border-lightGray pre:border-solid pre:sm:sp-py-[30] pre:sm:block pre:sm:border-none pre:sm:relative pre:sm:sp-pl-[89] pre:sm:mr-0 pre:sm:ml-auto
+  @apply pre:flex pre:py-[30px] pre:pl-5 pre:pb-10 pre:border-b pre:border-lightGray pre:border-solid pre:sm:sp-py-[30] pre:sm:block pre:sm:border-none pre:sm:relative pre:sm:sp-pl-[89] pre:sm:mr-0 pre:sm:ml-auto pre:first:pt-0
 }
 .careers-accordion-icon {
   @apply pre:h-[22px] pre:w-[22px] pre:absolute pre:right-0 pre:top-[50%] pre:transform-[translate3d(0,-50%,0)] pre:sm:sp-h-[22] pre:sm:sp-w-[22]
@@ -146,7 +146,7 @@
    @apply pre:relative pre:justify-end pre:grid
 }
 .careers-accordion__inner-content {
-   @apply pre:pt-[30px] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-1 pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light
+   @apply pre:pt-[30px] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-[10px] pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light pre:sm:sp-pt-[30] pre:[&_h4]:sm:sp-fs-[18] pre:[&_h5]:sm:sp-fs-[15] pre:[&_h4]:leading-none pre:[&_h5]:leading-none pre:[&_h4]:sm:sp-mb-[16]
 }
 
 #header {
