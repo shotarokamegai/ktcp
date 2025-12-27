@@ -61,8 +61,8 @@ export default async function WorkDetail({
     .slice(0, 4);     
 
   return (
-    <main className="container pre:pt-[307px] slide-out">
-      <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between">
+    <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110]">
+      <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between pre:sm:block pre:sm:sp-w-[339]">
         <div className="pre:w-[calc(375/1401*100%)]">
           {/* 日付 */}
           {(dateTxt) && (

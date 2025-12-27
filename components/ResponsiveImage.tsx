@@ -49,30 +49,27 @@ export default function ResponsiveImage({
   }, [placeholder_color, pc.placeholder_color, sp?.placeholder_color]);
 
   useEffect(() => {
-    const checkInView = () => {
-      const el = wrapperRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      if (rect.top + 100 <= window.innerHeight) setInView(true);
-    };
+  const el = wrapperRef.current;
+  if (!el) return;
 
-    const onScroll = () => {
-      if (ticking.current) return;
-      ticking.current = true;
-      requestAnimationFrame(() => {
-        checkInView();
-        ticking.current = false;
-      });
-    };
+  // すでに見えてる分は即 inView（初回のチラつき防止）
+  // ここは好みで消してOK
+  const rect = el.getBoundingClientRect();
+  if (rect.top <= window.innerHeight + 200) setInView(true);
 
-    checkInView();
-    window.addEventListener("scroll", onScroll);
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        setInView(true);
+        io.disconnect();
+      }
+    },
+    { root: null, rootMargin: "200px 0px", threshold: 0.01 }
+  );
+
+  io.observe(el);
+  return () => io.disconnect();
+}, []);
 
   const ratio = useMemo(() => {
     const r = (m?: ExtendedImageMeta | null) =>
@@ -80,7 +77,8 @@ export default function ResponsiveImage({
     return r(pc) || r(sp || null) || fallbackRatio;
   }, [pc, sp, fallbackRatio]);
 
-  const showImage = loaded && inView;
+  // const showImage = loaded && inView;
+  const showImage = loaded;
 
   return (
     <div

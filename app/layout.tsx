@@ -144,7 +144,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </div>
 
                   <span
-                    className={`${CAREERS_TEXT} splitting-hover__inner pre:mt-[3%]`}
+                    className={`${CAREERS_TEXT} splitting-hover__inner`}
                   >
                     <SplittingSpan text="CAREERS" />
                     <SplittingSpan text="CAREERS" />
