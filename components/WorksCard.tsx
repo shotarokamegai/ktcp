@@ -30,6 +30,7 @@ export default function WorksCard({
   }, []);
 
   const picked = pickEyecatchRandom(w, { seed: seed ?? w.id });
+  console.log(picked)
   if (!picked) return null;
 
   return (

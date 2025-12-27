@@ -102,7 +102,7 @@ export default function ResponsiveImage({
       }}
     >
       {/* ▼ BLUR プレースホルダー（白フチ対策：insetマイナス + scale） */}
-      <div
+      {/* <div
         aria-hidden
         style={{
           position: "absolute",
@@ -119,7 +119,7 @@ export default function ResponsiveImage({
           willChange: "opacity, filter, transform",
           backfaceVisibility: "hidden",
         }}
-      />
+      /> */}
 
       {/* ▼ PC/SP を picture で出し分け（表示される1枚だけロードされる） */}
       <picture>
@@ -128,7 +128,7 @@ export default function ResponsiveImage({
           src={pc.url}
           alt={alt}
           onLoad={() => setLoaded(true)}
-          loading="lazy"
+          // loading="lazy"
           style={{
             // position: "absolute",
             inset: 0,
