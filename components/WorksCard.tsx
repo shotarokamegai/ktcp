@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import FMLink from "@/components/FMLink";
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { pickEyecatchRandom } from "@/lib/wp";
@@ -13,7 +16,20 @@ export default function WorksCard({
   widthClass,
   className = "",
 }: Props) {
-  const picked = pickEyecatchRandom(w, { seed: w.id });
+  // SSR/初回Hydrationでは w.id seed（安定）→ mount後にランダムseedへ切り替え
+  const [seed, setSeed] = useState<number | null>(null);
+
+  useEffect(() => {
+    try {
+      const buf = new Uint32Array(1);
+      crypto.getRandomValues(buf);
+      setSeed(buf[0]);
+    } catch {
+      setSeed(Math.floor(Math.random() * 2 ** 32));
+    }
+  }, []);
+
+  const picked = pickEyecatchRandom(w, { seed: seed ?? w.id });
   if (!picked) return null;
 
   return (
@@ -47,19 +63,12 @@ export default function WorksCard({
       />
 
       <header className="pre:flex pre:mt-2.5 pre:sm:sp-mt-[10] pre:sm:block">
-        {/* <p className="pre:text-[15px] pre:font-gt pre:w-[70px]">
-          {w.acf?.date}
-        </p> */}
-
         <h2
           className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-105px)] pre:truncate pre:sm:sp-fs-[14] pre:truncate pre:sm:leading-[130%] pre:sm:w-full"
           dangerouslySetInnerHTML={{ __html: w.title?.rendered ?? "" }}
         />
-
         <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:sm:w-full pre:sm:text-left pre:sm:sp-fs-[10] pre:sm:sp-mt-[5]">
-          {Array.isArray(w.works_cat)
-            ? w.works_cat.map((c: any) => c.name).join(" / ")
-            : ""}
+          {Array.isArray(w.works_cat) ? w.works_cat.map((c: any) => c.name).join(" / ") : ""}
         </p>
       </header>
     </FMLink>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Work, WorkTerm } from "@/lib/wp";
 import WorksCard from "@/components/WorksCard";
 import WorksCategoryNav from "@/components/WorksCategoryNav";
@@ -22,6 +22,18 @@ export default function WorksBrowserClient({
   const [works, setWorks] = useState<Work[]>(initialWorks);
   const [activeSlug, setActiveSlug] = useState<string | null>(initialActiveSlug);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // ランダム要素を「アクセスごとに変える」ためのseed（SSR/Hydration一致のため mount後に確定）
+  const [layoutSeed, setLayoutSeed] = useState<number | null>(null);
+  useEffect(() => {
+    try {
+      const buf = new Uint32Array(1);
+      crypto.getRandomValues(buf);
+      setLayoutSeed(buf[0]);
+    } catch {
+      setLayoutSeed(Math.floor(Math.random() * 2 ** 32));
+    }
+  }, []);
 
   const abortRef = useRef<AbortController | null>(null);
   const listRef = useRef<HTMLElement | null>(null);
@@ -126,7 +138,8 @@ export default function WorksBrowserClient({
       if ((i + 1) % 3 === 0) items.push({ type: "illust", key: `illust-${i}` });
     });
 
-    const firstRowBigIndex = Math.random() > 0.5 ? 0 : 1;
+    // ★ Math.random() を使うと hydration でズレるので seed から決める
+    const firstRowBigIndex = ((layoutSeed ?? 0) & 1) === 0 ? 0 : 1;
     let workIndex = 0;
 
     return items.map((item) => {
@@ -136,11 +149,7 @@ export default function WorksBrowserClient({
             key={item.key}
             className="pre:w-1/4 pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:w-full slide-in slide-out pre:flex pre:items-center pre:justify-center"
           >
-            <img
-              src="/illust/about.png"
-              alt=""
-              className="pre:w-[calc(304/375*100%)]"
-            />
+            <img src="/illust/about.png" alt="" className="pre:w-[calc(304/375*100%)]" />
           </div>
         );
       }
@@ -149,15 +158,12 @@ export default function WorksBrowserClient({
       const row = Math.floor(workIndex / 3);
       const indexInRow = workIndex % 3;
 
-      const bigIndexForRow =
-        row % 2 === 0 ? firstRowBigIndex : 1 - firstRowBigIndex;
+      const bigIndexForRow = row % 2 === 0 ? firstRowBigIndex : 1 - firstRowBigIndex;
       const isWide = indexInRow === bigIndexForRow;
 
       workIndex++;
 
-      const widthClass = isWide
-        ? "pre:w-[calc(2/4*100%)]"
-        : "pre:w-[calc(1/4*100%)]";
+      const widthClass = isWide ? "pre:w-[calc(2/4*100%)]" : "pre:w-[calc(1/4*100%)]";
 
       return (
         <WorksCard
@@ -168,15 +174,11 @@ export default function WorksBrowserClient({
         />
       );
     });
-  }, [works]);
+  }, [works, layoutSeed]);
 
   return (
     <>
-      <WorksCategoryNav
-        categories={categories}
-        activeSlug={activeSlug}
-        onChange={onChangeCategory}
-      />
+      <WorksCategoryNav categories={categories} activeSlug={activeSlug} onChange={onChangeCategory} />
 
       <section
         ref={(el) => {

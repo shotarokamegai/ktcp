@@ -97,7 +97,7 @@ export default function ResponsiveImage({
       style={{
         position: "relative",
         width: "100%",
-        aspectRatio: ratio,
+        // aspectRatio: ratio,
         overflow: "hidden",
       }}
     >
@@ -130,11 +130,11 @@ export default function ResponsiveImage({
           onLoad={() => setLoaded(true)}
           loading="lazy"
           style={{
-            position: "absolute",
+            // position: "absolute",
             inset: 0,
             width: "100%",
-            height: "100%",
-            objectFit: fit,
+            // height: "100%",
+            // objectFit: fit,
             opacity: showImage ? 1 : 0,
             transition: "opacity .4s ease",
             zIndex: 1,
