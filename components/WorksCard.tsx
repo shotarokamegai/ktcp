@@ -109,6 +109,10 @@ export default function WorksCard({
       href={`/works/${w.slug}`}
       className={[
         widthClass,
+
+        // ✅ ここで常時 slide-in（hover依存をやめる）
+        "slide-in",
+
         "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
 
         // ✅ hover text（元に戻す）
@@ -119,7 +123,7 @@ export default function WorksCard({
         "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
         "pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))]",
         "pre:[&_.responsive-image-content]:scale-[1]",
-        "pre:hover:[&_.responsive-image-content]:scale-[1.1] slide-in",
+        "pre:hover:[&_.responsive-image-content]:scale-[1.1]",
 
         className,
       ].join(" ")}
@@ -133,12 +137,12 @@ export default function WorksCard({
         fallbackRatio={RATIO_MAP[pattern]}
       />
 
-      <header className="pre:flex pre:mt-2.5 pre:sm:block">
+      <header className="pre:flex pre:mt-2.5 pre:sm:block pre:sm:sp-mt-[8]">
         <h2
           className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-105px)] pre:truncate pre:sm:w-full transition-text pre:sm:sp-fs-[14] pre:sm:whitespace-normal pre:sm:sp-mb-[5]"
           dangerouslySetInnerHTML={{ __html: w.title?.rendered ?? "" }}
         />
-        <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:sm:w-full pre:sm:text-left transition-text">
+        <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
           {Array.isArray(w.works_cat) ? w.works_cat.map((c: any) => c.name).join(" / ") : ""}
         </p>
       </header>

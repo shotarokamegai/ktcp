@@ -137,6 +137,17 @@ export default function WorksBrowserClient({
     });
   }, [works, layoutSeed]);
 
+  useEffect(() => {
+  // works が差し替わった “後” に付与
+  const raf = requestAnimationFrame(() => {
+    const root = listRef.current ?? document;
+    root.querySelectorAll<HTMLElement>(".slide-in").forEach((el) => {
+      el.classList.add("is-shown");
+    });
+  });
+  return () => cancelAnimationFrame(raf);
+}, [works]);
+
   return (
     <>
       <WorksCategoryNav categories={categories} activeSlug={activeSlug} onChange={onChangeCategory} />
