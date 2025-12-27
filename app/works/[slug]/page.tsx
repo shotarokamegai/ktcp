@@ -62,25 +62,25 @@ export default async function WorkDetail({
 
   return (
     <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110]">
-      <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between pre:sm:block pre:sm:sp-w-[339]">
-        <div className="pre:w-[calc(375/1401*100%)]">
+      <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between pre:sm:sp-w-[339] pre:sm:block">
+        <div className="pre:w-[calc(375/1401*100%)] pre:sm:w-full pre:sm:flex pre:sm:flex-col">
           {/* 日付 */}
           {(dateTxt) && (
-            <div className="pre:mb-[14px] slide-in">
+            <div className="pre:mb-3.5 slide-in pre:sm:mb-0 pre:sm:order-2">
               {dateTxt && (
-                <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[1]">
+                <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-none pre:sm:sp-fs-[16]">
                   {dateTxt}
                 </p>
               )}
             </div>
           )}
           {/* タイトル */}
-          <h1 dangerouslySetInnerHTML={{ __html: work.title.rendered }} className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[1] slide-in" />
+          <h1 dangerouslySetInnerHTML={{ __html: work.title.rendered }} className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-none slide-in pre:sm:order-1 pre:sm:sp-fs-[24] pre:sm:sp-mb-[10]" />
           {/* カテゴリー */}
           {((categories && categories.length > 0)) && (
-            <div className="pre:mt-[426px] slide-in">
+            <div className="pre:mt-[426px] slide-in pre:sm:order-3 pre:sm:sp-mt-[110] pre:sm:sp-mb-[25]">
               {Array.isArray(categories) && categories.length > 0 && (
-                <p className="pre:text-[15px] pre:font-gt pre:font-light">
+                <p className="pre:text-[15px] pre:font-gt pre:font-light pre:sm:sp-fs-[14]">
                   {categories.map((cat, i) => (
                     <span key={cat.id}>
                       {cat.name}
@@ -92,7 +92,7 @@ export default async function WorkDetail({
             </div>
           )}
           </div>
-        <div className="pre:w-[calc(870/1401*100%)] slide-in">
+        <div className="pre:w-[calc(870/1401*100%)] slide-in slide-in pre:sm:w-full">
           {/* images（ACF images の image.url を列挙） */}
           {gallery.length > 0 && (
             <div>
@@ -111,14 +111,14 @@ export default async function WorkDetail({
       </section>
 
       {/* ▼ ここから Featured works セクションを追加 */}
-      <section className="pre:mt-40 pre:mb-[180px]">
-        <div className="pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[26px]">
-          <h2 className="pre:text-[24px] pre:font-gt pre:font-light">
+      <section className="pre:mt-40 pre:mb-[180px] pre:sm:sp-mt-[170] pre:sm:sp-mb-[110] pre:sm:sp-w-[339] pre:sm:mx-auto">
+        <div className="pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[26px] pre:sm:mx-auto pre:sm:sp-mb-[40] pre:sm:w-full">
+          <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:sm:sp-fs-[24]">
             Featured works
           </h2>
         </div>
 
-        <div className="pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto">
+        <div className="pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:sm:w-full">
           {featured.map((w: any) => {
             const picked = pickEyecatchRandom(w, { seed: w.id });
             if (!picked) return null;
@@ -130,6 +130,7 @@ export default async function WorkDetail({
                 className={
                   [
                     "pre:w-1/4", // ★ 全部1/4幅
+                    "pre:sm:sp-w-[160]", // ★ 全部1/4幅
                     "pre:mb-5",
                     "pre:px-[calc(7.5/1401*100%)]",
                     "pre:hover:text-ketchup",
@@ -150,13 +151,13 @@ export default async function WorkDetail({
                   fallbackRatio="4 / 3"
                 />
 
-                <header className="pre:flex pre:mt-2.5 pre:justify-between">
+                <header className="pre:flex pre:mt-2.5 pre:justify-between pre:sm:block pre:sm:sp-mt-[6]">
                   <h2
-                    className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(222/338*100%)]"
+                    className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(222/338*100%)] pre:sm:w-full pre:sm:sp-fs-[14] pre:sm:leading-[130%]"
                     dangerouslySetInnerHTML={{ __html: w.title.rendered }}
                   />
 
-                  <p className="pre:text-[10px] pre:leading-[130%] pre:font-gt pre:font-light pre:w-[calc(58/338*100%)] pre:text-right">
+                  <p className="pre:text-[10px] pre:leading-[130%] pre:font-gt pre:font-light pre:w-[calc(58/338*100%)] pre:text-right pre:sm:w-full pre:sm:text-left pre:sm:sp-fs-[10]">
                     {Array.isArray(w.works_cat) && w.works_cat.length > 0
                       ? w.works_cat.map((cat: any) => cat.name).join(" / ")
                       : ""}

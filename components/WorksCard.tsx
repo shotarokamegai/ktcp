@@ -119,7 +119,7 @@ export default function WorksCard({
         "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
         "pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))]",
         "pre:[&_.responsive-image-content]:scale-[1]",
-        "pre:hover:[&_.responsive-image-content]:scale-[1.1]",
+        "pre:hover:[&_.responsive-image-content]:scale-[1.1] slide-in",
 
         className,
       ].join(" ")}
@@ -135,7 +135,7 @@ export default function WorksCard({
 
       <header className="pre:flex pre:mt-2.5 pre:sm:block">
         <h2
-          className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-105px)] pre:truncate pre:sm:w-full transition-text"
+          className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-105px)] pre:truncate pre:sm:w-full transition-text pre:sm:sp-fs-[14] pre:sm:whitespace-normal pre:sm:sp-mb-[5]"
           dangerouslySetInnerHTML={{ __html: w.title?.rendered ?? "" }}
         />
         <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:sm:w-full pre:sm:text-left transition-text">

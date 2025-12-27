@@ -98,7 +98,7 @@ export default function WorksBrowserClient({
         return (
           <div
             key={item.key}
-            className="pre:w-1/4 pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0 pre:flex pre:items-center pre:justify-center"
+            className="pre:w-1/4 pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0 pre:flex pre:items-center pre:justify-center slide-in"
           >
             <img
               src="/illust/about.png"
