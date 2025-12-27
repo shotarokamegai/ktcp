@@ -49,6 +49,11 @@ type Props = {
   sections: Section[];
 
   applyLabel?: string;
+
+  /**
+   * Next.js Link(FMLink) は href 必須なので、
+   * ここは optional のままでも中で必ずフォールバックを当てる
+   */
   applyHref?: string;
   applyOnClick?: () => void;
 };
@@ -71,10 +76,9 @@ export default function CareersAccordion({
   applyHref,
   applyOnClick,
 }: Props) {
-  const applyProps = {
-    ...(applyHref ? { href: applyHref } : {}),
-    ...(applyOnClick ? { onClick: applyOnClick } : {}),
-  };
+  // ✅ FMLink（=Next Link）に必ずhrefを渡す（undefinedを混ぜない）
+  // ここはプロジェクトの応募ページに合わせて調整してください
+  const href = applyHref ?? "/application";
 
   return (
     <div className="accordion careers-accordion group" id={id}>
@@ -100,13 +104,7 @@ export default function CareersAccordion({
       <div className="accordion__inner careers-accordion__inner pre:grid-cols-[calc(436/1401*100%)_1fr] pre:gap-x-[calc(158/1401*100%)] pre:items-start pre:sm:!block">
         <div className="pre:sticky pre:top-[140px] careers-accordion-illust pre:pl-[calc(114/436*100%)] pre:pt-[70px] pre:sm:relative pre:sm:top-auto pre:sm:pt-0 pre:sm:p-0 pre:sm:sp-mt-[50]">
           <div className={cx("pre:w-full pre:sm:sp-pl-[89] pre:sm:flex pre:sm:justify-center", illustWrapClassName)}>
-            <Image
-              src={illustSrc}
-              alt=""
-              width={illustWidth}
-              height={illustHeight}
-              className={illustClassName}
-            />
+            <Image src={illustSrc} alt="" width={illustWidth} height={illustHeight} className={illustClassName} />
           </div>
         </div>
 
@@ -169,8 +167,9 @@ export default function CareersAccordion({
           ))}
 
           <FMLink
+            href={href}              // ✅ 必須
+            onClick={applyOnClick}   // ✅ optional
             className="btn-submit pre:mt-[30px] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white pre:sm:sp-mt-[12] pre:sm:sp-w-[320]"
-            {...applyProps}
           >
             <span className="splitting-hover__inner">
               <SplittingSpan text={applyLabel} />
