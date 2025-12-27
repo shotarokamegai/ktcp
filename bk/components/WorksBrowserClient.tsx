@@ -1,3 +1,4 @@
+// WorksBrowserClient.tsx
 "use client";
 
 import { useMemo, useRef, useState } from "react";
@@ -22,6 +23,20 @@ export default function WorksBrowserClient({
   const [works, setWorks] = useState<Work[]>(initialWorks);
   const [activeSlug, setActiveSlug] = useState<string | null>(initialActiveSlug);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // ★ アクセス（ページロード）ごとに1回だけ生成される seed
+  //   ※同一アクセス中は固定されるので、チラつき防止にもなる
+  const [visitSeed] = useState(() => {
+    try {
+      // randomUUID があれば最優先
+      if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+        return crypto.randomUUID();
+      }
+    } catch (_) {}
+    // フォールバック
+    return `${Date.now()}-${Math.random()}`;
+  });
+  console.log("visitSeed:", visitSeed);
 
   const abortRef = useRef<AbortController | null>(null);
   const listRef = useRef<HTMLElement | null>(null);
@@ -164,11 +179,13 @@ export default function WorksBrowserClient({
           key={item.key}
           work={w}
           widthClass={widthClass}
-          className="pre:mb-[20px]"
+          className="pre:mb-5"
+          // ★ アクセスごとに変わる seed を混ぜる（同一アクセス中は固定）
+          seed={`${visitSeed}-${w.id}`}
         />
       );
     });
-  }, [works]);
+  }, [works, visitSeed]);
 
   return (
     <>

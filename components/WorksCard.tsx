@@ -52,7 +52,7 @@ export default function WorksCard({
         </p> */}
 
         <h2
-          className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-105px)] pre:truncate pre:sm:sp-fs-[14] pre:truncate pre:sm:leading-[130%]"
+          className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-105px)] pre:truncate pre:sm:sp-fs-[14] pre:truncate pre:sm:leading-[130%] pre:sm:w-full"
           dangerouslySetInnerHTML={{ __html: w.title?.rendered ?? "" }}
         />
 

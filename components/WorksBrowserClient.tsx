@@ -164,7 +164,7 @@ export default function WorksBrowserClient({
           key={item.key}
           work={w}
           widthClass={widthClass}
-          className="pre:mb-[20px]"
+          className="pre:mb-5"
         />
       );
     });

@@ -24,7 +24,6 @@ export type Work = {
       pattern1?: any;
       pattern2?: any;
       pattern3?: any;
-      pattern4?: any;
     };
     // ここは page.tsx 側で参照してるので型に残しておく
     placeholder_color?: string | null;
@@ -212,13 +211,14 @@ export function pickEyecatchRandom(
   opts?: { seed?: string | number }
 ): { pc: ImageMeta; sp?: ImageMeta | null } | null {
   const g = w?.acf?.eyecatch ?? {};
-  const keys = ["pattern1", "pattern2", "pattern3", "pattern4"] as const;
+  const keys = ["pattern1", "pattern2", "pattern3"] as const;
 
   const candidates: Array<{ pc: ImageMeta | null; sp: ImageMeta | null }> = [];
   for (const k of keys) {
     const got = extractPattern((g as any)[k]);
     if (got) candidates.push(got);
   }
+  console.log("candidates:", candidates.length, "seed:", opts?.seed);
   if (candidates.length === 0) return null;
 
   const seedNum =

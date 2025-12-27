@@ -219,6 +219,14 @@ export function pickEyecatchRandom(
     const got = extractPattern((g as any)[k]);
     if (got) candidates.push(got);
   }
+    console.log(
+    "work:",
+    w?.id,
+    "candidates:",
+    candidates.map(c => c.pc || c.sp),
+    "seed:",
+    opts?.seed
+  );
   if (candidates.length === 0) return null;
 
   const seedNum =

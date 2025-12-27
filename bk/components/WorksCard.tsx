@@ -1,3 +1,4 @@
+// WorksCard.tsx
 import FMLink from "@/components/FMLink";
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { pickEyecatchRandom } from "@/lib/wp";
@@ -6,14 +7,17 @@ type Props = {
   work: any;
   widthClass: string;
   className?: string;
+  seed?: string | number; // ★追加
 };
 
 export default function WorksCard({
   work: w,
   widthClass,
   className = "",
+  seed,
 }: Props) {
-  const picked = pickEyecatchRandom(w, { seed: w.id });
+  // ★ アクセスseedが来ていればそれを使う（なければ従来通りid）
+  const picked = pickEyecatchRandom(w, { seed: seed ?? w.id });
   if (!picked) return null;
 
   return (
@@ -47,12 +51,8 @@ export default function WorksCard({
       />
 
       <header className="pre:flex pre:mt-2.5 pre:sm:sp-mt-[10] pre:sm:block">
-        {/* <p className="pre:text-[15px] pre:font-gt pre:w-[70px]">
-          {w.acf?.date}
-        </p> */}
-
         <h2
-          className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-105px)] pre:truncate pre:sm:sp-fs-[14] pre:truncate pre:sm:leading-[130%]"
+          className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-105px)] pre:truncate pre:sm:sp-fs-[14] pre:truncate pre:sm:leading-[130%] pre:sm:w-full"
           dangerouslySetInnerHTML={{ __html: w.title?.rendered ?? "" }}
         />
 
