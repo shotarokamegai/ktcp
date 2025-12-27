@@ -87,7 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MenuToggle />
 
         <header className={HEADER} id="header">
-          <h1 className="pre:relative pre:z-100">
+          <h1 className="pre:relative pre:z-100 slide-in">
             <FMLink href="/" className={LOGO_LINK}>
               <Image
                 src="/logo.svg"
@@ -110,7 +110,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 />
               </div>
 
-              <li className="pre:leading-none">
+              <li className="pre:leading-none slide-in">
                 <HeaderNavLink
                   href="/about"
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
@@ -122,7 +122,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </HeaderNavLink>
               </li>
 
-              <li className="pre:leading-none">
+              <li className="pre:leading-none slide-in">
                 <HeaderNavLink
                   href="/contact"
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
@@ -134,7 +134,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </HeaderNavLink>
               </li>
 
-              <li className="pre:leading-none">
+              <li className="pre:leading-none slide-in">
                 <HeaderNavLink
                   href="/careers"
                   className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover pre:sm:overflow-hidden`}

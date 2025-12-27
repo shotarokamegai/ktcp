@@ -34,6 +34,11 @@
   }
 }
 
+.transition-text {
+  will-change: color;
+  transition: color 0.75s var(--ease-out-quart); 
+}
+
 
 .btn-submit {
   will-change: background-color;
@@ -184,29 +189,29 @@
     filter: blur(12px);
     /* transform: translateY(6px); */
     transition:
-      opacity .5s var(--ease-in-out-quart) 1s,
+      opacity .75s var(--ease-in-out-quart) 1s,
       visibility 0ms linear 1.5s,
-      filter .5s var(--ease-in-out-quart) 1s,
-      transform .5s var(--ease-out-quart) 1s;
+      filter .75s var(--ease-in-out-quart) 1s,
+      transform .75s var(--ease-out-quart) 1s;
        will-change: opacity, filter, transform;
        .char {
           transition:
-            opacity .5s var(--ease-out-quart),
-            color .5s var(--ease-out-quart),
-            transform .5s var(--ease-out-quart) .5s;
+            opacity .75s var(--ease-out-quart),
+            color .75s var(--ease-out-quart),
+            transform .75s var(--ease-out-quart) .5s;
        }
       .plus {
         transform: translate3d(0, calc(-50% + 230%), 0);
         transition:
-          opacity .5s var(--ease-out-quart),
-          color .5s var(--ease-out-quart),
-          transform .5s var(--ease-out-quart) .5s;
+          opacity .75s var(--ease-out-quart),
+          color .75s var(--ease-out-quart),
+          transform .75s var(--ease-out-quart) .5s;
       }
       .illust {
         opacity: 0;
         transform: translate3d(-50%, -50%, 0) scale(1.05);
         will-change: opacity, transform;
-        transition: .5s transform var(--ease-in-out-quart) .5s, .5s opacity var(--ease-in-out-quart) .5s;
+        transition: .75s transform var(--ease-in-out-quart) .75s, .75s opacity var(--ease-in-out-quart) .75s;
       }
       .splitting-hover {
       .splitting-hover__inner {
@@ -235,15 +240,15 @@
     filter: blur(0);
     transform: translateY(0);
     transition:
-      opacity .5s var(--ease-in-out-quart),
+      opacity .75s var(--ease-in-out-quart),
       visibility 0ms linear,
-      filter .5s var(--ease-in-out-quart),
-      transform .5s var(--ease-out-quart) .5s;
+      filter .75s var(--ease-in-out-quart),
+      transform .75s var(--ease-out-quart) .75s;
 
       .plus {
         transform: translate3d(0, -50%, 0);
         transition:
-          transform .5s var(--ease-out-quart);
+          transform .75s var(--ease-out-quart);
         transition-delay:
           calc( 8 * 0.05s + .1s);
       }
@@ -252,16 +257,16 @@
         opacity: 1;
         transform: translate3d(-50%, -50%, 0) scale(1);
         will-change: opacity, transform;
-        transition: .5s transform var(--ease-in-out-quart) .3s, .5s opacity var(--ease-in-out-quart) .3s;
+        transition: .75s transform var(--ease-in-out-quart) .3s, .75s opacity var(--ease-in-out-quart) .3s;
       }
 
     .splitting-text .char {
       display: inline-block;
       will-change: transform, opacity;
       transition:
-        opacity .5s var(--ease-out-quart),
-        color .5s var(--ease-out-quart),
-        transform .5s var(--ease-out-quart);
+        opacity .75s var(--ease-out-quart),
+        color .75s var(--ease-out-quart),
+        transform .75s var(--ease-out-quart);
       transition-delay:
         calc(var(--char-index) * 0.05s + .1s),
         calc(var(--char-index) * 0.05s + .1s),

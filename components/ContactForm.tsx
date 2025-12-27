@@ -3,6 +3,7 @@
 import { useState } from "react";
 import FMLink from "@/components/FMLink";
 import Arrow from "@/components/svg/Arrow";
+import Image from "next/image";
 import SplittingSpan from "@/components/SplittingSpan";
 
 const GETFORM_ENDPOINT =
@@ -124,11 +125,20 @@ export default function ContactForm() {
     "pre:sm:sp-fs-[16]";
 
   // エラー時の input 表現（必要なら）
-  const iptErrorClass = "pre:text-ketchup pre:placeholder:text-ketchup";
+  const iptErrorClass = "pre:text-ketchup pre:placeholder:text-[#f55]";
 
   if (sent) {
     return (
-      <div>
+    <section
+      className="
+        pre:mb-[180px]
+        pre:w-[calc(100%-40px)]
+        pre:mx-auto
+        pre:sm:sp-w-[339]
+        pre:sm:block
+         pre:sm:sp-mb-[110]
+      "
+    >
         <h2 className="pre:text-[24px] pre:text-center pre:font-gt pre:font-light pre:mb-[50px]">
           Message Sent
         </h2>
@@ -160,11 +170,52 @@ export default function ContactForm() {
             </span>
           </div>
         </FMLink>
-      </div>
+      </section>
     );
   }
 
   return (
+    <section
+      className="
+        pre:grid
+        pre:items-start
+        pre:grid-cols-[calc(375/1401*100%)_1fr]
+        pre:gap-x-[calc(192/1401*100%)]
+        pre:mb-[180px]
+        pre:w-[calc(100%-40px)]
+        pre:mx-auto
+        pre:sm:sp-w-[339]
+        pre:sm:block
+         pre:sm:sp-mb-[110]
+      "
+    >
+      {/* sticky は内側に */}
+      <div className="pre:sticky pre:top-24 pre:sm:relative pre:sm:top-auto pre:sm:sp-mb-[40]">
+        <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:mb-[106px] slide-in pre:sm:sp-fs-[24] pre:sm:sp-mb-[25]">
+          Contact
+        </h2>
+    
+        <div className="pre:w-[256px] pre:mb-2.5 pre:sm:sp-w-[212] pre:sm:sp-mb-[35] pre:sm:mr-0 pre:sm:ml-auto">
+          <Image
+            src="/illust/contact.png"
+            alt=""
+            width={256}
+            height={222}
+            className="pre:w-[220px] slide-in pre:sm:sp-w-[212]"
+          />
+        </div>
+    
+        <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in pre:wrap-anywhere pre:sm:sp-fs-[24]">
+          Transforming Your Content Like <br className="pre:hidden pre:sm:block" />Ketchup
+          <br className="pre:sm:hidden" />
+          Transforms a Meal, <br className="pre:hidden pre:sm:block" />The Perfect Condiment
+          <br />
+          for Your Business
+        </p>
+      </div>
+    
+      {/* 右列：ここも w は付けない（1frに任せる） */}
+      <div className="slide-in">
     <form onSubmit={handleSubmit} noValidate className="slide-in">
       <Row label="貴社名" htmlFor="company">
         <input
@@ -247,7 +298,7 @@ export default function ContactForm() {
       </Row>
 
       {errors.submit && (
-        <p className="pre:mt-[10px] pre:text-ketchup pre:text-[12px]">
+        <p className="pre:mt-[10px] pre:text-[#f55] pre:text-[12px]">
           {errors.submit}
         </p>
       )}
@@ -281,5 +332,7 @@ export default function ContactForm() {
         </button>
       </div>
     </form>
+      </div>
+    </section>
   );
 }

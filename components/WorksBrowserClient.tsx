@@ -6,7 +6,6 @@ import WorksCard from "@/components/WorksCard";
 import WorksCategoryNav from "@/components/WorksCategoryNav";
 
 const SWAP_OUT_MS = 350; // slide-out の duration に合わせる
-const REFRESH_EVENT = "slidein:refresh";
 
 type Props = {
   initialWorks: Work[];
@@ -39,99 +38,51 @@ export default function WorksBrowserClient({
   const listRef = useRef<HTMLElement | null>(null);
 
   const setUrlOnly = (slug: string | null) => {
-    const next = slug ? `/works?category=${encodeURIComponent(slug)}` : `/works`;
-    window.history.pushState({}, "", next);
-  };
-
-  const fetchWorksOnly = async (slug: string | null) => {
-    abortRef.current?.abort();
-    const ac = new AbortController();
-    abortRef.current = ac;
-
-    const qs = slug ? `?category=${encodeURIComponent(slug)}` : "";
-    const res = await fetch(`/api/works${qs}`, {
-      signal: ac.signal,
-      headers: { Accept: "application/json" },
-    });
-
-    const contentType = res.headers.get("content-type") || "";
-    const text = await res.text();
-
-    if (!res.ok) {
-      throw new Error(
-        `API error: ${res.status} ${res.statusText}\n` +
-          `URL: /api/works${qs}\n` +
-          `Body(head): ${text.slice(0, 200)}`
-      );
-    }
-    if (!contentType.includes("application/json")) {
-      throw new Error(
-        `Expected JSON but got "${contentType}"\n` +
-          `URL: /api/works${qs}\n` +
-          `Body(head): ${text.slice(0, 200)}`
-      );
-    }
-
-    const json = JSON.parse(text);
-    if (!json.ok) throw new Error(json.message || "fetch failed");
-    return json.works as Work[];
-  };
-
-  // ▼ 現在表示中を OUT（is-shown を外す）
-  const playSwapOut = () => {
-    const root = listRef.current ?? document;
-    const els = Array.from(root.querySelectorAll<HTMLElement>(".slide-in"));
-    els.forEach((el) => {
-      el.classList.remove("is-shown");
-      el.classList.add("is-hidden"); // is-hidden のCSSが無いならこの行は消してOK
-      el.style.transitionDelay = "0ms";
-    });
+    const url = new URL(window.location.href);
+    if (slug) url.searchParams.set("category", slug);
+    else url.searchParams.delete("category");
+    window.history.replaceState({}, "", url.toString());
   };
 
   const onChangeCategory = async (slug: string | null) => {
     if (slug === activeSlug) return;
 
     setIsAnimating(true);
+    setActiveSlug(slug);
+    setUrlOnly(slug);
 
-    // ① いま表示中をOUT
-    playSwapOut();
+    // abort previous fetch
+    if (abortRef.current) abortRef.current.abort();
+    const ac = new AbortController();
+    abortRef.current = ac;
 
     try {
-      // ② 次を取得
-      const nextWorks = await fetchWorksOnly(slug);
+      const params = new URLSearchParams();
+      if (slug) params.set("category", slug);
 
-      // ③ OUT 完了を待ってから差し替え
-      setTimeout(() => {
-        setActiveSlug(slug);
-        setUrlOnly(slug);
-        setWorks(nextWorks);
-
-        // ④ DOM反映後に slide-in 再実行
-        requestAnimationFrame(() => {
-          window.dispatchEvent(new Event(REFRESH_EVENT));
-          setIsAnimating(false);
-        });
-      }, SWAP_OUT_MS);
-    } catch (e) {
-      // 失敗したら見た目だけ戻す
-      requestAnimationFrame(() => {
-        const root = listRef.current ?? document;
-        const els = Array.from(root.querySelectorAll<HTMLElement>(".slide-in"));
-        els.forEach((el) => {
-          el.classList.remove("is-hidden");
-          el.classList.add("is-shown");
-          el.style.transitionDelay = "0ms";
-        });
-        setIsAnimating(false);
+      const res = await fetch(`/api/works?${params.toString()}`, {
+        signal: ac.signal,
       });
-      throw e;
+      if (!res.ok) throw new Error("fetch failed");
+      const json = (await res.json()) as { works: Work[] };
+
+      setWorks(json.works || []);
+    } catch (e: any) {
+      if (e?.name !== "AbortError") {
+        // eslint-disable-next-line no-console
+        console.error(e);
+      }
+    } finally {
+      setTimeout(() => setIsAnimating(false), SWAP_OUT_MS);
     }
   };
 
-  // ▼ ここで「work + illust差し込み」を復活させる
+  // ▼ ここで「work + illust差し込み」を作る（元の仕様に戻す）
   const renderedItems = useMemo(() => {
+    // まずは先頭9件に限定（元の挙動）
     const latest = works.slice(0, 9);
 
+    // 3件ごとに illust を差し込む
     const items: { type: "work" | "illust"; work?: Work; key: string }[] = [];
     latest.forEach((w, i) => {
       items.push({ type: "work", work: w, key: `work-${w.id}` });
@@ -147,29 +98,39 @@ export default function WorksBrowserClient({
         return (
           <div
             key={item.key}
-            className="pre:w-1/4 pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:w-full slide-in slide-out pre:flex pre:items-center pre:justify-center"
+            className="pre:w-1/4 pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0 pre:flex pre:items-center pre:justify-center"
           >
-            <img src="/illust/about.png" alt="" className="pre:w-[calc(304/375*100%)]" />
+            <img
+              src="/illust/about.png"
+              alt=""
+              className="pre:w-[calc(304/375*100%)]"
+              loading="lazy"
+            />
           </div>
         );
       }
 
       const w = item.work!;
+      // 3投稿レイアウト：3件単位で big の左右を入れ替える（0/1）
       const row = Math.floor(workIndex / 3);
-      const indexInRow = workIndex % 3;
+      const bigIndexForRow = row === 0 ? firstRowBigIndex : (row + firstRowBigIndex) % 2;
 
-      const bigIndexForRow = row % 2 === 0 ? firstRowBigIndex : 1 - firstRowBigIndex;
-      const isWide = indexInRow === bigIndexForRow;
+      // ここでは「workが並ぶ想定 index」は 0,1,2 を繰り返す扱いにする
+      const indexInTri = workIndex % 3;
 
-      workIndex++;
+      // big は 0 or 1 に出したい（=2/4幅）。残りは 1/4。
+      const isWide = indexInTri === bigIndexForRow;
 
       const widthClass = isWide ? "pre:w-[calc(2/4*100%)]" : "pre:w-[calc(1/4*100%)]";
+
+      workIndex++;
 
       return (
         <WorksCard
           key={item.key}
           work={w}
           widthClass={widthClass}
+          isWide={isWide} // ★pattern制御に使う
           className="pre:mb-5"
         />
       );

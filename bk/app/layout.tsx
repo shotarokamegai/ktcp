@@ -23,7 +23,7 @@ const HEADER =
   "pre:w-full pre:px-5 pre:py-[26px] pre:bg-white pre:sm:py-0 pre:sm:sp-px-[20] pre:sm:flex pre:sm:items-center pre:sm:justify-between";
 
 const LOGO_LINK =
-  "pre:w-[104.4px] pre:h-11 pre:sm:sp-w-[65] pre:sm:h-auto pre:sm:block";
+  "pre:w-[104.4px] pre:h-11 pre:sm:sp-w-[65] pre:sm:h-auto pre:sm:block slide-in";
 
 const NAV =
   "js-header-nav pre:[&_ul]:flex pre:[&_ul]:items-start pre:[&_ul]:justify-end pre:sm:flex " +
@@ -110,7 +110,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 />
               </div>
 
-              <li className="pre:leading-none">
+              <li className="pre:leading-none slide-in">
                 <HeaderNavLink
                   href="/about"
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
@@ -122,7 +122,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </HeaderNavLink>
               </li>
 
-              <li className="pre:leading-none">
+              <li className="pre:leading-none slide-in">
                 <HeaderNavLink
                   href="/contact"
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
@@ -134,7 +134,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </HeaderNavLink>
               </li>
 
-              <li className="pre:leading-none">
+              <li className="pre:leading-none slide-in">
                 <HeaderNavLink
                   href="/careers"
                   className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover pre:sm:overflow-hidden`}

@@ -143,10 +143,10 @@ html.is-page-masked #page-mask {
       .careers-accordion-icon {
         div {
           &:nth-child(1) {
-            animation: accordionIconOpen1 0.4s forwards;
+            animation: accordionIconOpen1 0.7s forwards;
           }
           &:nth-child(2) {
-            animation: accordionIconOpen2 0.4s forwards;
+            animation: accordionIconOpen2 0.7s forwards;
           }
         }
       }
@@ -175,9 +175,9 @@ html.is-page-masked #page-mask {
         display: inline-block;
         will-change: transform, opacity;
         transition:
-          opacity .5s var(--ease-out-quart),
-          color .5s var(--ease-out-quart),
-          transform .5s var(--ease-out-quart);
+          opacity .75s var(--ease-out-quart),
+          color .75s var(--ease-out-quart),
+          transform .75s var(--ease-out-quart);
         transition-delay:
           calc(var(--char-index) * 0.05s + .5s),
           calc(var(--char-index) * 0.05s + .5s),
@@ -283,10 +283,10 @@ html.is-page-masked #page-mask {
       .careers-accordion-icon {
         div {
           &:nth-child(1) {
-            animation: accordionIconOpen1 0.4s forwards;
+            animation: accordionIconOpen1 0.7s forwards;
           }
           &:nth-child(2) {
-            animation: accordionIconOpen2 0.4s forwards;
+            animation: accordionIconOpen2 0.7s forwards;
           }
         }
       }

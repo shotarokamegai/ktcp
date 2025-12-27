@@ -19,6 +19,33 @@ export default function WorksCategoryNav({
   const base =
     "pre:font-gt pre:font-light pre:mr-[25px] pre:last:mr-0 pre:transition-colors pre:cursor-pointer pre:inline-block pre:[&_.splitting-hover__inner]:h-[50px] pre:[&_span]:text-[10px]";
 
+  const kickSlideInWhenReady = () => {
+    const apply = () => {
+      const els = document.querySelectorAll<HTMLElement>(".slide-in");
+      if (!els.length) return false;
+      els.forEach((el) => el.classList.add("is-shown"));
+      return true;
+    };
+
+    // 既にあるなら即付与
+    if (apply()) return;
+
+    // 生成待ち（最大1.5秒で打ち切り）
+    const root = document.body;
+    const obs = new MutationObserver(() => {
+      if (apply()) {
+        obs.disconnect();
+        clearTimeout(timer);
+      }
+    });
+
+    obs.observe(root, { childList: true, subtree: true });
+
+    const timer = window.setTimeout(() => {
+      obs.disconnect();
+    }, 1500);
+  };
+
   return (
     <section
       className={[
@@ -29,7 +56,10 @@ export default function WorksCategoryNav({
       {/* ALL */}
       <button
         type="button"
-        onClick={() => onChange?.(null)}
+        onClick={() => {
+          onChange?.(null)
+          kickSlideInWhenReady();
+        }}
         className={[
           base,
           !activeSlug
@@ -50,7 +80,10 @@ export default function WorksCategoryNav({
           <button
             key={cat.id}
             type="button"
-            onClick={() => onChange?.(cat.slug)}
+            onClick={() => {
+              onChange?.(cat.slug);
+              kickSlideInWhenReady();
+            }}
             className={[
               base,
               isActive

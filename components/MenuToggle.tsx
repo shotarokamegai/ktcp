@@ -10,16 +10,10 @@ export default function MenuToggle() {
 
     const ACTIVE_CLASS = "is-open"; // trigger / nav 共通
     const CLOSE_DURATION = 200; // ★ navのフェードアウト所要ms（CSSと合わせる）
+    const AFTER_CLOSE_DELAY = 10000; // ★ 消えた後の“間”
 
-    // nav 内の splitting-hover（メニュー項目）
     const items = Array.from(
       nav.querySelectorAll<HTMLElement>(".splitting-hover")
-    );
-
-    // ★追加：ヘッダー内 Close（menu-trigger 内の splitting-hover）
-    // これが今まで制御されていなかったので、OPEN時に表示されなくなっていた
-    const closeLabels = Array.from(
-      trigger.querySelectorAll<HTMLElement>(".splitting-hover")
     );
 
     // stagger index（1回でOK）
@@ -31,9 +25,6 @@ export default function MenuToggle() {
     const open = () => {
       nav.classList.add(ACTIVE_CLASS);
       trigger.classList.add(ACTIVE_CLASS);
-
-      // ★追加：Close を強制表示（hover不要に）
-      closeLabels.forEach((el) => el.classList.add("stay"));
 
       // 入口アニメを毎回リスタート
       items.forEach((el) => el.classList.remove("menu-enter"));
@@ -49,9 +40,6 @@ export default function MenuToggle() {
       nav.classList.remove(ACTIVE_CLASS);
       trigger.classList.remove(ACTIVE_CLASS);
 
-      // ★追加：Close を初期状態に戻す
-      closeLabels.forEach((el) => el.classList.remove("stay"));
-
       items.forEach((el) => el.classList.remove("menu-enter"));
     };
 
@@ -64,42 +52,50 @@ export default function MenuToggle() {
     trigger.addEventListener("click", toggle);
 
     // nav内リンク押下
-    const onNavClick = (e: Event) => {
-      const a = (e.target as HTMLElement).closest("a") as HTMLAnchorElement | null;
-      if (!a) return;
+const onNavClick = (e: Event) => {
+  const ev = e as MouseEvent;
 
-      // ★ SPだけ：ページを隠してから close → close完了後に fm:start で遷移
-      if (isSP()) {
-        const href = a.getAttribute("href");
-        if (!href) return;
+  // 修飾クリックは無視（新規タブ等）
+  if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button !== 0) return;
 
-        e.preventDefault();
+  const a = (e.target as HTMLElement).closest("a") as HTMLAnchorElement | null;
+  if (!a) return;
 
-        // 下の #page を見せない（メニューの下に敷く前提）
-        document.documentElement.classList.add("is-page-masked");
+  if (isSP()) {
+    const href = a.getAttribute("href");
+    if (!href) return;
 
-        // メニューを閉じる（フェードアウト開始）
-        close();
+    // ★ ここが重要：Next.js Link の onClick より先に止める
+    e.preventDefault();
+    // @ts-expect-error: stopImmediatePropagation exists on Event in browsers
+    e.stopImmediatePropagation?.();
+    ev.stopPropagation();
 
-        // フェードアウト完了後に遷移開始
-        window.setTimeout(() => {
-          window.dispatchEvent(
-            new CustomEvent("fm:start", { detail: { href } })
-          );
-        }, CLOSE_DURATION);
+    document.documentElement.classList.add("is-page-masked");
+    close();
 
-        return;
-      }
+    const AFTER_CLOSE_DELAY = 500;
 
-      // ★ PCは今まで通り：メニューだけ閉じて、遷移は通常に任せる
-      close();
-    };
+    window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("fm:start", { detail: { href } }));
+    }, CLOSE_DURATION + AFTER_CLOSE_DELAY);
 
-    nav.addEventListener("click", onNavClick);
+    return;
+  }
+
+  close();
+};
+
+
+    // nav.addEventListener("click", onNavClick);
+    nav.addEventListener("click", onNavClick, { capture: true });
+
 
     return () => {
       trigger.removeEventListener("click", toggle);
-      nav.removeEventListener("click", onNavClick);
+      // nav.removeEventListener("click", onNavClick);
+      nav.removeEventListener("click", onNavClick, { capture: true } as any);
+
     };
   }, []);
 

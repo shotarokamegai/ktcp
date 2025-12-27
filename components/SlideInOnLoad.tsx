@@ -50,7 +50,7 @@ export default function SlideInOnLoad() {
   /* ===== IN ===== */
   const runIn = () => {
     const els = Array.from(
-      document.querySelectorAll<HTMLElement>("#page .slide-in")
+      document.querySelectorAll<HTMLElement>(".slide-in")
     );
 
     els.forEach((el) => {
@@ -72,7 +72,7 @@ export default function SlideInOnLoad() {
   /* ===== OUT ===== */
   const runOutAndPush = (href: string) => {
     const els = Array.from(
-      document.querySelectorAll<HTMLElement>("#page .slide-out")
+      document.querySelectorAll<HTMLElement>(".slide-out")
     );
 
     if (els.length === 0) {

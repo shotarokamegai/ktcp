@@ -15,13 +15,13 @@ export const revalidate = 60;
 export default function ContactPage() {
   return (
     <main className="container pre:pt-[263px] slide-out pre:sm:sp-pt-[110]">
-  <section
-    className="
-      pre:w-[693px]
-      pre:mb-[180px]
-      pre:mx-auto
-    "
-  >
+    <section
+      className="
+        pre:w-[693px]
+        pre:mb-[180px]
+        pre:mx-auto
+      "
+    >
     {/* sticky は内側に */}
     <div className="pre:sm:relative">
       <Image src="/illust/engineer.png" alt="" width={323} height={177} className="pre:w-[323px] pre:mb-[70px] pre:mx-auto slide-in" />

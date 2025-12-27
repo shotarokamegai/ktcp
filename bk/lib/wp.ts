@@ -14,37 +14,70 @@ export type WorkTerm = {
 };
 
 export type Work = {
-  ...
-  works_cat?: WorkTerm[];
-};
-
-export type ImageMeta = {
-  url: string;
-  width?: number;
-  height?: number;
+  id: number;
+  slug: string;
+  title?: { rendered?: string };
+  acf?: any;
+  works_cat?: any[];
+  eyecatch?: any;
+  [key: string]: any;
 };
 
 // =========================================
-// 基本fetch関数
+// fetch helpers
 // =========================================
-async function wpGet<T>(path: string): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, { next: { revalidate: 60 } });
-  if (!res.ok) throw new Error(`WP fetch failed: ${res.status} ${path}`);
+function qs(params: Record<string, any>) {
+  const usp = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v === undefined || v === null || v === "") return;
+    usp.set(k, String(v));
+  });
+  const s = usp.toString();
+  return s ? `?${s}` : "";
+}
+
+export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, init);
+  if (!res.ok) {
+    throw new Error(`fetch failed: ${res.status} ${res.statusText} (${url})`);
+  }
   return (await res.json()) as T;
 }
 
 // =========================================
-// pickEyecatchRandom（pattern1〜3から選ぶ）
+// WP API
 // =========================================
-function hash32(str: string) {
-  let h = 2166136261;
-  for (let i = 0; i < str.length; i++) {
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
+export async function fetchWorks(params: {
+  per_page?: number;
+  page?: number;
+  works_cat?: number;
+  _embed?: 1;
+  orderby?: string;
+  order?: "asc" | "desc";
+}) {
+  const url = `${API_BASE}/works${qs({
+    per_page: params.per_page ?? 100,
+    page: params.page ?? 1,
+    works_cat: params.works_cat,
+    _embed: params._embed ?? 1,
+    orderby: params.orderby ?? "date",
+    order: params.order ?? "desc",
+  })}`;
+
+  return fetchJson<Work[]>(url, { cache: "no-store" });
 }
 
+export async function fetchWorksCategories(params?: { per_page?: number }) {
+  const url = `${API_BASE}/works_cat${qs({
+    per_page: params?.per_page ?? 100,
+  })}`;
+
+  return fetchJson<WorkTerm[]>(url, { cache: "no-store" });
+}
+
+// =========================================
+// Image picker (fallback)
+// =========================================
 function mulberry32(a: number) {
   return function () {
     let t = (a += 0x6d2b79f5);
@@ -54,56 +87,65 @@ function mulberry32(a: number) {
   };
 }
 
-function extractPattern(p: any): { pc: ImageMeta | null; sp: ImageMeta | null } | null {
-  if (!p) return null;
-
-  // ACFの形がどう来ても落ちないように保険
-  const pc = p?.pc ?? p?.PC ?? p?.desktop ?? p?.image ?? p ?? null;
-  const sp = p?.sp ?? p?.SP ?? p?.mobile ?? null;
-
-  const toMeta = (x: any): ImageMeta | null => {
-    if (!x) return null;
-    if (typeof x === "string") return { url: x };
-    const url = x?.url || x?.source_url;
-    if (!url) return null;
-    return { url, width: x?.width, height: x?.height };
-  };
-
-  const pcMeta = toMeta(pc);
-  const spMeta = toMeta(sp);
-
-  // pcもspも無いなら候補から除外
-  if (!pcMeta && !spMeta) return null;
-  return { pc: pcMeta, sp: spMeta };
+function toImageMeta(x: any): { url: string; width?: number; height?: number } | null {
+  if (!x) return null;
+  if (typeof x === "string") return { url: x };
+  if (typeof x === "object") {
+    const url = x.url || x.src || x.source_url;
+    if (typeof url !== "string" || !url) return null;
+    const width = typeof x.width === "number" ? x.width : undefined;
+    const height = typeof x.height === "number" ? x.height : undefined;
+    return { url, width, height };
+  }
+  return null;
 }
 
+/**
+ * 作品データから「それっぽい」画像をランダムに選ぶ（SSR/CSRズレ防止で seed 必須）
+ * - WorksCard側で pattern画像が無い時の保険に使う
+ */
 export function pickEyecatchRandom(
-  w: Work,
-  opts?: { seed?: string | number }
-): { pc: ImageMeta; sp?: ImageMeta | null } | null {
-  const g = w?.acf?.eyecatch ?? {};
+  work: any,
+  opts: { seed: number }
+): { pc: { url: string; width?: number; height?: number }; sp?: { url: string; width?: number; height?: number } } | null {
+  const seed = opts.seed >>> 0;
+  const rand = mulberry32(seed);
 
-  // ★ pattern1〜3 だけ
-  const keys = ["pattern1", "pattern2", "pattern3"] as const;
+  const candidates: Array<{ pc: any; sp?: any }> = [];
 
-  const candidates: Array<{ pc: ImageMeta | null; sp: ImageMeta | null }> = [];
-  for (const k of keys) {
-    const got = extractPattern((g as any)[k]);
-    if (got) candidates.push(got);
+  // 1) acf.patternX
+  if (work?.acf) {
+    const p1 = work.acf.pattern1;
+    const p2 = work.acf.pattern2;
+    const p3 = work.acf.pattern3;
+
+    if (p1) candidates.push({ pc: p1?.pc ?? p1, sp: p1?.sp });
+    if (p2) candidates.push({ pc: p2?.pc ?? p2, sp: p2?.sp });
+    if (p3) candidates.push({ pc: p3?.pc ?? p3, sp: p3?.sp });
+
+    // 2) その他候補
+    if (work.acf.eyecatch) candidates.push({ pc: work.acf.eyecatch });
+    if (work.acf.thumbnail) candidates.push({ pc: work.acf.thumbnail });
   }
-  if (candidates.length === 0) return null;
 
-  const seedNum =
-    typeof opts?.seed === "number"
-      ? opts.seed
-      : typeof opts?.seed === "string"
-      ? hash32(opts.seed)
-      : Math.floor(Math.random() * 2 ** 32);
+  // 3) wp標準
+  if (work?.eyecatch) candidates.push({ pc: work.eyecatch });
+  if (work?._embedded?.["wp:featuredmedia"]?.[0]) {
+    candidates.push({ pc: work._embedded["wp:featuredmedia"][0] });
+  }
 
-  const rnd = mulberry32(seedNum)();
-  const pick = candidates[Math.floor(rnd * candidates.length)];
-  const pc = pick.pc ?? pick.sp;
-  if (!pc) return null;
+  const normalized = candidates
+    .map((c) => ({
+      pc: toImageMeta(c.pc),
+      sp: toImageMeta(c.sp),
+    }))
+    .filter((c) => c.pc?.url);
 
-  return { pc, sp: pick.sp && pick.pc ? pick.sp : null };
+  if (!normalized.length) return null;
+
+  const idx = Math.floor(rand() * normalized.length);
+  const pick = normalized[idx];
+  if (!pick?.pc?.url) return null;
+
+  return { pc: pick.pc, sp: pick.sp || undefined };
 }

@@ -107,7 +107,7 @@ export default function ResponsiveImage({
         style={{
           position: "absolute",
           inset: enablePlaceholder ? `-${PAD}px` : "0px",
-          background: enablePlaceholder ? placeholderBg : "transparent",
+          // background: enablePlaceholder ? placeholderBg : "transparent",
           filter: enablePlaceholder ? `blur(${BLUR_PX}px)` : "none",
           transform: enablePlaceholder ? "scale(1.05)" : "none",
           transformOrigin: "center",

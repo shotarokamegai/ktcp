@@ -378,9 +378,6 @@ export default function ApplicationForm() {
   if (sent) {
     return (
       <div>
-        <h2 className="pre:text-[24px] pre:text-center pre:font-gt pre:font-light pre:mb-[50px]">
-          Message Sent
-        </h2>
         <h3 className="pre:text-[16px] pre:font-bold pre:mb-5 pre:text-center">
           応募受付完了
         </h3>

@@ -111,7 +111,7 @@ export default async function WorkDetail({
       </section>
 
       {/* ▼ ここから Featured works セクションを追加 */}
-      <section className="pre:mt-[160px] pre:mb-[180px]">
+      <section className="pre:mt-40 pre:mb-[180px]">
         <div className="pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[26px]">
           <h2 className="pre:text-[24px] pre:font-gt pre:font-light">
             Featured works
@@ -129,8 +129,8 @@ export default async function WorkDetail({
                 href={`/works/${w.slug}`}
                 className={
                   [
-                    "pre:w-[calc(1/4*100%)]", // ★ 全部1/4幅
-                    "pre:mb-[20px]",
+                    "pre:w-1/4", // ★ 全部1/4幅
+                    "pre:mb-5",
                     "pre:px-[calc(7.5/1401*100%)]",
                     "pre:hover:text-ketchup",
                     // ホバー時のResponsiveImageアニメ（トップと合わせたければそのまま）
@@ -150,11 +150,7 @@ export default async function WorkDetail({
                   fallbackRatio="4 / 3"
                 />
 
-                <header className="pre:flex pre:mt-[10px]">
-                  <p className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[70px]">
-                    {w.acf?.date}
-                  </p>
-
+                <header className="pre:flex pre:mt-2.5">
                   <h2
                     className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-70px-105px)] pre:text-ellipsis pre:overflow-hidden pre:whitespace-nowrap"
                     dangerouslySetInnerHTML={{ __html: w.title.rendered }}
