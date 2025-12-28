@@ -111,7 +111,7 @@ const fieldBase =
   "pre:focus-visible:outline-none pre:focus-visible:ring-0 " +
   "pre:sm:sp-fs-[16]";
 
-const inputClass = cx(fieldBase, "pre:h-[40px] pre:px-[12px] pre:bg-beige pre:sm:sp-h-[40] pre:sm:sp-px-[12]");
+const inputClass = cx(fieldBase, "pre:h-[40px] pre:px-[12px] pre:bg-beige pre:sm:sp-h-[40] pre:sm:sp-px-[12] pre:sm:box-border");
 const textareaClass = cx(
   fieldBase,
   "pre:min-h-[244px] pre:sm:sp-min-h-[117] pre:px-[12px] pre:sm:sp-px-[12] pre:py-[10px] pre:sm:sp-py-[10] pre:resize-y pre:bg-beige"
@@ -489,7 +489,7 @@ export default function ApplicationForm() {
               type="date"
               value={birthday}
               onChange={(e) => setBirthday(e.target.value)}
-              className={cx(inputClass, ' pre:border pre:border-solid pre:border-darkGray ', errors.birthday && fieldErrorClass)}
+              className={cx(inputClass, ' pre:border pre:border-solid pre:border-darkGray pre:sm:appearance-none ', errors.birthday && fieldErrorClass)}
               required
             />
           </Row>
