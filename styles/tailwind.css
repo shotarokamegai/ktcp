@@ -203,7 +203,7 @@
           transition:
             opacity .75s var(--ease-out-quart),
             color .75s var(--ease-out-quart),
-            transform .75s var(--ease-out-quart) .5s;
+            transform .75s var(--ease-out-quart) .2s;
        }
       .plus {
         transform: translate3d(0, calc(-50% + 230%), 0);
@@ -216,7 +216,7 @@
         opacity: 0;
         transform: translate3d(-50%, -50%, 0) scale(1.05);
         will-change: opacity, transform;
-        transition: .75s transform var(--ease-in-out-quart) .75s, .75s opacity var(--ease-in-out-quart) .75s;
+        transition: .75s transform var(--ease-in-out-quart) .2s, .75s opacity var(--ease-in-out-quart) .2s;
       }
       .splitting-hover {
       .splitting-hover__inner {

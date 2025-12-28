@@ -201,7 +201,7 @@ export default async function WorkDetail({
 
                 <header className="pre:flex pre:mt-2.5 pre:justify-between pre:sm:block pre:sm:sp-mt-[6]">
                   <h2
-                    className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(222/338*100%)] pre:sm:w-full pre:sm:sp-fs-[14] pre:sm:leading-[130%]"
+                    className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(222/338*100%)] pre:sm:w-full pre:sm:sp-fs-[14] pre:sm:leading-[130%] pre:sm:sp-mb-[5] pre:leading-[1.7]"
                     dangerouslySetInnerHTML={{ __html: w.title.rendered }}
                   />
 

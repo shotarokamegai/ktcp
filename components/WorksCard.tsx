@@ -155,7 +155,7 @@ export default function WorksCard({
 
       <header className="pre:flex pre:mt-2.5 pre:sm:block pre:sm:sp-mt-[8]">
         <h2
-          className="pre:text-[15px] pre:font-gt pre:font-light pre:leading-[1.7] pre:w-[calc(100%-105px)] pre:pr-2 pre:sm:w-full transition-text pre:sm:sp-fs-[14] pre:sm:whitespace-normal pre:sm:sp-mb-[5]"
+          className="pre:text-[15px] pre:font-gt pre:font-light pre:leading-[1.7] pre:w-[calc(100%-105px)] pre:pr-2 pre:sm:w-full transition-text pre:sm:sp-fs-[14] pre:sm:whitespace-normal pre:sm:sp-mb-[5] pre:sm:pr-0"
           dangerouslySetInnerHTML={{ __html: w.title?.rendered ?? "" }}
         />
         <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:font-gt pre:font-light pre:leading-[1.7] pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
