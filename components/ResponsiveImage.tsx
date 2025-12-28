@@ -127,7 +127,7 @@ export default function ResponsiveImage({
             height: "100%",
             objectFit: fit,
             opacity: showImage ? 1 : 0,
-            transition: "opacity .4s ease",
+            transition: "opacity .4s ease, transform .75s cubic-bezier(0.165, 0.84, 0.44, 1);",
             zIndex: 1,
             display: "block",
           }}

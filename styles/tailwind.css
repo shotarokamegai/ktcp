@@ -39,6 +39,11 @@
   transition: color 0.75s var(--ease-out-quart); 
 }
 
+.transition-scale {
+  will-change: transform;
+  transition: transform 0.75s var(--ease-out-quart); 
+}
+
 
 .btn-submit {
   will-change: background-color;

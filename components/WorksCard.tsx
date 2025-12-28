@@ -134,8 +134,8 @@ export default function WorksCard({
 
         // image hover
         "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
+        "pre:hover:[&_img]:transform-[scale(1.05)]",
         "pre:hover:[&_.responsive-image]:[clip-path:polygon(calc(100%_*_0.046)_0,calc(100%_*_0.953)_0,calc(100%_*_0.953)_100%,calc(100%_*_0.046)_100%)]",
-        "pre:[&_.responsive-image]:transition-all pre:[&_.responsive-image]:duration-500",
 
         className,
       ].join(" ")}
