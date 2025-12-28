@@ -158,7 +158,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </ul>
           </nav>
 
-          <div className="menu-trigger pre:hidden pre:sm:block pre:sm:relative pre:sm:sp-h-[14] pre:sm:sp-w-[30]">
+          <div className="menu-trigger pre:hidden pre:sm:block pre:sm:relative pre:sm:sp-h-[14] pre:sm:sp-w-[30] slide-in">
             <div className="menu-trigger-content pre:sm:relative pre:h-full pre:w-full pre:[&_div]:absolute pre:[&_div]:h-0.5 pre:[&_div]:bg-ketchup">
               <div className="menu1 pre:w-full pre:left-0"></div>
               <div className="menu2 pre:sp-w-[18]"></div>
