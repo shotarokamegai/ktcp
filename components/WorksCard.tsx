@@ -16,15 +16,7 @@ type Props = {
 };
 
 type ImageMeta = { url: string; width?: number; height?: number };
-
-const PATTERNS = [1, 2, 3] as const;
-type Pattern = (typeof PATTERNS)[number];
-
-const RATIO_MAP: Record<Pattern, string> = {
-  1: "1 / 1",
-  2: "3 / 4",
-  3: "16 / 9",
-};
+type Pattern = 1 | 2 | 3;
 
 function normalizeImage(x: any): ImageMeta | null {
   if (!x) return null;
@@ -104,6 +96,14 @@ export default function WorksCard({
   const picked = byPattern ?? fallback;
   if (!picked?.pc?.url) return null;
 
+  // works_cat の表示ラベル：ACFの ryaku を優先し、なければ name
+  const catLabel = Array.isArray(w?.works_cat)
+    ? w.works_cat
+        .map((c: any) => c?.acf?.ryaku || c?.ryaku || c?.name)
+        .filter(Boolean)
+        .join(" / ")
+    : "";
+
   return (
     <FMLink
       href={`/works/${w.slug}`}
@@ -121,29 +121,34 @@ export default function WorksCard({
 
         // ✅ image hover（元に戻す）
         "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
-        "pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))]",
-        "pre:[&_.responsive-image-content]:scale-[1]",
-        "pre:hover:[&_.responsive-image-content]:scale-[1.1]",
+        "pre:hover:[&_.responsive-image]:[clip-path:polygon(calc(100%_*_0.046)_0,calc(100%_*_0.953)_0,calc(100%_*_0.953)_100%,calc(100%_*_0.046)_100%)]",
+        "pre:[&_.responsive-image]:transition-all pre:[&_.responsive-image]:duration-500",
 
         className,
       ].join(" ")}
     >
       <ResponsiveImage
-        pc={picked.pc}
-        sp={picked.sp || undefined}
-        alt={w.title?.rendered ?? ""}
-        placeholder_color={w.acf?.placeholder_color}
-        // ✅ 高さはpatternで先に固定
-        fallbackRatio={RATIO_MAP[pattern]}
+        className="pre:aspect-[1/1] pre:sm:sp-aspect-[1/1]"
+        pc={{
+          url: picked.pc.url,
+          width: picked.pc.width,
+          height: picked.pc.height,
+        }}
+        sp={
+          picked.sp?.url
+            ? { url: picked.sp.url, width: picked.sp.width, height: picked.sp.height }
+            : undefined
+        }
+        alt={w?.title?.rendered ?? ""}
       />
 
       <header className="pre:flex pre:mt-2.5 pre:sm:block pre:sm:sp-mt-[8]">
         <h2
-          className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(100%-105px)] pre:truncate pre:sm:w-full transition-text pre:sm:sp-fs-[14] pre:sm:whitespace-normal pre:sm:sp-mb-[5]"
+          className="pre:text-[15px] pre:font-gt pre:font-light pre:leading-[1.7] pre:w-[calc(100%-105px)] pre:pr-2 pre:sm:w-full transition-text pre:sm:sp-fs-[14] pre:sm:whitespace-normal pre:sm:sp-mb-[5]"
           dangerouslySetInnerHTML={{ __html: w.title?.rendered ?? "" }}
         />
-        <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
-          {Array.isArray(w.works_cat) ? w.works_cat.map((c: any) => c.name).join(" / ") : ""}
+        <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:font-gt pre:font-light pre:leading-[1.7] pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
+          {catLabel}
         </p>
       </header>
     </FMLink>

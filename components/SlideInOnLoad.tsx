@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 /* ===== 調整用 ===== */
 const IN_BASE_DELAY = 0;
 const IN_MIN_DELAY = 0;
-const IN_MAX_DELAY = 200;
+const IN_MAX_DELAY = 1000;
 
 const OUT_MIN_DELAY = 0;
 const OUT_MAX_DELAY = 200;

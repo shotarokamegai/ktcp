@@ -16,6 +16,9 @@ type Props = {
   fit?: CSSProperties["objectFit"];
   placeholder_color?: string;
   disablePlaceholder?: boolean;
+
+  // ✅ 追加
+  className?: string;
 };
 
 export default function ResponsiveImage({
@@ -26,6 +29,7 @@ export default function ResponsiveImage({
   fit = "cover",
   placeholder_color,
   disablePlaceholder = false,
+  className = "",
 }: Props) {
   const [loaded, setLoaded] = useState(false);
   const [inView, setInView] = useState(false);
@@ -50,13 +54,12 @@ export default function ResponsiveImage({
   }, [pc, sp, fallbackRatio]);
 
   // ─────────────────────────────────────────────
-  // 1) InView（必要なら loaded && inView に戻せるよう残す）
+  // InView
   // ─────────────────────────────────────────────
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
 
-    // 初回の取りこぼし防止（少し先読み）
     const rect = el.getBoundingClientRect();
     if (rect.top <= window.innerHeight + 200) setInView(true);
 
@@ -75,7 +78,7 @@ export default function ResponsiveImage({
   }, []);
 
   // ─────────────────────────────────────────────
-  // 2) loaded（SSRで onLoad 取り逃した場合も拾う）
+  // loaded
   // ─────────────────────────────────────────────
   useEffect(() => {
     const img = imgRef.current;
@@ -83,27 +86,25 @@ export default function ResponsiveImage({
 
     const markLoaded = () => setLoaded(true);
 
-    // ✅ ここが肝：hydrate前に読み込み完了してるケース
     if (img.complete && img.naturalWidth > 0) {
       markLoaded();
       return;
     }
 
     img.addEventListener("load", markLoaded);
-    img.addEventListener("error", markLoaded); // エラーでも透明固定にならない保険
+    img.addEventListener("error", markLoaded);
     return () => {
       img.removeEventListener("load", markLoaded);
       img.removeEventListener("error", markLoaded);
     };
-  }, [pc.url]); // URLが変わるケースにも対応
+  }, [pc.url]);
 
-  // いまは loaded のみ（必要なら loaded && inView に戻せる）
-  const showImage = loaded; // or: loaded && inView;
+  const showImage = loaded; // or loaded && inView;
 
   return (
     <div
       ref={wrapperRef}
-      className="responsive-image"
+      className={["responsive-image", className].filter(Boolean).join(" ")}
       style={{
         position: "relative",
         width: "100%",
@@ -120,7 +121,6 @@ export default function ResponsiveImage({
           alt={alt}
           loading="lazy"
           decoding="async"
-          onLoad={() => setLoaded(true)} // CSR遷移用の保険（上のcomplete拾いが本命）
           style={{
             inset: 0,
             width: "100%",
