@@ -210,7 +210,7 @@
         transition:
           opacity .75s var(--ease-out-quart),
           color .75s var(--ease-out-quart),
-          transform .75s var(--ease-out-quart) .5s;
+          transform .75s var(--ease-out-quart) .2s;
       }
       .illust {
         opacity: 0;
