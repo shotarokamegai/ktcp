@@ -186,8 +186,8 @@ export default async function WorkDetail({
                   "pre:hover:text-ketchup",
                   "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
                   "pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))]",
-                  "pre:[&_.responsive-image-content]:scale-[1]",
-                  "pre:hover:[&_.responsive-image-content]:scale-[1.1]",
+                  "pre:[&_img]:transform-[scale(1)]",
+                  "pre:hover:[&_img]:transform-[scale(1.05)]",
                   "slide-in",
                 ].join(" ")}
               >
