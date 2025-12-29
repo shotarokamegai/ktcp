@@ -9,7 +9,7 @@ import type { WorkTerm } from "@/lib/wp";
 function getActiveSlug(pathname: string): string | null {
   const m = pathname.match(/^\/works\/category\/([^\/?#]+)/);
   if (m?.[1]) return decodeURIComponent(m[1]);
-  if (pathname === "/works") return null; // ALL
+  if (pathname === "/works") return null;
   return null;
 }
 
@@ -33,8 +33,9 @@ export default function WorksCategoryNavShell({
   const base =
     "pre:font-gt pre:font-light pre:mr-[25px] pre:last:mr-0 pre:transition-colors pre:cursor-pointer pre:inline-block pre:[&_.splitting-hover__inner]:h-[50px] pre:[&_span]:text-[10px] pre:sm:sp-mr-[20] pre:sm:sp-fs-[10]";
 
+  // ✅ navは常駐表示（slide-inにしない）
   const wrap =
-    "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] slide-in pre:sm:sp-w-[340] pre:sm:justify-start pre:sm:sp-mb-[30] pre:sm:pb-0";
+    "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] pre:sm:sp-w-[340] pre:sm:justify-start pre:sm:sp-mb-[30] pre:sm:pb-0";
 
   const cls = (isActive: boolean) =>
     [
@@ -51,7 +52,6 @@ export default function WorksCategoryNavShell({
     </span>
   );
 
-  // クリック→アニメ見せてから遷移（navが生成し直されて即stayになる問題の根本対策）
   const animateThenNavigate = (href: string) => (e: any) => {
     if (href === pathname) return;
     e.preventDefault();
@@ -72,7 +72,11 @@ export default function WorksCategoryNavShell({
 
   return (
     <section className={wrap}>
-      <FMLink href={allHref} className={cls(activeSlug === null)} onClick={animateThenNavigate(allHref)}>
+      <FMLink
+        href={allHref}
+        className={cls(activeSlug === null)}
+        onClick={animateThenNavigate(allHref)}
+      >
         <Label text={allLabel} />
       </FMLink>
 

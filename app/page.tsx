@@ -1,6 +1,6 @@
 // app/works/page.tsx
 import { Suspense } from "react";
-import SlideInHydrate from "@/components/SlideInHydrate";
+import WorksCategoryNavShell from "@/components/WorksCategoryNavShell";
 import Footer from "@/components/Footer";
 import WorksBrowserClient from "@/components/WorksBrowserClient";
 import { fetchWorks, fetchWorkCategories } from "@/lib/wp";
@@ -13,7 +13,7 @@ export default async function WorksPage() {
   return (
     <main className="container pre:pt-[307px] pre:sm:sp-pt-[130] slide-out">
       <Suspense fallback={null}>
-        <SlideInHydrate />
+        <WorksCategoryNavShell categories={categories} />
       </Suspense>
       <WorksBrowserClient
         initialWorks={works}

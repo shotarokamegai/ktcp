@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 /* ===== 調整用 ===== */
 const IN_BASE_DELAY = 0;
 const IN_MIN_DELAY = 0;
-const IN_MAX_DELAY = 1000;
+const IN_MAX_DELAY = 600;
 
 const OUT_MIN_DELAY = 0;
 const OUT_MAX_DELAY = 200;
@@ -15,7 +15,7 @@ const TRANSITION_DURATION = 200;
 const IN_MODE: "random" | "sequence" = "sequence";
 const OUT_MODE: "random" | "sequence" = "sequence";
 
-const REFRESH_EVENT = "slidein:refresh";
+export const REFRESH_EVENT = "slidein:refresh";
 /* ================= */
 
 export default function SlideInOnLoad() {
@@ -40,28 +40,30 @@ export default function SlideInOnLoad() {
   const scrollToTop = () => {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant" as ScrollBehavior,
-    });
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
   };
 
   /* ===== IN ===== */
   const runIn = () => {
-    const els = Array.from(
-      document.querySelectorAll<HTMLElement>(".slide-in")
-    );
+    const els = Array.from(document.querySelectorAll<HTMLElement>(".slide-in"));
 
+    // ✅ 既に見えているものは剥がさない（1・2件目が消えがち問題対策）
     els.forEach((el) => {
-      el.classList.remove("is-shown", "is-hidden");
+      el.classList.remove("is-hidden");
       el.style.transitionDelay = "0ms";
     });
+
+    // reflow（delay適用の保険）
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    document.body.offsetHeight;
 
     const count = els.length;
 
     setTimeout(() => {
       els.forEach((el, i) => {
+        // 既に表示済みは無視（再度付け直してチラつかせない）
+        if (el.classList.contains("is-shown")) return;
+
         const delay = getDelay(i, count, IN_MIN_DELAY, IN_MAX_DELAY, IN_MODE);
         el.style.transitionDelay = `${delay}ms`;
         requestAnimationFrame(() => el.classList.add("is-shown"));
@@ -71,9 +73,9 @@ export default function SlideInOnLoad() {
 
   /* ===== OUT ===== */
   const runOutAndPush = (href: string) => {
-    const els = Array.from(
-      document.querySelectorAll<HTMLElement>(".slide-out")
-    );
+    const els = Array.from(document.querySelectorAll<HTMLElement>(".slide-out"))
+      // ✅ works一覧など、OUTさせたくない領域は data-no-out 配下で除外
+      .filter((el) => !el.closest("[data-no-out]"));
 
     if (els.length === 0) {
       router.push(href, { scroll: true });
@@ -97,32 +99,24 @@ export default function SlideInOnLoad() {
     }, maxDelay + TRANSITION_DURATION + 50);
   };
 
-  /* ===== pathname change ===== */
   useEffect(() => {
-    // SPでメニュー遷移時に被せたマスクの後始末（もし使ってる場合）
     document.documentElement.classList.remove("is-page-masked");
-
-    // 常に先頭
     scrollToTop();
     requestAnimationFrame(() => scrollToTop());
-
     runIn();
   }, [pathname]);
 
-  /* ===== 同一ページ差し替え ===== */
   useEffect(() => {
     const handler = () => runIn();
     window.addEventListener(REFRESH_EVENT, handler);
     return () => window.removeEventListener(REFRESH_EVENT, handler);
   }, []);
 
-  /* ===== ページ遷移 OUT ===== */
   useEffect(() => {
     const handler = (e: Event) => {
       const href = (e as CustomEvent).detail?.href;
       if (!href) return;
 
-      // ★ 追加：同一ページ遷移（Nextがpushを無視）なら OUT しない
       const next = new URL(href, window.location.href);
       const curr = new URL(window.location.href);
 
@@ -130,14 +124,11 @@ export default function SlideInOnLoad() {
         next.pathname === curr.pathname && next.search === curr.search;
 
       if (sameRoute) {
-        // hashだけ違うならスクロールだけ反映（必要なら）
         if (next.hash && next.hash !== curr.hash) {
           window.history.pushState({}, "", next.hash);
           const el = document.querySelector(next.hash);
           el?.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-
-        // もし何かで見え方が崩れてても IN をやり直す
         window.dispatchEvent(new Event(REFRESH_EVENT));
         return;
       }

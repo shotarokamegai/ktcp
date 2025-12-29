@@ -6,7 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 export default function SlideInHydrate({
   selector = ".slide-in",
   className = "is-shown",
-  bootScans = 6, // 初回だけ数フレームスキャン（取りこぼし対策）
+  bootScans = 6,
 }: {
   selector?: string;
   className?: string;
@@ -21,13 +21,11 @@ export default function SlideInHydrate({
         targets ?? Array.from(document.querySelectorAll<HTMLElement>(selector));
       if (!els.length) return;
 
-      // ✅ removeしない：付いてなければ付けるだけ
       els.forEach((el) => {
         if (!el.classList.contains(className)) el.classList.add(className);
       });
     };
 
-    // ✅ 初回：数フレームにわたって “追加のみ” を繰り返す（取りこぼし対策）
     let rafId = 0;
     let count = 0;
     const bootLoop = () => {
@@ -37,7 +35,6 @@ export default function SlideInHydrate({
     };
     rafId = requestAnimationFrame(bootLoop);
 
-    // ✅ 遅れて追加された slide-in にも追従（追加のみ）
     const mo = new MutationObserver((mutations) => {
       const added: HTMLElement[] = [];
       for (const m of mutations) {
