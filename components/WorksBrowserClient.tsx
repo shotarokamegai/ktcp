@@ -88,12 +88,13 @@ export default function WorksBrowserClient({
 
   const rendered = useMemo(() => {
     const safeWorks = Array.isArray(works) ? works : [];
-    const latest = safeWorks.slice(0, 9);
+
+    // ✅ illustが入りやすいように 12件まで
+    const latest = safeWorks.slice(0, 12);
 
     const out: JSX.Element[] = [];
 
     const pushIllust = (rowIndex: number) => {
-      // 行ごとにseed固定のランダムでpattern決定
       const r = mulberry32((layoutSeed + rowIndex * 997) >>> 0)();
       const pattern = (Math.floor(r * 3) + 1) as IllustPattern;
 
@@ -101,14 +102,11 @@ export default function WorksBrowserClient({
         <div
           key={`illust-row-${rowIndex}`}
           className={[
-            // ★ worksと同じ1マス幅で横並びに参加
             "pre:w-[calc(1/4*100%)]",
             "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
-            // ★ 中央寄せ
             "pre:flex pre:items-center pre:justify-center",
           ].join(" ")}
         >
-          {/* ★ aspect-ratioは内側ラッパーへ（wrap計算を壊さない） */}
           <div className="pre:w-full" style={{ aspectRatio: ILLUST_RATIO_MAP[pattern] }}>
             <img
               src="/illust/about.png"
@@ -127,6 +125,9 @@ export default function WorksBrowserClient({
     // row3のwide位置を左右交互に
     let wideToggle = (layoutSeed & 1) === 0 ? 0 : 1;
 
+    // ✅ 「2行でも1回出す」ためのフラグ
+    let hasInsertedEarlyIllust = false;
+
     while (cursor < latest.length) {
       const remaining = latest.length - cursor;
 
@@ -134,7 +135,7 @@ export default function WorksBrowserClient({
       const rowKind = rowIndex % 2 === 0 ? "row3" : "row4";
       const need = rowKind === "row3" ? 3 : 4;
 
-      // 残りが足りない場合：残り全部を1/4で出して終了（欠け防止）
+      // 残りが足りない場合：残り全部を1/4で出して終了
       if (remaining < need) {
         for (let i = 0; i < remaining; i++) {
           const w = latest[cursor++];
@@ -148,11 +149,25 @@ export default function WorksBrowserClient({
             />
           );
         }
+
+        // ✅ 余り行も「1行」扱い（illust挿入判定に必要）
+        const afterRowIndex = rowIndex;
+
+        // ✅ 3行に1回 or 2行しか作れない場合の救済で1回
+        const shouldInsertIllust =
+          ((afterRowIndex + 1) % 3 === 0) ||
+          (!hasInsertedEarlyIllust && latest.length >= 5 && afterRowIndex === 1);
+
+        if (shouldInsertIllust) {
+          pushIllust(afterRowIndex);
+          if (afterRowIndex === 1) hasInsertedEarlyIllust = true;
+        }
+
         break;
       }
 
       if (rowKind === "row3") {
-        const wideIndex = wideToggle === 0 ? 0 : 1; // 0/1交互（必要なら2も混ぜてOK）
+        const wideIndex = wideToggle === 0 ? 0 : 1;
 
         for (let i = 0; i < 3; i++) {
           const w = latest[cursor++];
@@ -171,7 +186,6 @@ export default function WorksBrowserClient({
 
         wideToggle = 1 - wideToggle;
       } else {
-        // row4: 4つ全部1マス（ここで isWide は絶対 false）
         for (let i = 0; i < 4; i++) {
           const w = latest[cursor++];
           out.push(
@@ -186,9 +200,16 @@ export default function WorksBrowserClient({
         }
       }
 
-      // ✅ 3行に1回だけ illust（= 出た次の行は必ず出ない）
-      if ((rowIndex + 1) % 3 === 0) {
+      // ✅ 3行に1回
+      const shouldInsertNormal = (rowIndex + 1) % 3 === 0;
+
+      // ✅ 作品が少なくて2行しか作れないカテゴリでも、2行目の後に1回だけ救済
+      const shouldInsertEarly =
+        !hasInsertedEarlyIllust && latest.length >= 5 && rowIndex === 1;
+
+      if (shouldInsertNormal || shouldInsertEarly) {
         pushIllust(rowIndex);
+        if (shouldInsertEarly) hasInsertedEarlyIllust = true;
       }
 
       rowIndex++;
