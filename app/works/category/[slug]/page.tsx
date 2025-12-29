@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import SlideInHydrate from "@/components/SlideInHydrate";
 import Footer from "@/components/Footer";
 import ResponsiveImage from "@/components/ResponsiveImage";
 import WorksCategoryNav from "@/components/WorksCategoryNav";
 import WorksCard from "@/components/WorksCard";
+import WorksCategoryNavLink from "@/components/WorksCategoryNavLink";
 import { fetchWorksByCategorySlug, fetchWorkCategories } from "@/lib/wp";
 
 export const revalidate = 60;
@@ -65,7 +67,12 @@ export default async function WorksCategoryPage({
 
   return (
     <main className="container pre:pt-[307px]">
-      <WorksCategoryNav activeSlug={slug} />
+         <SlideInHydrate />
+      <WorksCategoryNavLink
+  categories={categories}
+  activeSlug={slug}
+  allHref="/works"
+/>
 
       <section className="pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]">
         {(() => {
