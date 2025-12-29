@@ -1,4 +1,5 @@
 // app/works/page.tsx
+import { Suspense } from "react";
 import SlideInHydrate from "@/components/SlideInHydrate";
 import Footer from "@/components/Footer";
 import WorksBrowserClient from "@/components/WorksBrowserClient";
@@ -11,7 +12,9 @@ export default async function WorksPage() {
 
   return (
     <main className="container pre:pt-[307px] pre:sm:sp-pt-[130] slide-out">
-      <SlideInHydrate />
+      <Suspense fallback={null}>
+        <SlideInHydrate />
+      </Suspense>
       <WorksBrowserClient
         initialWorks={works}
         categories={categories}

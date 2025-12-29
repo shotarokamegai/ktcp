@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import SlideInHydrate from "@/components/SlideInHydrate";
 import Footer from "@/components/Footer";
@@ -67,7 +68,9 @@ export default async function WorksCategoryPage({
 
   return (
     <main className="container pre:pt-[307px]">
-         <SlideInHydrate />
+      <Suspense fallback={null}>
+        <SlideInHydrate />
+      </Suspense>
       <WorksCategoryNavLink
   categories={categories}
   activeSlug={slug}
