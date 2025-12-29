@@ -94,7 +94,7 @@ export default function ResponsiveImage({
           height: "100%",
           objectFit: fit,
           opacity: loaded ? 1 : 0,
-          transition: "opacity .35s ease",
+          transition: "opacity .35s ease, transform .7s cubic-bezier(0.23, 1, 0.32, 1)",
           display: "block",
         }}
       />
