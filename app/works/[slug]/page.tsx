@@ -1,4 +1,5 @@
 // app/works/[slug]/page.tsx
+import VideoAutoPlay from "@/components/VideoAutoPlay";
 import Link from "next/link";
 import FMLink from "@/components/FMLink";
 import Footer from "@/components/Footer";
@@ -141,18 +142,11 @@ export default async function WorkDetail({
                   {m.kind === "image" ? (
                     <ResponsiveImage pc={{ url: m.url }} alt={m.alt || `image-${i}`} />
                   ) : (
-                    <video
-                      className="pre:w-full pre:h-auto"
-                      controls
-                      playsInline
-                      preload="metadata"
-                      // 必要なら以下も（自動再生したい場合）
-                      // muted
-                      // autoPlay
-                      // loop
-                    >
-                      <source src={m.url} type={m.mime || guessVideoMime(m.url)} />
-                    </video>
+                  <VideoAutoPlay
+                    src={m.url}
+                    mime={m.mime || guessVideoMime(m.url)}
+                    className="pre:w-full pre:h-auto"
+                  />
                   )}
                 </div>
               ))}
