@@ -17,7 +17,7 @@ export default function WorksCategoryNav({
   allLabel?: string;
 }) {
   const base =
-    "pre:font-gt pre:font-light pre:mr-[25px] pre:last:mr-0 pre:transition-colors pre:cursor-pointer pre:inline-block pre:[&_.splitting-hover__inner]:h-[50px] pre:[&_span]:text-[10px]";
+    "pre:font-gt pre:font-light pre:mr-[25px] pre:last:mr-0 pre:transition-colors pre:cursor-pointer pre:inline-block pre:[&_.splitting-hover__inner]:h-[50px] pre:[&_span]:text-[10px] pre:sm:sp-mr-[20] pre:sm:sp-fs-[10]";
 
   return (
     <section

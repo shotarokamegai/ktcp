@@ -5,37 +5,53 @@ import type { Work, WorkTerm } from "@/lib/wp";
 import WorksCard from "@/components/WorksCard";
 import WorksCategoryNav from "@/components/WorksCategoryNav";
 
-const SWAP_OUT_MS = 350; // slide-out の duration に合わせる
+const SWAP_OUT_MS = 350;
 
 type Props = {
-  initialWorks: Work[];
+  initialWorks?: Work[];
   categories: WorkTerm[];
-  initialActiveSlug?: string | null; // null = ALL
+  initialActiveSlug?: string | null;
+};
+
+function mulberry32(a: number) {
+  return function () {
+    let t = (a += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+type IllustPattern = 1 | 2 | 3;
+const ILLUST_RATIO_MAP: Record<IllustPattern, string> = {
+  1: "1 / 1",
+  2: "3 / 4",
+  3: "4 / 3",
 };
 
 export default function WorksBrowserClient({
-  initialWorks,
+  initialWorks = [],
   categories,
   initialActiveSlug = null,
 }: Props) {
-  const [works, setWorks] = useState<Work[]>(initialWorks);
+  const [works, setWorks] = useState<Work[]>(
+    Array.isArray(initialWorks) ? initialWorks : []
+  );
   const [activeSlug, setActiveSlug] = useState<string | null>(initialActiveSlug);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // ランダム要素を「アクセスごとに変える」ためのseed（SSR/Hydration一致のため mount後に確定）
-  const [layoutSeed, setLayoutSeed] = useState<number | null>(null);
+  const [layoutSeed, setLayoutSeed] = useState<number>(0);
   useEffect(() => {
     try {
       const buf = new Uint32Array(1);
       crypto.getRandomValues(buf);
-      setLayoutSeed(buf[0]);
+      setLayoutSeed(buf[0] >>> 0);
     } catch {
-      setLayoutSeed(Math.floor(Math.random() * 2 ** 32));
+      setLayoutSeed((Math.random() * 2 ** 32) >>> 0);
     }
   }, []);
 
   const abortRef = useRef<AbortController | null>(null);
-  const listRef = useRef<HTMLElement | null>(null);
 
   const setUrlOnly = (slug: string | null) => {
     const url = new URL(window.location.href);
@@ -51,7 +67,6 @@ export default function WorksBrowserClient({
     setActiveSlug(slug);
     setUrlOnly(slug);
 
-    // abort previous fetch
     if (abortRef.current) abortRef.current.abort();
     const ac = new AbortController();
     abortRef.current = ac;
@@ -60,108 +75,143 @@ export default function WorksBrowserClient({
       const params = new URLSearchParams();
       if (slug) params.set("category", slug);
 
-      const res = await fetch(`/api/works?${params.toString()}`, {
-        signal: ac.signal,
-      });
+      const res = await fetch(`/api/works?${params.toString()}`, { signal: ac.signal });
       if (!res.ok) throw new Error("fetch failed");
-      const json = (await res.json()) as { works: Work[] };
-
-      setWorks(json.works || []);
+      const json = (await res.json()) as { works?: Work[] };
+      setWorks(Array.isArray(json.works) ? json.works : []);
     } catch (e: any) {
-      if (e?.name !== "AbortError") {
-        // eslint-disable-next-line no-console
-        console.error(e);
-      }
+      if (e?.name !== "AbortError") console.error(e);
     } finally {
       setTimeout(() => setIsAnimating(false), SWAP_OUT_MS);
     }
   };
 
-  // ▼ ここで「work + illust差し込み」を作る（元の仕様に戻す）
-  const renderedItems = useMemo(() => {
-    // まずは先頭9件に限定（元の挙動）
-    const latest = works.slice(0, 9);
+  const rendered = useMemo(() => {
+    const safeWorks = Array.isArray(works) ? works : [];
+    const latest = safeWorks.slice(0, 9);
 
-    // 3件ごとに illust を差し込む
-    const items: { type: "work" | "illust"; work?: Work; key: string }[] = [];
-    latest.forEach((w, i) => {
-      items.push({ type: "work", work: w, key: `work-${w.id}` });
-      if ((i + 1) % 3 === 0) items.push({ type: "illust", key: `illust-${i}` });
-    });
+    const out: JSX.Element[] = [];
 
-    // ★ Math.random() を使うと hydration でズレるので seed から決める
-    const firstRowBigIndex = ((layoutSeed ?? 0) & 1) === 0 ? 0 : 1;
-    let workIndex = 0;
+    const pushIllust = (rowIndex: number) => {
+      // 行ごとにseed固定のランダムでpattern決定
+      const r = mulberry32((layoutSeed + rowIndex * 997) >>> 0)();
+      const pattern = (Math.floor(r * 3) + 1) as IllustPattern;
 
-    return items.map((item) => {
-      if (item.type === "illust") {
-        return (
-          <div
-            key={item.key}
-            className="pre:w-1/4 pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0 pre:flex pre:items-center pre:justify-center slide-in"
-          >
+      out.push(
+        <div
+          key={`illust-row-${rowIndex}`}
+          className={[
+            // ★ worksと同じ1マス幅で横並びに参加
+            "pre:w-[calc(1/4*100%)]",
+            "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
+            // ★ 中央寄せ
+            "pre:flex pre:items-center pre:justify-center",
+          ].join(" ")}
+        >
+          {/* ★ aspect-ratioは内側ラッパーへ（wrap計算を壊さない） */}
+          <div className="pre:w-full" style={{ aspectRatio: ILLUST_RATIO_MAP[pattern] }}>
             <img
               src="/illust/about.png"
               alt=""
-              className="pre:w-[calc(304/375*100%)]"
+              className="pre:w-full pre:h-full pre:object-contain"
               loading="lazy"
             />
           </div>
-        );
+        </div>
+      );
+    };
+
+    let cursor = 0;
+    let rowIndex = 0;
+
+    // row3のwide位置を左右交互に
+    let wideToggle = (layoutSeed & 1) === 0 ? 0 : 1;
+
+    while (cursor < latest.length) {
+      const remaining = latest.length - cursor;
+
+      // ✅ 行は必ず 3 → 4 → 3 → 4…
+      const rowKind = rowIndex % 2 === 0 ? "row3" : "row4";
+      const need = rowKind === "row3" ? 3 : 4;
+
+      // 残りが足りない場合：残り全部を1/4で出して終了（欠け防止）
+      if (remaining < need) {
+        for (let i = 0; i < remaining; i++) {
+          const w = latest[cursor++];
+          out.push(
+            <WorksCard
+              key={`work-${w.id}`}
+              work={w}
+              isWide={false}
+              widthClass="pre:w-[calc(1/4*100%)]"
+              className="pre:mb-5"
+            />
+          );
+        }
+        break;
       }
 
-      const w = item.work!;
-      // 3投稿レイアウト：3件単位で big の左右を入れ替える（0/1）
-      const row = Math.floor(workIndex / 3);
-      const bigIndexForRow = row === 0 ? firstRowBigIndex : (row + firstRowBigIndex) % 2;
+      if (rowKind === "row3") {
+        const wideIndex = wideToggle === 0 ? 0 : 1; // 0/1交互（必要なら2も混ぜてOK）
 
-      // ここでは「workが並ぶ想定 index」は 0,1,2 を繰り返す扱いにする
-      const indexInTri = workIndex % 3;
+        for (let i = 0; i < 3; i++) {
+          const w = latest[cursor++];
+          const isWide = i === wideIndex;
 
-      // big は 0 or 1 に出したい（=2/4幅）。残りは 1/4。
-      const isWide = indexInTri === bigIndexForRow;
+          out.push(
+            <WorksCard
+              key={`work-${w.id}`}
+              work={w}
+              isWide={isWide}
+              widthClass={isWide ? "pre:w-[calc(2/4*100%)]" : "pre:w-[calc(1/4*100%)]"}
+              className="pre:mb-5"
+            />
+          );
+        }
 
-      const widthClass = isWide ? "pre:w-[calc(2/4*100%)]" : "pre:w-[calc(1/4*100%)]";
+        wideToggle = 1 - wideToggle;
+      } else {
+        // row4: 4つ全部1マス（ここで isWide は絶対 false）
+        for (let i = 0; i < 4; i++) {
+          const w = latest[cursor++];
+          out.push(
+            <WorksCard
+              key={`work-${w.id}`}
+              work={w}
+              isWide={false}
+              widthClass="pre:w-[calc(1/4*100%)]"
+              className="pre:mb-5"
+            />
+          );
+        }
+      }
 
-      workIndex++;
+      // ✅ 3行に1回だけ illust（= 出た次の行は必ず出ない）
+      if ((rowIndex + 1) % 3 === 0) {
+        pushIllust(rowIndex);
+      }
 
-      return (
-        <WorksCard
-          key={item.key}
-          work={w}
-          widthClass={widthClass}
-          isWide={isWide} // ★pattern制御に使う
-          className="pre:mb-5"
-        />
-      );
-    });
+      rowIndex++;
+    }
+
+    return out;
   }, [works, layoutSeed]);
-
-  useEffect(() => {
-  // works が差し替わった “後” に付与
-  const raf = requestAnimationFrame(() => {
-    const root = listRef.current ?? document;
-    root.querySelectorAll<HTMLElement>(".slide-in").forEach((el) => {
-      el.classList.add("is-shown");
-    });
-  });
-  return () => cancelAnimationFrame(raf);
-}, [works]);
 
   return (
     <>
-      <WorksCategoryNav categories={categories} activeSlug={activeSlug} onChange={onChangeCategory} />
+      <WorksCategoryNav
+        categories={categories}
+        activeSlug={activeSlug}
+        onChange={onChangeCategory}
+      />
 
       <section
-        ref={(el) => {
-          listRef.current = el;
-        }}
         className={[
           "pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:sm:sp-w-[360] pre:sm:sp-mb-[110]",
           isAnimating ? "works-list is-changing" : "works-list",
         ].join(" ")}
       >
-        {renderedItems}
+        {rendered}
       </section>
     </>
   );

@@ -1,28 +1,40 @@
 "use client";
 
-import FMLink from "@/components/FMLink";
+import Link from "next/link";
 import ResponsiveImage from "@/components/ResponsiveImage";
+import type { ImageMeta } from "@/components/ResponsiveImage";
 import { pickEyecatchRandom } from "@/lib/wp";
 
 type Props = {
   work: any;
   widthClass: string;
   className?: string;
-  /**
-   * 2/4幅（= 1列3投稿の「大きい枠」）かどうか。
-   * true の場合は縦長になる pattern を避ける。
-   */
-  isWide?: boolean;
+  isWide?: boolean; // row3の1つだけ true（2マス）
 };
 
-type ImageMeta = { url: string; width?: number; height?: number };
+type RatioKey = "1/1" | "3/4" | "4/3";
 type Pattern = 1 | 2 | 3;
 
-const RATIO_MAP: Record<Pattern, string> = {
-  1: "1 / 1",
-  2: "3 / 4",
-  3: "16 / 9",
+const RATIO_TO_PATTERN: Record<RatioKey, Pattern> = {
+  "1/1": 1,
+  "3/4": 2,
+  "4/3": 3,
 };
+
+const RATIO_VALUE: Record<RatioKey, string> = {
+  "1/1": "1 / 1",
+  "3/4": "3 / 4",
+  "4/3": "4 / 3",
+};
+
+function mulberry32(a: number) {
+  return function () {
+    let t = (a += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
 function normalizeImage(x: any): ImageMeta | null {
   if (!x) return null;
@@ -32,30 +44,34 @@ function normalizeImage(x: any): ImageMeta | null {
     if (typeof url !== "string" || !url) return null;
     const width = typeof x.width === "number" ? x.width : undefined;
     const height = typeof x.height === "number" ? x.height : undefined;
-    return { url, width, height };
+    const placeholder_color =
+      typeof x.placeholder_color === "string" ? x.placeholder_color : null;
+    return { url, width, height, placeholder_color };
   }
   return null;
 }
 
-/**
- * いろんなACF構造を吸収して pattern別のpc/spを取りに行く
- */
-function getPatternImages(
-  work: any,
-  pattern: Pattern
-): { pc: ImageMeta; sp?: ImageMeta | null } | null {
-  const key = `pattern${pattern}`;
-  const obj = work?.acf?.[key];
-  if (!obj) return null;
+/** pattern1/2/3 を単一画像として取得（acf揺れ吸収） */
+function getPatternImage(w: any, p: Pattern): ImageMeta | null {
+  const acf = w?.acf;
+  if (!acf) return null;
 
-  // 1) ACFが { pc:{}, sp:{} } / {pc:'',sp:''} 形式
-  const pc = normalizeImage(obj.pc || obj.PC || obj.desktop);
-  const sp = normalizeImage(obj.sp || obj.SP || obj.mobile);
-  if (pc) return { pc, sp };
+  const raw =
+    acf[`pattern${p}`] ??
+    acf[`pattern_${p}`] ??
+    acf[`pattern${p}_pc`] ??
+    acf[`pattern_${p}_pc`];
 
-  // 2) ACFが単体画像（string / {url,width,height}）形式
-  const pc2 = normalizeImage(obj);
-  if (pc2) return { pc: pc2, sp: null };
+  if (!raw) return null;
+
+  const direct = normalizeImage(raw);
+  if (direct) return direct;
+
+  // { pc: {...} } 等
+  if (typeof raw === "object") {
+    const pc = normalizeImage(raw.pc || raw.PC || raw.desktop);
+    if (pc) return pc;
+  }
 
   return null;
 }
@@ -66,38 +82,48 @@ export default function WorksCard({
   className = "",
   isWide = false,
 }: Props) {
-  // ★要件：
-  // - pattern3 は「四つ並び（= 1/4幅）」の時しか入れない
-  // - 1列3投稿の“大きい枠”(isWide=true)では縦長を避けたい → 1:1のみに限定
-  const allowed: Pattern[] = isWide ? [1] : [1, 2, 3];
+  const seed = (w?.id ?? 0) >>> 0;
+  const rand = mulberry32(seed);
 
-  // seed固定（SSR/CSR一致）
-  const seed = w?.id ?? 0;
+  // ✅ レイアウトルール：
+  // - wide(2マス) は縦長回避で「3/4のみ」固定（= pattern2）
+  // - それ以外は 1/1・3/4・4/3 をランダム
+  // - pattern3(4/3) は 1マスのみ（wideでは選ばれない）
+  let ratioKey: RatioKey = isWide
+    ? "3/4"
+    : (["1/1", "3/4", "4/3"] as const)[Math.floor(rand() * 3)];
 
-  // allowedの中で deterministic に pattern を選ぶ
-  let pattern: Pattern = allowed[seed % allowed.length];
+  let pattern: Pattern = RATIO_TO_PATTERN[ratioKey];
 
-  // pattern固定で画像を拾う
-  let byPattern = getPatternImages(w, pattern);
+  // 選んだpatternでまず取る
+  let img = getPatternImage(w, pattern);
 
-  // 取れなかったら allowed 内で順にフォールバック
-  if (!byPattern) {
-    for (const p of allowed) {
-      const hit = getPatternImages(w, p);
+  // 無い場合：許容される候補から「画像があるもの」へフォールバック
+  const fallbackOrder: RatioKey[] = isWide
+    ? ["3/4", "1/1"] // wideは縦長回避、最悪1/1へ
+    : ["1/1", "3/4", "4/3"];
+
+  if (!img) {
+    for (const rk of fallbackOrder) {
+      const p = RATIO_TO_PATTERN[rk];
+      const hit = getPatternImage(w, p);
       if (hit) {
+        ratioKey = rk;
         pattern = p;
-        byPattern = hit;
+        img = hit;
         break;
       }
     }
   }
 
-  // それでも無理なら従来フォールバック
-  const fallback = byPattern ? null : pickEyecatchRandom(w, { seed });
-  const picked = byPattern ?? fallback;
-  if (!picked?.pc?.url) return null;
+  // それでも無い場合：何かしら出す
+  if (!img) {
+    const fb = pickEyecatchRandom(w, { seed })?.pc;
+    if (fb?.url) img = { url: fb.url, width: fb.width, height: fb.height };
+  }
 
-  // works_cat の表示ラベル：ACFの ryaku を優先し、なければ name
+  if (!img?.url) return null;
+
   const catLabel = Array.isArray(w?.works_cat)
     ? w.works_cat
         .map((c: any) => c?.acf?.ryaku || c?.ryaku || c?.name)
@@ -105,63 +131,39 @@ export default function WorksCard({
         .join(" / ")
     : "";
 
-  // ✅ SPだけ、patternごとの aspect-ratio を .responsive-image に強制
-  // （ResponsiveImageに渡すclassNameが効かない/上書きされるケース対策）
-  const smRatioFix =
-    pattern === 1
-      ? "pre:sm:[&_.responsive-image]:!aspect-[1/1]"
-      : pattern === 2
-        ? "pre:sm:[&_.responsive-image]:!aspect-[3/4]"
-        : "pre:sm:[&_.responsive-image]:!aspect-[16/9]";
-
   return (
-    <FMLink
+    <Link
       href={`/works/${w.slug}`}
       className={[
         widthClass,
-
-        // ✅ ここで常時 slide-in
         "slide-in",
-
-        // ✅ SP比率強制（←今回の修正の本体）
-        smRatioFix,
-
         "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
-
-        // hover text
+        // ---- hover復活 ----
         "pre:hover:[&_header_h2]:text-ketchup",
         "pre:hover:[&_header_p]:text-ketchup",
-
-        // image hover
         "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
-        "pre:hover:[&_img]:transform-[scale(1.05)]",
         "pre:hover:[&_.responsive-image]:[clip-path:polygon(calc(100%_*_0.046)_0,calc(100%_*_0.953)_0,calc(100%_*_0.953)_100%,calc(100%_*_0.046)_100%)]",
-
+        "pre:[&_.responsive-image]:transition-all pre:[&_.responsive-image]:duration-500",
         className,
       ].join(" ")}
     >
       <ResponsiveImage
-        pc={{ url: picked.pc.url, width: picked.pc.width, height: picked.pc.height }}
-        sp={
-          picked.sp?.url
-            ? { url: picked.sp.url, width: picked.sp.width, height: picked.sp.height }
-            : undefined
-        }
+        pc={img}
         alt={w?.title?.rendered ?? ""}
-        placeholder_color={w.acf?.placeholder_color}
-        // PCは既に効いてる前提で維持（SPは smRatioFix で矯正）
-        fallbackRatio={RATIO_MAP[pattern]}
+        placeholder_color={w?.acf?.placeholder_color}
+        aspectRatio={RATIO_VALUE[ratioKey]}
+        fit="cover"
       />
 
       <header className="pre:flex pre:mt-2.5 pre:sm:block pre:sm:sp-mt-[8]">
         <h2
           className="pre:text-[15px] pre:font-gt pre:font-light pre:leading-[1.7] pre:w-[calc(100%-105px)] pre:pr-2 pre:sm:w-full transition-text pre:sm:sp-fs-[14] pre:sm:whitespace-normal pre:sm:sp-mb-[5] pre:sm:pr-0"
-          dangerouslySetInnerHTML={{ __html: w.title?.rendered ?? "" }}
+          dangerouslySetInnerHTML={{ __html: w?.title?.rendered ?? "" }}
         />
         <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:font-gt pre:font-light pre:leading-[1.7] pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
           {catLabel}
         </p>
       </header>
-    </FMLink>
+    </Link>
   );
 }
