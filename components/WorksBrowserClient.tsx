@@ -7,11 +7,19 @@ import WorksCategoryNav from "@/components/WorksCategoryNav";
 
 const SWAP_OUT_MS = 350;
 
-type Props = {
-  initialWorks?: Work[];
-  categories: WorkTerm[];
-  initialActiveSlug?: string | null;
+// ------------------------------
+// ratio ↔ pattern (absolute rule)
+// ------------------------------
+export type RatioKey = "1/1" | "3/4" | "4/3";
+export type Pattern = 1 | 2 | 3;
+
+const RATIO_TO_PATTERN: Record<RatioKey, Pattern> = {
+  "1/1": 1,
+  "3/4": 2,
+  "4/3": 3,
 };
+
+const RATIOS: readonly RatioKey[] = ["1/1", "3/4", "4/3"] as const;
 
 function mulberry32(a: number) {
   return function () {
@@ -22,6 +30,15 @@ function mulberry32(a: number) {
   };
 }
 
+// workId と layoutSeed から ratio を安定決定（同一アクセス中は固定）
+function pickRatioKey(layoutSeed: number, workId: number, isWide: boolean): RatioKey {
+  // ※isWide でも ratio を固定にしない（要件）
+  const s = (layoutSeed ^ Math.imul((workId >>> 0) + (isWide ? 101 : 0), 2654435761)) >>> 0;
+  const r = mulberry32(s)();
+  return RATIOS[Math.floor(r * RATIOS.length)];
+}
+
+// illust用（既存のまま）
 type IllustPattern = 1 | 2 | 3;
 const ILLUST_RATIO_MAP: Record<IllustPattern, string> = {
   1: "1 / 1",
@@ -29,14 +46,18 @@ const ILLUST_RATIO_MAP: Record<IllustPattern, string> = {
   3: "4 / 3",
 };
 
+type Props = {
+  initialWorks?: Work[];
+  categories: WorkTerm[];
+  initialActiveSlug?: string | null;
+};
+
 export default function WorksBrowserClient({
   initialWorks = [],
   categories,
   initialActiveSlug = null,
 }: Props) {
-  const [works, setWorks] = useState<Work[]>(
-    Array.isArray(initialWorks) ? initialWorks : []
-  );
+  const [works, setWorks] = useState<Work[]>(Array.isArray(initialWorks) ? initialWorks : []);
   const [activeSlug, setActiveSlug] = useState<string | null>(initialActiveSlug);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -88,8 +109,6 @@ export default function WorksBrowserClient({
 
   const rendered = useMemo(() => {
     const safeWorks = Array.isArray(works) ? works : [];
-
-    // ✅ illustが入りやすいように 12件まで
     const latest = safeWorks.slice(0, 12);
 
     const out: JSX.Element[] = [];
@@ -100,7 +119,7 @@ export default function WorksBrowserClient({
 
       out.push(
         <div
-          key={`illust-row-${rowIndex}`}
+          key={`illust-row-${rowIndex}-${out.length}`}
           className={[
             "pre:w-[calc(1/4*100%)]",
             "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
@@ -119,50 +138,45 @@ export default function WorksBrowserClient({
       );
     };
 
+    let slotCount = 0;
+    const ILLUST_EVERY_SLOTS = 8;
+
     let cursor = 0;
     let rowIndex = 0;
 
-    // row3のwide位置を左右交互に
     let wideToggle = (layoutSeed & 1) === 0 ? 0 : 1;
-
-    // ✅ 「2行でも1回出す」ためのフラグ
-    let hasInsertedEarlyIllust = false;
 
     while (cursor < latest.length) {
       const remaining = latest.length - cursor;
-
-      // ✅ 行は必ず 3 → 4 → 3 → 4…
       const rowKind = rowIndex % 2 === 0 ? "row3" : "row4";
       const need = rowKind === "row3" ? 3 : 4;
 
-      // 残りが足りない場合：残り全部を1/4で出して終了
       if (remaining < need) {
         for (let i = 0; i < remaining; i++) {
           const w = latest[cursor++];
+          const isWide = false;
+          const idNum = Number(w?.id ?? cursor);
+          const ratioKey = pickRatioKey(layoutSeed, idNum, isWide);
+          const requiredPattern = RATIO_TO_PATTERN[ratioKey];
+
           out.push(
             <WorksCard
               key={`work-${w.id}`}
               work={w}
-              isWide={false}
+              isWide={isWide}
               widthClass="pre:w-[calc(1/4*100%)]"
               className="pre:mb-5"
+              ratioKey={ratioKey}
+              requiredPattern={requiredPattern}
             />
           );
         }
 
-        // ✅ 余り行も「1行」扱い（illust挿入判定に必要）
-        const afterRowIndex = rowIndex;
-
-        // ✅ 3行に1回 or 2行しか作れない場合の救済で1回
-        const shouldInsertIllust =
-          ((afterRowIndex + 1) % 3 === 0) ||
-          (!hasInsertedEarlyIllust && latest.length >= 5 && afterRowIndex === 1);
-
-        if (shouldInsertIllust) {
-          pushIllust(afterRowIndex);
-          if (afterRowIndex === 1) hasInsertedEarlyIllust = true;
+        slotCount += remaining;
+        if (slotCount >= ILLUST_EVERY_SLOTS) {
+          pushIllust(rowIndex);
+          slotCount = 0;
         }
-
         break;
       }
 
@@ -173,6 +187,10 @@ export default function WorksBrowserClient({
           const w = latest[cursor++];
           const isWide = i === wideIndex;
 
+          const idNum = Number(w?.id ?? cursor);
+          const ratioKey = pickRatioKey(layoutSeed, idNum, isWide);
+          const requiredPattern = RATIO_TO_PATTERN[ratioKey];
+
           out.push(
             <WorksCard
               key={`work-${w.id}`}
@@ -180,36 +198,42 @@ export default function WorksBrowserClient({
               isWide={isWide}
               widthClass={isWide ? "pre:w-[calc(2/4*100%)]" : "pre:w-[calc(1/4*100%)]"}
               className="pre:mb-5"
+              ratioKey={ratioKey}
+              requiredPattern={requiredPattern}
             />
           );
         }
 
         wideToggle = 1 - wideToggle;
+        slotCount += 4;
       } else {
         for (let i = 0; i < 4; i++) {
           const w = latest[cursor++];
+
+          const isWide = false;
+          const idNum = Number(w?.id ?? cursor);
+          const ratioKey = pickRatioKey(layoutSeed, idNum, isWide);
+          const requiredPattern = RATIO_TO_PATTERN[ratioKey];
+
           out.push(
             <WorksCard
               key={`work-${w.id}`}
               work={w}
-              isWide={false}
+              isWide={isWide}
               widthClass="pre:w-[calc(1/4*100%)]"
               className="pre:mb-5"
+              ratioKey={ratioKey}
+              requiredPattern={requiredPattern}
             />
           );
         }
+
+        slotCount += 4;
       }
 
-      // ✅ 3行に1回
-      const shouldInsertNormal = (rowIndex + 1) % 3 === 0;
-
-      // ✅ 作品が少なくて2行しか作れないカテゴリでも、2行目の後に1回だけ救済
-      const shouldInsertEarly =
-        !hasInsertedEarlyIllust && latest.length >= 5 && rowIndex === 1;
-
-      if (shouldInsertNormal || shouldInsertEarly) {
+      if (slotCount >= ILLUST_EVERY_SLOTS) {
         pushIllust(rowIndex);
-        if (shouldInsertEarly) hasInsertedEarlyIllust = true;
+        slotCount = 0;
       }
 
       rowIndex++;
