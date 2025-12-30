@@ -226,6 +226,14 @@
     }
 }
 
+.splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(1) .char {
+  transform: translateY(-107%);
+}
+.splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(2) .char {
+  /* transform: translateY(-10%); */
+  transform: translateY(0%);
+}
+
 @media (hover: hover) {
   /* hover / stay で入れ替え */
   .splitting-hover:hover .splitting-hover__inner > .splitting-text:nth-child(1) .char {
@@ -236,13 +244,6 @@
     transform: translateY(0%);
   }
 
-  .splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(1) .char {
-    transform: translateY(-107%);
-  }
-  .splitting-hover.stay .splitting-hover__inner > .splitting-text:nth-child(2) .char {
-    /* transform: translateY(-10%); */
-    transform: translateY(0%);
-  }
 
   .icon-hover {
       &:hover {
