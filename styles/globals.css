@@ -124,6 +124,10 @@ a {
 }
 
 @media screen and (max-width: 749px) {
+  header {
+  transform: translateZ(0);
+  will-change: transform;
+  }
   #page-mask {
   position: fixed;
   inset: 0;

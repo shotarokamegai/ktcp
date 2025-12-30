@@ -20,13 +20,13 @@ const BODY = "pre:w-full";
 const HEADER =
   "pre:fixed pre:top-0 pre:left-0 pre:z-[100] pre:h-[86px] pre:sm:sp-h-[50] " +
   "pre:flex pre:justify-between " +
-  "pre:w-full pre:bg-white pre:sm:py-0 pre:sm:sp-px-[20] pre:sm:flex pre:sm:items-center pre:sm:justify-between";
+  "pre:w-full pre:bg-white pre:sm:py-0 pre:sm:sp-px-[20] pre:sm:flex pre:sm:items-center pre:sm:justify-between slide-in";
 
 const LOGO_LINK =
   "pre:w-[104.4px] pre:h-11 pre:sm:sp-w-[65] pre:sm:h-auto pre:sm:block";
 
 const NAV =
-  "js-header-nav pre:absolute pre:top-[26px] pre:right-[20px] pre:[&_ul]:flex pre:[&_ul]:items-start pre:[&_ul]:justify-end pre:sm:flex " +
+  "js-header-nav pre:absolute pre:top-[26px] pre:right-5 pre:[&_ul]:flex pre:[&_ul]:items-start pre:[&_ul]:justify-end pre:sm:flex " +
   "pre:sm:fixed pre:sm:sp-w-[430] pre:sm:mx-auto pre:sm:bg-white " +
   "pre:sm:opacity-0 pre:sm:invisible pre:sm:h-screen pre:sm:w-screen pre:sm:top-0 pre:sm:left-0 pre:sm:[&_ul]:flex-col pre:sm:sp-pl-[20] pre:sm:sp-pb-[50]";
 
@@ -87,12 +87,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MenuToggle />
 
         <header className={HEADER} id="header">
-          <h1 className="pre:absolute center-y sm:center-y pre:left-5 pre:z-100">
+          <h1 className="pre:absolute pre:top-[26px] pre:left-5 pre:z-100 sm:center-y">
             <FMLink href="/" className={LOGO_LINK}>
               <Image
                 src="/logo.svg"
                 alt="Ketchup Logo"
-                className="slide-in"
+                className=""
                 width={104.4}
                 height={44}
               />
@@ -111,7 +111,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 />
               </div>
 
-              <li className="pre:leading-none slide-in">
+              <li className="pre:leading-none">
                 <HeaderNavLink
                   href="/about"
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
@@ -123,7 +123,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </HeaderNavLink>
               </li>
 
-              <li className="pre:leading-none slide-in">
+              <li className="pre:leading-none">
                 <HeaderNavLink
                   href="/contact"
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
@@ -135,7 +135,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </HeaderNavLink>
               </li>
 
-              <li className="pre:leading-none slide-in">
+              <li className="pre:leading-none">
                 <HeaderNavLink
                   href="/careers"
                   className={`${NAV_LINK_BASE} ${CAREERS_LINK} splitting-hover pre:sm:overflow-hidden`}
@@ -160,7 +160,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
 
           <div className="menu-trigger pre:hidden pre:sm:block pre:sm:absolute pre:sm:sp-h-[14] pre:sm:sp-w-[30] pre:sm:sp-right-[18] sm:center-y">
-            <div className="pre:h-full pre:w-full slide-in">
+            <div className="pre:h-full pre:w-full">
             <div className="menu-trigger-content pre:sm:relative pre:h-full pre:w-full pre:[&_div]:absolute pre:[&_div]:h-0.5 pre:[&_div]:bg-ketchup">
               <div className="menu1 pre:w-full pre:left-0"></div>
               <div className="menu2 pre:sp-w-[18]"></div>
