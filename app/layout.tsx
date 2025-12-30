@@ -18,15 +18,15 @@ import SlideInOnLoad from "@/components/SlideInOnLoad";
 const BODY = "pre:w-full";
 
 const HEADER =
-  "pre:fixed pre:top-0 pre:left-0 pre:z-[100] pre:sm:sp-h-[50] " +
+  "pre:fixed pre:top-0 pre:left-0 pre:z-[100] pre:h-[86px] pre:sm:sp-h-[50] " +
   "pre:flex pre:justify-between " +
-  "pre:w-full pre:px-5 pre:py-[26px] pre:bg-white pre:sm:py-0 pre:sm:sp-px-[20] pre:sm:flex pre:sm:items-center pre:sm:justify-between";
+  "pre:w-full pre:bg-white pre:sm:py-0 pre:sm:sp-px-[20] pre:sm:flex pre:sm:items-center pre:sm:justify-between";
 
 const LOGO_LINK =
   "pre:w-[104.4px] pre:h-11 pre:sm:sp-w-[65] pre:sm:h-auto pre:sm:block";
 
 const NAV =
-  "js-header-nav pre:[&_ul]:flex pre:[&_ul]:items-start pre:[&_ul]:justify-end pre:sm:flex " +
+  "js-header-nav pre:absolute pre:top-[26px] pre:right-[20px] pre:[&_ul]:flex pre:[&_ul]:items-start pre:[&_ul]:justify-end pre:sm:flex " +
   "pre:sm:fixed pre:sm:sp-w-[430] pre:sm:mx-auto pre:sm:bg-white " +
   "pre:sm:opacity-0 pre:sm:invisible pre:sm:h-screen pre:sm:w-screen pre:sm:top-0 pre:sm:left-0 pre:sm:[&_ul]:flex-col pre:sm:sp-pl-[20] pre:sm:sp-pb-[50]";
 
@@ -87,11 +87,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MenuToggle />
 
         <header className={HEADER} id="header">
-          <h1 className="pre:relative pre:z-100 slide-in">
+          <h1 className="pre:absolute center-y sm:center-y pre:left-5 pre:z-100">
             <FMLink href="/" className={LOGO_LINK}>
               <Image
                 src="/logo.svg"
                 alt="Ketchup Logo"
+                className="slide-in"
                 width={104.4}
                 height={44}
               />
@@ -158,7 +159,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </ul>
           </nav>
 
-          <div className="menu-trigger pre:hidden pre:sm:block pre:sm:relative pre:sm:sp-h-[14] pre:sm:sp-w-[30] slide-in">
+          <div className="menu-trigger pre:hidden pre:sm:block pre:sm:absolute pre:sm:sp-h-[14] pre:sm:sp-w-[30] pre:sm:sp-right-[18] sm:center-y">
+            <div className="pre:h-full pre:w-full slide-in">
             <div className="menu-trigger-content pre:sm:relative pre:h-full pre:w-full pre:[&_div]:absolute pre:[&_div]:h-0.5 pre:[&_div]:bg-ketchup">
               <div className="menu1 pre:w-full pre:left-0"></div>
               <div className="menu2 pre:sp-w-[18]"></div>
@@ -172,6 +174,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <SplittingSpan text="Close" />
               </span>
             </p>
+            </div>
           </div>
         </header>
 

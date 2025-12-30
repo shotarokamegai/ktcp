@@ -187,7 +187,6 @@ export default async function WorkDetail({
               >
                 <ResponsiveImage
                   pc={picked.pc}
-                  sp={picked.sp || undefined}
                   alt={w.title.rendered}
                   placeholder_color={w.acf?.placeholder_color}
                   fallbackRatio="4 / 3"
