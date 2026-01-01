@@ -73,6 +73,7 @@ export default function WorksBrowserClient({
   }, []);
 
   const abortRef = useRef<AbortController | null>(null);
+  const animTimerRef = useRef<number | null>(null);
 
   const setUrlOnly = (slug: string | null) => {
     const url = new URL(window.location.href);
@@ -103,6 +104,7 @@ export default function WorksBrowserClient({
     } catch (e: any) {
       if (e?.name !== "AbortError") console.error(e);
     } finally {
+      //ここのせいで2回renderされてる気がする
       setTimeout(() => setIsAnimating(false), SWAP_OUT_MS);
     }
   };
