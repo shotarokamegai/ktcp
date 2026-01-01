@@ -6,7 +6,7 @@ import WorksCard from "@/components/WorksCard";
 import WorksCategoryNav from "@/components/WorksCategoryNav";
 
 const SWAP_OUT_MS = 350; // ← CSSのfade-out時間に合わせる
-const APPLY_SHOWN_AFTER_MS = 60; // ← 新DOM反映後に is-shown 付ける猶予（必要なら0でもOK）
+const APPLY_SHOWN_AFTER_MS = 10; // ← 新DOM反映後に is-shown 付ける猶予（必要なら0でもOK）
 
 // ------------------------------
 // ratio ↔ pattern (absolute rule)

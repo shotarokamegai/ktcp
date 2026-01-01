@@ -87,7 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MenuToggle />
 
         <header className={HEADER} id="header">
-          <h1 className="pre:absolute pre:top-[26px] pre:left-5 pre:z-100 sm:center-y">
+          <h1 className="pre:absolute pre:top-[26px] pre:left-5 pre:z-100 sm:center-y" id="logo">
             <FMLink href="/" className={LOGO_LINK}>
               <Image
                 src="/logo.svg"

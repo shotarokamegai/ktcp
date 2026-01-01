@@ -1,5 +1,49 @@
 @layer components {
   /* ===============================
+     Logo Animation
+     =============================== */
+  @keyframes LogoHover {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* ===============================
+     Input Animation
+     =============================== */
+  @keyframes checkZoomIn {
+    0% {
+      opacity: 0;
+      transform: rotate(50deg) scale(.5);
+    }
+    50% {
+      opacity: 1;
+      transform: rotate(50deg) scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: rotate(50deg) scale(1);
+    }
+  }
+
+  @keyframes checkZoomOut {
+    0% {
+      opacity: 1;
+      transform: rotate(50deg) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: rotate(50deg) scale(.9);
+    }
+  }
+
+  /* ===============================
      Accordion Icon Animation
      =============================== */
 
@@ -236,6 +280,13 @@
 
 @media (hover: hover) {
   /* hover / stay で入れ替え */
+  #logo {
+    will-change: transform;
+    transition: transform .5s var(--ease-out-quart);
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
   .splitting-hover:hover .splitting-hover__inner > .splitting-text:nth-child(1) .char {
     transform: translateY(-107%);
   }

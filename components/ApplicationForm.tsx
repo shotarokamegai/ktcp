@@ -116,7 +116,7 @@ const textareaClass = cx(
   fieldBase,
   "pre:min-h-[244px] pre:sm:sp-min-h-[117] pre:px-[12px] pre:sm:sp-px-[12] pre:py-[10px] pre:sm:sp-py-[10] pre:resize-y pre:bg-beige"
 );
-const selectClass = cx(fieldBase, "pre:h-[40px] pre:px-[12px] pre:border pre:border-solid pre:border-darkGray pre:sp-h-[40] pre:sm:sp-px-[12]");
+const selectClass = cx(fieldBase, "pre:h-[40px] pre:px-[12px] pre:border pre:border-solid pre:border-darkGray pre:sm:sp-h-[40] pre:sm:sp-px-[12]");
 
 const fieldErrorClass =
   "pre:border-[#f55] pre:text-[#f55] pre:placeholder:text-[#f55]";
