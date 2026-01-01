@@ -5,7 +5,8 @@ import type { Work, WorkTerm } from "@/lib/wp";
 import WorksCard from "@/components/WorksCard";
 import WorksCategoryNav from "@/components/WorksCategoryNav";
 
-const SWAP_OUT_MS = 350;
+const SWAP_OUT_MS = 350; // ← CSSのfade-out時間に合わせる
+const APPLY_SHOWN_AFTER_MS = 60; // ← 新DOM反映後に is-shown 付ける猶予（必要なら0でもOK）
 
 // ------------------------------
 // ratio ↔ pattern (absolute rule)
@@ -61,6 +62,7 @@ export default function WorksBrowserClient({
   const [activeSlug, setActiveSlug] = useState<string | null>(initialActiveSlug);
   const [isAnimating, setIsAnimating] = useState(false);
 
+  // layoutSeed（既存）
   const [layoutSeed, setLayoutSeed] = useState<number>(0);
   useEffect(() => {
     try {
@@ -73,7 +75,29 @@ export default function WorksBrowserClient({
   }, []);
 
   const abortRef = useRef<AbortController | null>(null);
-  const animTimerRef = useRef<number | null>(null);
+
+  // ★追加：切替の競合を防ぐ
+  const swapIdRef = useRef(0);
+  const swapTimerRef = useRef<number | null>(null);
+
+  // ★追加：次の一覧を一時保持（古い一覧が消えてから差し替える）
+  const pendingWorksRef = useRef<Work[] | null>(null);
+
+  // ★任意：差し替え後に is-shown をまとめて付与したい場合
+  const applyShown = () => {
+    window.setTimeout(() => {
+      document
+        .querySelectorAll<HTMLElement>(".works-list .slide-in")
+        .forEach((el) => el.classList.add("is-shown"));
+    }, APPLY_SHOWN_AFTER_MS);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (swapTimerRef.current) window.clearTimeout(swapTimerRef.current);
+      if (abortRef.current) abortRef.current.abort();
+    };
+  }, []);
 
   const setUrlOnly = (slug: string | null) => {
     const url = new URL(window.location.href);
@@ -85,10 +109,20 @@ export default function WorksBrowserClient({
   const onChangeCategory = async (slug: string | null) => {
     if (slug === activeSlug) return;
 
+    // 既存のタイマーを止める（連打対策）
+    if (swapTimerRef.current) {
+      window.clearTimeout(swapTimerRef.current);
+      swapTimerRef.current = null;
+    }
+
+    // 切替IDを更新（後から返ってきた結果の混入を防ぐ）
+    const swapId = ++swapIdRef.current;
+
     setIsAnimating(true);
     setActiveSlug(slug);
     setUrlOnly(slug);
 
+    // 前のfetchは中断
     if (abortRef.current) abortRef.current.abort();
     const ac = new AbortController();
     abortRef.current = ac;
@@ -100,12 +134,32 @@ export default function WorksBrowserClient({
       const res = await fetch(`/api/works?${params.toString()}`, { signal: ac.signal });
       if (!res.ok) throw new Error("fetch failed");
       const json = (await res.json()) as { works?: Work[] };
-      setWorks(Array.isArray(json.works) ? json.works : []);
+
+      // ここでは setWorks しない。いったん保持して、フェードアウト後に差し替える。
+      pendingWorksRef.current = Array.isArray(json.works) ? json.works : [];
+
+      // ★「完全に消えてから」差し替える
+      swapTimerRef.current = window.setTimeout(() => {
+        // 途中で別の切替が走っていたら捨てる
+        if (swapId !== swapIdRef.current) return;
+
+        const nextWorks = pendingWorksRef.current ?? [];
+        pendingWorksRef.current = null;
+
+        setWorks(nextWorks);
+
+        // 新しい一覧へ切替 → 通常状態へ
+        setIsAnimating(false);
+
+        // 必要なら新しい一覧に is-shown を付与（WorksCard側の取りこぼし対策）
+        applyShown();
+
+        swapTimerRef.current = null;
+      }, SWAP_OUT_MS);
     } catch (e: any) {
       if (e?.name !== "AbortError") console.error(e);
-    } finally {
-      //ここのせいで2回renderされてる気がする
-      setTimeout(() => setIsAnimating(false), SWAP_OUT_MS);
+      // エラー時はアニメ状態を戻す
+      setIsAnimating(false);
     }
   };
 
