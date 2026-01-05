@@ -6,6 +6,9 @@ import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 import { fetchWorkBySlug, strip, fetchWorks, pickEyecatchRandom } from "@/lib/wp";
 import ResponsiveImage from "@/components/ResponsiveImage";
+import FeaturedWorksMobileSwiper, {
+  type FeaturedCard,
+} from "@/components/FeaturedWorksMobileSwiper";
 
 export const revalidate = 60;
 
@@ -98,6 +101,31 @@ export default async function WorkDetail({
     .filter((w: any) => w.slug !== (work as any).slug)
     .slice(0, 4);
 
+  const featuredCards: FeaturedCard[] = featured
+  .map((w: any) => {
+    const picked = pickEyecatchRandom(w, { seed: w.id });
+    if (!picked) return null;
+
+    const catLabel = Array.isArray(w?.works_cat)
+      ? w.works_cat
+          .map((c: any) => c?.acf?.ryaku || c?.ryaku || c?.name)
+          .filter(Boolean)
+          .join(" / ")
+      : "";
+
+    return {
+      id: w.id,
+      slug: w.slug,
+      titleHtml: w.title.rendered,
+      catLabel,
+      pc: picked.pc,
+      sp: picked.sp,
+      placeholder_color: w.acf?.placeholder_color,
+    };
+  })
+  .filter(Boolean) as FeaturedCard[];
+
+
   return (
     <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110]">
       <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between pre:sm:sp-w-[339] pre:sm:block">
@@ -162,19 +190,21 @@ export default async function WorkDetail({
             Featured works
           </h2>
         </div>
+        {/* SP：Swiper */}
+        <FeaturedWorksMobileSwiper items={featuredCards} />
 
-        <div className="pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:sm:w-full pre:sm:justify-between">
+        {/* PC：今の4カラム（smでは非表示） */}
+        <div className="pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:sm:hidden">
           {featured.map((w: any) => {
             const picked = pickEyecatchRandom(w, { seed: w.id });
             if (!picked) return null;
-
+          
             return (
               <FMLink
                 key={w.id}
                 href={`/works/${w.slug}`}
                 className={[
                   "pre:w-1/4",
-                  "pre:sm:sp-w-[160]",
                   "pre:mb-5",
                   "pre:px-[calc(7.5/1401*100%)]",
                   "pre:hover:text-ketchup",
@@ -191,7 +221,6 @@ export default async function WorkDetail({
                   placeholder_color={w.acf?.placeholder_color}
                   fallbackRatio="4 / 3"
                 />
-
                 <header className="pre:flex pre:mt-2.5 pre:justify-between pre:sm:block pre:sm:sp-mt-[6]">
                   <h2
                     className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(222/338*100%)] pre:sm:w-full pre:sm:sp-fs-[14] pre:sm:leading-[130%] pre:sm:sp-mb-[5] pre:leading-[1.7]"
