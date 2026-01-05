@@ -1,14 +1,11 @@
 // app/works/[slug]/page.tsx
 import VideoAutoPlay from "@/components/VideoAutoPlay";
-import Link from "next/link";
-import FMLink from "@/components/FMLink";
+import WorksCard from "@/components/WorksCard";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 import { fetchWorkBySlug, strip, fetchWorks, pickEyecatchRandom } from "@/lib/wp";
 import ResponsiveImage from "@/components/ResponsiveImage";
-import FeaturedWorksMobileSwiper, {
-  type FeaturedCard,
-} from "@/components/FeaturedWorksMobileSwiper";
+import FeaturedWorksMobileSwiper from "@/components/FeaturedWorksMobileSwiper";
 
 export const revalidate = 60;
 
@@ -101,31 +98,6 @@ export default async function WorkDetail({
     .filter((w: any) => w.slug !== (work as any).slug)
     .slice(0, 4);
 
-  const featuredCards: FeaturedCard[] = featured
-  .map((w: any) => {
-    const picked = pickEyecatchRandom(w, { seed: w.id });
-    if (!picked) return null;
-
-    const catLabel = Array.isArray(w?.works_cat)
-      ? w.works_cat
-          .map((c: any) => c?.acf?.ryaku || c?.ryaku || c?.name)
-          .filter(Boolean)
-          .join(" / ")
-      : "";
-
-    return {
-      id: w.id,
-      slug: w.slug,
-      titleHtml: w.title.rendered,
-      catLabel,
-      pc: picked.pc,
-      sp: picked.sp,
-      placeholder_color: w.acf?.placeholder_color,
-    };
-  })
-  .filter(Boolean) as FeaturedCard[];
-
-
   return (
     <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110]">
       <section className=" pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:flex pre:justify-between pre:sm:sp-w-[339] pre:sm:block">
@@ -191,55 +163,24 @@ export default async function WorkDetail({
           </h2>
         </div>
         {/* SP：Swiper */}
-        <FeaturedWorksMobileSwiper items={featuredCards} />
+        <FeaturedWorksMobileSwiper works={featured} />
 
         {/* PC：今の4カラム（smでは非表示） */}
         <div className="pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:sm:hidden">
-          {featured.map((w: any) => {
-            const picked = pickEyecatchRandom(w, { seed: w.id });
-            if (!picked) return null;
-          
-            return (
-              <FMLink
-                key={w.id}
-                href={`/works/${w.slug}`}
-                className={[
-                  "pre:w-1/4",
-                  "pre:mb-5",
-                  "pre:px-[calc(7.5/1401*100%)]",
-                  "pre:hover:text-ketchup",
-                  "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
-                  "pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))]",
-                  "pre:[&_img]:transform-[scale(1)]",
-                  "pre:hover:[&_img]:transform-[scale(1.05)]",
-                  "slide-in",
-                ].join(" ")}
-              >
-                <ResponsiveImage
-                  pc={picked.pc}
-                  alt={w.title.rendered}
-                  placeholder_color={w.acf?.placeholder_color}
-                  fallbackRatio="4 / 3"
-                />
-                <header className="pre:flex pre:mt-2.5 pre:justify-between pre:sm:block pre:sm:sp-mt-[6]">
-                  <h2
-                    className="pre:text-[15px] pre:font-gt pre:font-light pre:w-[calc(222/338*100%)] pre:sm:w-full pre:sm:sp-fs-[14] pre:sm:leading-[130%] pre:sm:sp-mb-[5] pre:leading-[1.7]"
-                    dangerouslySetInnerHTML={{ __html: w.title.rendered }}
-                  />
+          {featured.map((w: any, i: number) => {
+            const ratioKey = (["1/1", "3/4", "4/3"] as const)[(Number(w?.id ?? 0) + i) % 3];
+            const requiredPattern = ratioKey === "1/1" ? 1 : ratioKey === "3/4" ? 2 : 3;
 
-                  <p className="pre:text-[10px] pre:leading-[130%] pre:font-gt pre:font-light pre:w-[calc(58/338*100%)] pre:text-right pre:sm:w-full pre:sm:text-left pre:sm:sp-fs-[10]">
-                    {(() => {
-                      const catLabel = Array.isArray(w?.works_cat)
-                        ? w.works_cat
-                            .map((c: any) => c?.acf?.ryaku || c?.ryaku || c?.name)
-                            .filter(Boolean)
-                            .join(" / ")
-                        : "";
-                      return catLabel;
-                    })()}
-                  </p>
-                </header>
-              </FMLink>
+            return (
+              <WorksCard
+                key={`featured-${w.id}`}
+                work={w}
+                isWide={false}
+                widthClass="pre:w-1/4"
+                className="pre:mb-5 pre:px-[calc(7.5/1401*100%)]"
+                ratioKey={ratioKey}
+                requiredPattern={requiredPattern}
+              />
             );
           })}
         </div>
