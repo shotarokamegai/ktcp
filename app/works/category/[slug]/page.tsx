@@ -100,7 +100,6 @@ export default async function WorksCategoryPage({
                   <ResponsiveImage
                     pc={{ url: "/illust.png", width: 1200, height: 900 } as any}
                     alt="Ketchup Illustration"
-                    fallbackRatio="4 / 3"
                     disablePlaceholder
                   />
                 </div>

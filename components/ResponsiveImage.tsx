@@ -14,27 +14,27 @@ type Props = {
   pc: ImageMeta;
   alt: string;
 
-  /** 例: "1 / 1" "3 / 4" "4 / 3" を外から固定 */
-  aspectRatio?: string;
+  /** 画像の見せ方 */
+  fit?: CSSProperties["objectFit"]; // "cover" | "contain" etc
 
-  /** aspectRatio未指定のときの保険 */
-  fallbackRatio?: string;
+  /** wrapper の class（横幅はここで指定する） */
+  className?: string;
 
-  fit?: CSSProperties["objectFit"];
   placeholder_color?: string;
   disablePlaceholder?: boolean;
-  className?: string;
+
+  /** 任意：ラッパーに足す style */
+  style?: CSSProperties;
 };
 
 export default function ResponsiveImage({
   pc,
   alt,
-  aspectRatio,
-  fallbackRatio = "4 / 3",
   fit = "cover",
+  className = "",
   placeholder_color,
   disablePlaceholder = false,
-  className = "",
+  style,
 }: Props) {
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -43,12 +43,6 @@ export default function ResponsiveImage({
     if (disablePlaceholder) return "transparent";
     return placeholder_color || pc.placeholder_color || "rgb(217, 217, 217)";
   }, [disablePlaceholder, placeholder_color, pc.placeholder_color]);
-
-  const ratio = useMemo(() => {
-    if (aspectRatio) return aspectRatio;
-    if (pc?.width && pc?.height) return `${pc.width} / ${pc.height}`;
-    return fallbackRatio;
-  }, [aspectRatio, pc, fallbackRatio]);
 
   useEffect(() => {
     setLoaded(false);
@@ -76,11 +70,12 @@ export default function ResponsiveImage({
       style={{
         position: "relative",
         width: "100%",
-        aspectRatio: ratio,
         overflow: "hidden",
         background: placeholderBg,
+        ...style,
       }}
     >
+      {/* ✅ 高さを画像に任せる：position:absolute はやめる */}
       <img
         ref={imgRef}
         src={pc.url}
@@ -88,15 +83,12 @@ export default function ResponsiveImage({
         loading="lazy"
         decoding="async"
         style={{
-          position: "absolute",
-          inset: 0,
           width: "100%",
-          height: "100%",
+          height: "auto",
+          display: "block",
           objectFit: fit,
           opacity: loaded ? 1 : 0,
-          transition:
-            "opacity .35s ease, transform .7s cubic-bezier(0.23, 1, 0.32, 1)",
-          display: "block",
+          transition: "opacity .35s ease, transform .7s cubic-bezier(0.23, 1, 0.32, 1)",
         }}
       />
     </div>

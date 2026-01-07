@@ -48,12 +48,12 @@ function mulberry32(a: number) {
 }
 
 function pickRatioKey(layoutSeed: number, workId: number, isWide: boolean): RatioKey {
-  const s = (layoutSeed ^ Math.imul((workId >>> 0) + (isWide ? 101 : 0), 2654435761)) >>> 0;
+  const s =
+    (layoutSeed ^ Math.imul((workId >>> 0) + (isWide ? 101 : 0), 2654435761)) >>> 0;
   const r = mulberry32(s)();
   return RATIOS[Math.floor(r * RATIOS.length)];
 }
 
-// ★ rowIndex ごとに安定した illust を選ぶ
 function pickIllustSrc(layoutSeed: number, rowIndex: number) {
   const r = mulberry32((layoutSeed + rowIndex * 997) >>> 0)();
   return ILLUST_IMAGES[Math.floor(r * ILLUST_IMAGES.length)];
@@ -160,9 +160,6 @@ export default function WorksBrowserClient({
     }
   };
 
-  // ------------------------------------------------------------------
-  // render
-  // ------------------------------------------------------------------
   const rendered = useMemo(() => {
     const latest = works.slice(0, 12);
     const out: JSX.Element[] = [];
@@ -178,7 +175,7 @@ export default function WorksBrowserClient({
       >
         <div
           className="pre:w-full pre:flex pre:items-center pre:justify-center"
-          style={{ aspectRatio: "4 / 3" }}
+          style={{ aspectRatio: "4 / 3" }} // ※ illust はあなたの以前の要件どおり 4/3 のまま
         >
           <img
             src={src}
@@ -195,11 +192,12 @@ export default function WorksBrowserClient({
     );
 
     const ILLUST_EVERY_SLOTS = 8;
-    const ILLUST_COL_IN_ROW4 = 1; // 0-3（中央寄り = 1 or 2）
+    const ILLUST_COL_IN_ROW4 = 1; // row4 の 2番目（中央寄り）
 
     let cursor = 0;
     let rowIndex = 0;
     let wideToggle = (layoutSeed & 1) === 0 ? 0 : 1;
+
     let slotCount = 0;
     let needIllust = false;
 

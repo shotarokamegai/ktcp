@@ -66,6 +66,21 @@
   --color-ketchup: #C80F2E;
 }
 
+html:not(.has-booted) .header-slide {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(30px);
+}
+
+html.has-booted .header-slide {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+  transition:
+  opacity 1.5s var(--ease-in-out-quint),
+  transform 1.5s var(--ease-in-out-quint),
+  filter 1s var(--ease-in-out-quad);
+}
 body {
     margin: 0;
     font-family: dnp-shuei-gothic-kin-std, sans-serif;

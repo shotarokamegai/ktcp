@@ -2,7 +2,6 @@
 
 import FMLink from "@/components/FMLink";
 import ResponsiveImage from "@/components/ResponsiveImage";
-import type { ImageMeta } from "@/components/ResponsiveImage";
 
 type RatioKey = "1/1" | "3/4" | "4/3";
 type Pattern = 1 | 2 | 3;
@@ -13,28 +12,27 @@ type Props = {
   className?: string;
   isWide?: boolean;
 
-  // ✅ レイアウト側で確定した真実
   ratioKey: RatioKey;
   requiredPattern: Pattern;
 };
 
-const RATIO_VALUE: Record<RatioKey, string> = {
-  "1/1": "1 / 1",
-  "3/4": "3 / 4",
-  "4/3": "4 / 3",
+// ✅ pattern → 横幅（画像ラッパーの幅）
+const PATTERN_WIDTH: Record<Pattern, string> = {
+  1: "pre:w-[calc(690/870*100%)]",
+  2: "pre:w-[calc(516/870*100%)]",
+  3: "pre:w-full",
 };
 
-// ✅ 整合性を壊さないプレースホルダ
-function solidPlaceholderDataUrl(fill: string) {
-  const safe = fill || "rgb(217, 217, 217)";
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 3"><rect width="4" height="3" fill="${safe}"/></svg>`;
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-}
+// ✅ 画像の寄せ（必要なら）
+const PATTERN_ALIGN: Record<Pattern, string> = {
+  1: "pre:justify-center",
+  2: "pre:justify-end",
+  3: "pre:justify-start",
+};
 
-function getEyecatchUrlByRequiredPattern(work: any, p: Pattern): string | null {
-  // ✅ ACF構造：acf.eyecatch.pattern1/2/3 が "url文字列"
+function getEyecatchUrlByPattern(work: any, p: Pattern): string | null {
   const url = work?.acf?.eyecatch?.[`pattern${p}`];
-  return typeof url === "string" && url.length > 0 ? url : null;
+  return typeof url === "string" && url.trim() ? url.trim() : null;
 }
 
 export default function WorksCard({
@@ -45,27 +43,8 @@ export default function WorksCard({
   ratioKey,
   requiredPattern,
 }: Props) {
-  const url = getEyecatchUrlByRequiredPattern(w, requiredPattern);
-
-  let img: ImageMeta;
-  if (url) {
-    img = { url };
-  } else {
-    // ✅ patternを変えて救済しない（整合性維持）
-    if (process.env.NODE_ENV !== "production") {
-      // eslint-disable-next-line no-console
-      console.warn("[WorksCard] eyecatch url not found", {
-        workId: w?.id,
-        slug: w?.slug,
-        ratioKey,
-        requiredPattern,
-        hasEyecatch: Boolean(w?.acf?.eyecatch),
-        eyecatchKeys: w?.acf?.eyecatch ? Object.keys(w.acf.eyecatch) : null,
-      });
-    }
-    const ph = String(w?.acf?.placeholder_color || "rgb(217, 217, 217)");
-    img = { url: solidPlaceholderDataUrl(ph) };
-  }
+  const url = getEyecatchUrlByPattern(w, requiredPattern);
+  const imgUrl = url || "";
 
   const catLabel = Array.isArray(w?.works_cat)
     ? w.works_cat
@@ -81,30 +60,25 @@ export default function WorksCard({
         widthClass,
         "slide-in",
         "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
-        // hover（維持）
-        "pre:hover:[&_header_h2]:text-ketchup",
-        "pre:hover:[&_header_p]:text-ketchup",
-        "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
-        "pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))] pre:hover:[&_img]:transform-[scale(1.05)]",
-        "pre:[&_.responsive-image]:transition-all pre:[&_.responsive-image]:duration-500",
         className,
       ].join(" ")}
       data-wide={isWide ? "1" : "0"}
       data-ratio={ratioKey}
       data-pattern={String(requiredPattern)}
     >
-      <ResponsiveImage
-        pc={img}
-        alt={w?.title?.rendered ?? ""}
-        placeholder_color={w?.acf?.placeholder_color}
-        aspectRatio={RATIO_VALUE[ratioKey]} // ✅ 枠のratioはレイアウトの真実のみ
-        fit="cover"
-      />
+      {/* ✅ aspect-ratio は一切なし。横幅だけ pattern で制御 */}
+      <div className={["pre:flex", PATTERN_ALIGN[requiredPattern]].join(" ")}>
+        <ResponsiveImage
+          pc={{ url: imgUrl }}
+          alt={w?.title?.rendered ?? ""}
+          className={PATTERN_WIDTH[requiredPattern]}
+          fit="cover"
+          placeholder_color={w?.acf?.placeholder_color}
+        />
+      </div>
 
       <header className="pre:flex pre:mt-2.5 pre:sm:block pre:sm:sp-mt-[8]">
-        <h2
-          dangerouslySetInnerHTML={{ __html: w?.title?.rendered ?? "" }}
-        />
+        <h2 dangerouslySetInnerHTML={{ __html: w?.title?.rendered ?? "" }} />
         <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:font-gt pre:font-light pre:leading-[1.7] pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
           {catLabel}
         </p>

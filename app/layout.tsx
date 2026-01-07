@@ -18,9 +18,8 @@ import SlideInOnLoad from "@/components/SlideInOnLoad";
 const BODY = "pre:w-full";
 
 const HEADER =
-  "pre:fixed pre:top-0 pre:left-0 pre:z-[100] pre:h-[86px] pre:sm:sp-h-[50] " +
-  "pre:flex pre:justify-between " +
-  "pre:w-full pre:bg-white pre:sm:py-0 pre:sm:sp-px-[20] pre:sm:flex pre:sm:items-center pre:sm:justify-between slide-in";
+  "pre:fixed pre:top-0 pre:left-0 pre:z-[100] pre:h-[86px] pre:sm:sp-h-[50] header-slide " +
+  "pre:w-full pre:bg-white pre:sm:py-0 pre:sm:sp-px-[20] pre:sm:flex pre:sm:items-center pre:sm:justify-between";
 
 const LOGO_LINK =
   "pre:w-[104.4px] pre:h-11 pre:sm:sp-w-[65] pre:sm:h-auto pre:sm:block";
