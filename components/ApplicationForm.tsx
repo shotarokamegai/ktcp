@@ -378,8 +378,8 @@ export default function ApplicationForm() {
 
   if (sent) {
     return (
-      <div className="pre:mt-5 pre:sm:sp-mt-[30] pre:sm:flex pre:sm:flex-col">
-        <Image src="/illust/engineer.png" alt="" width={323} height={177} className="pre:w-[323px] pre:mx-auto slide-in pre:sm:sp-w-[235] pre:sm:order-2" />
+      <div className="pre:sm:flex pre:sm:flex-col">
+        <Image src="/illust/complete.png" alt="" width={827} height={1037} className="pre:w-[250px] pre:mx-auto pre:mb-5 slide-in pre:sm:sp-w-[235] pre:sm:order-2" />
         <h2 className="pre:mb-14 pre:sm:sp-mb-[25] pre:text-[24px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[24] pre:text-center pre:sm:order-1">
           Application Sent
         </h2>
@@ -416,9 +416,9 @@ export default function ApplicationForm() {
   }
 
   return (
-    <div className="pre:mt-[70px] pre:sm:sp-mt-[25] pre:sm:flex pre:sm:flex-col">
-      <Image src="/illust/engineer.png" alt="" width={323} height={177} className="pre:w-[323px] pre:mx-auto slide-in pre:sm:sp-w-[235] pre:sm:order-2" />
-      <h2 className="pre:mb-14 pre:text-[24px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[24] pre:text-center pre:sm:order-1 pre:sm:text-left pre:sm:sp-mb-[60]">
+    <div className="pre:mt-[70px] pre:sm:sp-mt-[0] pre:sm:flex pre:sm:flex-col">
+      <Image src="/illust/form.png" alt="" width={543} height={822} className="pre:w-[140px] pre:mx-auto slide-in pre:sm:sp-w-[120] pre:sm:order-2 pre:mb-5 pre:sm:mb-0" />
+      <h2 className="pre:mb-14 pre:text-[24px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[24] pre:text-center pre:sm:order-1 pre:sm:text-left pre:sm:sp-mb-[30]">
         Application Form
       </h2>
       <form onSubmit={handleSubmit} noValidate className="slide-in pre:sm:order-3 pre:sm:sp-mt-[60]">

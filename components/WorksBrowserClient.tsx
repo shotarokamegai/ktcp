@@ -5,11 +5,11 @@ import type { Work, WorkTerm } from "@/lib/wp";
 import WorksCard from "@/components/WorksCard";
 import WorksCategoryNav from "@/components/WorksCategoryNav";
 
-const SWAP_OUT_MS = 350; // ← CSSのfade-out時間に合わせる
-const APPLY_SHOWN_AFTER_MS = 1; // ← 新DOM反映後に is-shown 付ける猶予（必要なら0でもOK）
+const SWAP_OUT_MS = 350;
+const APPLY_SHOWN_AFTER_MS = 1;
 
 // ------------------------------
-// ratio ↔ pattern (absolute rule)
+// ratio ↔ pattern
 // ------------------------------
 export type RatioKey = "1/1" | "3/4" | "4/3";
 export type Pattern = 1 | 2 | 3;
@@ -22,6 +22,22 @@ const RATIO_TO_PATTERN: Record<RatioKey, Pattern> = {
 
 const RATIOS: readonly RatioKey[] = ["1/1", "3/4", "4/3"] as const;
 
+// ------------------------------
+// illust assets（7種）
+// ------------------------------
+const ILLUST_IMAGES = [
+  "/illust/about.png",
+  "/illust/careers.png",
+  "/illust/complete.png",
+  "/illust/contact.png",
+  "/illust/engineer.png",
+  "/illust/form.png",
+  "/illust/web-director.png",
+] as const;
+
+// ------------------------------
+// utils
+// ------------------------------
 function mulberry32(a: number) {
   return function () {
     let t = (a += 0x6d2b79f5);
@@ -31,22 +47,21 @@ function mulberry32(a: number) {
   };
 }
 
-// workId と layoutSeed から ratio を安定決定（同一アクセス中は固定）
 function pickRatioKey(layoutSeed: number, workId: number, isWide: boolean): RatioKey {
-  // ※isWide でも ratio を固定にしない（要件）
   const s = (layoutSeed ^ Math.imul((workId >>> 0) + (isWide ? 101 : 0), 2654435761)) >>> 0;
   const r = mulberry32(s)();
   return RATIOS[Math.floor(r * RATIOS.length)];
 }
 
-// illust用（既存のまま）
-type IllustPattern = 1 | 2 | 3;
-const ILLUST_RATIO_MAP: Record<IllustPattern, string> = {
-  1: "1 / 1",
-  2: "3 / 4",
-  3: "4 / 3",
-};
+// ★ rowIndex ごとに安定した illust を選ぶ
+function pickIllustSrc(layoutSeed: number, rowIndex: number) {
+  const r = mulberry32((layoutSeed + rowIndex * 997) >>> 0)();
+  return ILLUST_IMAGES[Math.floor(r * ILLUST_IMAGES.length)];
+}
 
+// ------------------------------
+// Props
+// ------------------------------
 type Props = {
   initialWorks?: Work[];
   categories: WorkTerm[];
@@ -62,7 +77,7 @@ export default function WorksBrowserClient({
   const [activeSlug, setActiveSlug] = useState<string | null>(initialActiveSlug);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // layoutSeed（既存）
+  // layoutSeed（1ロード中は固定）
   const [layoutSeed, setLayoutSeed] = useState<number>(0);
   useEffect(() => {
     try {
@@ -75,15 +90,10 @@ export default function WorksBrowserClient({
   }, []);
 
   const abortRef = useRef<AbortController | null>(null);
-
-  // ★追加：切替の競合を防ぐ
   const swapIdRef = useRef(0);
   const swapTimerRef = useRef<number | null>(null);
-
-  // ★追加：次の一覧を一時保持（古い一覧が消えてから差し替える）
   const pendingWorksRef = useRef<Work[] | null>(null);
 
-  // ★任意：差し替え後に is-shown をまとめて付与したい場合
   const applyShown = () => {
     window.setTimeout(() => {
       document
@@ -109,20 +119,17 @@ export default function WorksBrowserClient({
   const onChangeCategory = async (slug: string | null) => {
     if (slug === activeSlug) return;
 
-    // 既存のタイマーを止める（連打対策）
     if (swapTimerRef.current) {
       window.clearTimeout(swapTimerRef.current);
       swapTimerRef.current = null;
     }
 
-    // 切替IDを更新（後から返ってきた結果の混入を防ぐ）
     const swapId = ++swapIdRef.current;
 
     setIsAnimating(true);
     setActiveSlug(slug);
     setUrlOnly(slug);
 
-    // 前のfetchは中断
     if (abortRef.current) abortRef.current.abort();
     const ac = new AbortController();
     abortRef.current = ac;
@@ -135,117 +142,81 @@ export default function WorksBrowserClient({
       if (!res.ok) throw new Error("fetch failed");
       const json = (await res.json()) as { works?: Work[] };
 
-      // ここでは setWorks しない。いったん保持して、フェードアウト後に差し替える。
       pendingWorksRef.current = Array.isArray(json.works) ? json.works : [];
 
-      // ★「完全に消えてから」差し替える
       swapTimerRef.current = window.setTimeout(() => {
-        // 途中で別の切替が走っていたら捨てる
         if (swapId !== swapIdRef.current) return;
 
-        const nextWorks = pendingWorksRef.current ?? [];
+        setWorks(pendingWorksRef.current ?? []);
         pendingWorksRef.current = null;
 
-        setWorks(nextWorks);
-
-        // 新しい一覧へ切替 → 通常状態へ
         setIsAnimating(false);
-
-        // 必要なら新しい一覧に is-shown を付与（WorksCard側の取りこぼし対策）
         applyShown();
-
         swapTimerRef.current = null;
       }, SWAP_OUT_MS);
     } catch (e: any) {
       if (e?.name !== "AbortError") console.error(e);
-      // エラー時はアニメ状態を戻す
       setIsAnimating(false);
     }
   };
 
+  // ------------------------------------------------------------------
+  // render
+  // ------------------------------------------------------------------
   const rendered = useMemo(() => {
-    const safeWorks = Array.isArray(works) ? works : [];
-    const latest = safeWorks.slice(0, 12);
-
+    const latest = works.slice(0, 12);
     const out: JSX.Element[] = [];
 
-    const pushIllust = (rowIndex: number) => {
-      const r = mulberry32((layoutSeed + rowIndex * 997) >>> 0)();
-      const pattern = (Math.floor(r * 3) + 1) as IllustPattern;
-
-      out.push(
+    const IllustCell = (key: string, src: string) => (
+      <div
+        key={key}
+        className={[
+          "pre:w-[calc(1/4*100%)]",
+          "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
+          "pre:flex pre:items-start pre:justify-center",
+        ].join(" ")}
+      >
         <div
-          key={`illust-row-${rowIndex}-${out.length}`}
-          className={[
-            "pre:w-[calc(1/4*100%)]",
-            "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
-            "pre:flex pre:items-center pre:justify-center",
-          ].join(" ")}
+          className="pre:w-full pre:flex pre:items-center pre:justify-center"
+          style={{ aspectRatio: "4 / 3" }}
         >
-          <div className="pre:w-full" style={{ aspectRatio: ILLUST_RATIO_MAP[pattern] }}>
-            <img
-              src="/illust/about.png"
-              alt=""
-              className="pre:w-full pre:h-full pre:object-contain"
-              loading="lazy"
-            />
-          </div>
+          <img
+            src={src}
+            alt=""
+            className="pre:w-full pre:h-full pre:object-contain"
+            loading="lazy"
+          />
         </div>
-      );
-    };
+      </div>
+    );
 
-    let slotCount = 0;
+    const EmptyCell = (key: string) => (
+      <div key={key} className="pre:w-[calc(1/4*100%)] pre:mb-5" aria-hidden />
+    );
+
     const ILLUST_EVERY_SLOTS = 8;
+    const ILLUST_COL_IN_ROW4 = 1; // 0-3（中央寄り = 1 or 2）
 
     let cursor = 0;
     let rowIndex = 0;
-
     let wideToggle = (layoutSeed & 1) === 0 ? 0 : 1;
+    let slotCount = 0;
+    let needIllust = false;
 
     while (cursor < latest.length) {
       const remaining = latest.length - cursor;
-      const rowKind = rowIndex % 2 === 0 ? "row3" : "row4";
-      const need = rowKind === "row3" ? 3 : 4;
+      const isRow3 = rowIndex % 2 === 0;
 
-      if (remaining < need) {
-        for (let i = 0; i < remaining; i++) {
-          const w = latest[cursor++];
-          const isWide = false;
-          const idNum = Number(w?.id ?? cursor);
-          const ratioKey = pickRatioKey(layoutSeed, idNum, isWide);
-          const requiredPattern = RATIO_TO_PATTERN[ratioKey];
-
-          out.push(
-            <WorksCard
-              key={`work-${w.id}`}
-              work={w}
-              isWide={isWide}
-              widthClass="pre:w-[calc(1/4*100%)]"
-              className="pre:mb-5"
-              ratioKey={ratioKey}
-              requiredPattern={requiredPattern}
-            />
-          );
-        }
-
-        slotCount += remaining;
-        if (slotCount >= ILLUST_EVERY_SLOTS) {
-          pushIllust(rowIndex);
-          slotCount = 0;
-        }
-        break;
-      }
-
-      if (rowKind === "row3") {
+      // ---------------- row3 ----------------
+      if (isRow3) {
+        const take = Math.min(3, remaining);
         const wideIndex = wideToggle === 0 ? 0 : 1;
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < take; i++) {
           const w = latest[cursor++];
-          const isWide = i === wideIndex;
+          const isWide = take === 3 && i === wideIndex;
 
-          const idNum = Number(w?.id ?? cursor);
-          const ratioKey = pickRatioKey(layoutSeed, idNum, isWide);
-          const requiredPattern = RATIO_TO_PATTERN[ratioKey];
+          const ratioKey = pickRatioKey(layoutSeed, Number(w.id), isWide);
 
           out.push(
             <WorksCard
@@ -255,40 +226,59 @@ export default function WorksBrowserClient({
               widthClass={isWide ? "pre:w-[calc(2/4*100%)]" : "pre:w-[calc(1/4*100%)]"}
               className="pre:mb-5"
               ratioKey={ratioKey}
-              requiredPattern={requiredPattern}
+              requiredPattern={RATIO_TO_PATTERN[ratioKey]}
             />
           );
         }
 
-        wideToggle = 1 - wideToggle;
-        slotCount += 4;
-      } else {
-        for (let i = 0; i < 4; i++) {
-          const w = latest[cursor++];
+        if (take === 3) {
+          wideToggle = 1 - wideToggle;
+          slotCount += 4;
+          if (slotCount >= ILLUST_EVERY_SLOTS) needIllust = true;
+        }
 
-          const isWide = false;
-          const idNum = Number(w?.id ?? cursor);
-          const ratioKey = pickRatioKey(layoutSeed, idNum, isWide);
-          const requiredPattern = RATIO_TO_PATTERN[ratioKey];
+        rowIndex++;
+        continue;
+      }
+
+      // ---------------- row4 ----------------
+      const insertIllust = needIllust || slotCount + 4 >= ILLUST_EVERY_SLOTS;
+      const illustSrc = pickIllustSrc(layoutSeed, rowIndex);
+
+      const worksToTake = Math.min(insertIllust ? 3 : 4, remaining);
+      let taken = 0;
+
+      for (let i = 0; i < 4; i++) {
+        if (insertIllust && i === ILLUST_COL_IN_ROW4) {
+          out.push(IllustCell(`illust-${rowIndex}-${i}`, illustSrc));
+          continue;
+        }
+
+        if (taken < worksToTake) {
+          const w = latest[cursor++];
+          taken++;
+
+          const ratioKey = pickRatioKey(layoutSeed, Number(w.id), false);
 
           out.push(
             <WorksCard
               key={`work-${w.id}`}
               work={w}
-              isWide={isWide}
+              isWide={false}
               widthClass="pre:w-[calc(1/4*100%)]"
               className="pre:mb-5"
               ratioKey={ratioKey}
-              requiredPattern={requiredPattern}
+              requiredPattern={RATIO_TO_PATTERN[ratioKey]}
             />
           );
+        } else {
+          out.push(EmptyCell(`empty-${rowIndex}-${i}`));
         }
-
-        slotCount += 4;
       }
 
-      if (slotCount >= ILLUST_EVERY_SLOTS) {
-        pushIllust(rowIndex);
+      slotCount += 4;
+      if (insertIllust) {
+        needIllust = false;
         slotCount = 0;
       }
 
@@ -300,15 +290,12 @@ export default function WorksBrowserClient({
 
   return (
     <>
-      <WorksCategoryNav
-        categories={categories}
-        activeSlug={activeSlug}
-        onChange={onChangeCategory}
-      />
+      <WorksCategoryNav categories={categories} activeSlug={activeSlug} onChange={onChangeCategory} />
 
       <section
         className={[
-          "pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] pre:sm:sp-w-[360] pre:sm:sp-mb-[110]",
+          "pre:flex pre:flex-wrap pre:items-start pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]",
+          "pre:sm:sp-w-[360] pre:sm:sp-mb-[110]",
           isAnimating ? "works-list is-changing" : "works-list",
         ].join(" ")}
       >
