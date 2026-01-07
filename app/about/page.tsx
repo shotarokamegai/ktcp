@@ -26,7 +26,7 @@ export default async function AboutPage() {
           <div className="pre:w-[calc(517/1400*100%)] pre:sm:w-full pre:sm:sp-mb-[40]">
             <h1 className="pre:text-[24px] pre:font-gt pre:font-light slide-in pre:mb-[180px] pre:sm:sp-fs-[24] pre:sm:sp-mb-[50]">About</h1>
             <Image src="/illust/about.png" alt="" width={372} height={279} className="pre:w-[calc(372/450*100%)] pre:max-w-[372px] slide-in pre:sm:w-full pre:sm:sp-mb-[30]" />
-            <h2 className="pre:text-[24px] pre:leading-[130%] pre:font-gt pre:font-light pre:sm:sp-fs-[24]">
+            <h2 className="pre:text-[clamp(12px,1.666666vw,24px)] pre:leading-[130%] pre:font-gt pre:font-light pre:sm:sp-fs-[24]">
               <span className="pre:inline-block slide-in">
                 Transforming Your Content Like Ketchup 
               </span><br/>

@@ -179,12 +179,11 @@ export default function ContactForm() {
       className="
         pre:grid
         pre:items-start
-        pre:grid-cols-[calc(375/1401*100%)_1fr]
+        pre:grid-cols-[calc(460/1401*100%)_1fr]
         pre:gap-x-[calc(192/1401*100%)]
         pre:mb-[180px]
         pre:w-[calc(100%-40px)]
         pre:mx-auto
-        pre:sm:sp-w-[339]
         pre:sm:block
          pre:sm:sp-mb-[110]
       "
@@ -205,7 +204,7 @@ export default function ContactForm() {
           />
         </div>
     
-        <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in pre:wrap-anywhere pre:sm:sp-fs-[24] pre:sm:whitespace-nowrap">
+        <p className="pre:text-[clamp(12px,1.666666vw,24px)] pre:font-gt pre:font-light pre:leading-[130%] slide-in pre:wrap-anywhere pre:sm:sp-fs-[24] pre:whitespace-nowrap">
           Transforming Your Content Like <br className="pre:hidden pre:sm:block" />Ketchup
           <br className="pre:sm:hidden" />
           Transforms a Meal, <br className="pre:hidden pre:sm:block" />The Perfect Condiment
