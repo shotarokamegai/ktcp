@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import FMLink from "@/components/FMLink";
 import Arrow from "@/components/svg/Arrow";
 import Image from "next/image";
@@ -15,6 +15,106 @@ function cx(...xs: Array<string | false | null | undefined>) {
   return xs.filter(Boolean).join(" ");
 }
 
+/**
+ * ✅ 二度表示防止版 slide-in
+ * - 初期フレーム自体を見せない（root visibility:hidden）
+ * - paint前に is-shown を剥がす（useLayoutEffect）
+ * - 少し遅らせて visible + is-shown 付与（setTimeout + rAF）
+ * - 剥がす瞬間の「消えるアニメ」を出さない（transition: none 一瞬）
+ */
+function useSlideInArm(
+  rootRef: React.RefObject<HTMLElement | null>,
+  deps: any[] = [],
+  delayMs = 120
+) {
+  const timerRef = useRef<number | null>(null);
+
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    // 初期は見せない（SSR/初期描画のチラ見え防止）
+    root.style.visibility = "hidden";
+
+    if (timerRef.current) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    const els = Array.from(root.querySelectorAll<HTMLElement>(".slide-in"));
+    if (els.length === 0) return;
+
+    // 剥がす瞬間だけ transition を殺す（フェードアウトを出さない）
+    els.forEach((el) => {
+      el.style.transition = "none";
+      el.classList.remove("is-shown");
+      el.setAttribute("data-slidein-rearm", "1");
+    });
+
+    // reflow で「剥がした状態」を確定
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    root.offsetHeight;
+
+    // transition を戻す（まだ見せない）
+    els.forEach((el) => {
+      el.style.transition = "";
+    });
+
+    return () => {
+      const r = rootRef.current;
+      if (!r) return;
+
+      if (timerRef.current) {
+        window.clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+
+      r.querySelectorAll<HTMLElement>('.slide-in[data-slidein-rearm="1"]').forEach((el) => {
+        el.removeAttribute("data-slidein-rearm");
+        el.style.transition = "";
+      });
+
+      r.style.visibility = "";
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    if (timerRef.current) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    timerRef.current = window.setTimeout(() => {
+      requestAnimationFrame(() => {
+        // ここで初めて見せる
+        root.style.visibility = "visible";
+
+        const targets = Array.from(
+          root.querySelectorAll<HTMLElement>('.slide-in[data-slidein-rearm="1"]')
+        );
+
+        // 保険の reflow
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        root.offsetHeight;
+
+        targets.forEach((el) => el.classList.add("is-shown"));
+      });
+    }, delayMs);
+
+    return () => {
+      if (timerRef.current) {
+        window.clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+}
+
 type RowProps = {
   label: string;
   htmlFor: string;
@@ -22,8 +122,7 @@ type RowProps = {
   error?: string;
   children: React.ReactNode;
 
-  // ▼ Rowごとに差し替え可能
-  className?: string; // root
+  className?: string;
   labelClassName?: string;
   bodyClassName?: string;
   errorClassName?: string;
@@ -38,22 +137,15 @@ function Row({
   required,
   error,
   children,
-
   className,
   labelClassName,
   bodyClassName,
   errorClassName,
-  dividerClassName, // 未使用でもOK（将来復活用）
-  withDivider = true, // 今は無効化（将来復活用）
+  withDivider = true,
   errorPlacement = "below",
 }: RowProps) {
   return (
-    <div
-      className={cx(
-        "pre:flex pre:flex-col pre:gap-[10px]",
-        className
-      )}
-    >
+    <div className={cx("pre:flex pre:flex-col pre:gap-[10px]", className)}>
       <label
         htmlFor={htmlFor}
         className={cx(
@@ -74,35 +166,17 @@ function Row({
           </p>
         )}
 
-        {/* 区切り線（必要なら復活）
-        {withDivider && (
-          <div
-            className={cx(
-              "pre:mt-[10px] pre:border-b pre:border-solid pre:border-[#222]",
-              dividerClassName
-            )}
-          />
-        )} */}
+        {withDivider ? null : null}
       </div>
 
       {error && errorPlacement === "inline" && (
-        <p
-          className={cx(
-            "pre:mt-[6px] pre:text-[#f55] pre:text-[12px]",
-            errorClassName
-          )}
-        >
+        <p className={cx("pre:mt-[6px] pre:text-[#f55] pre:text-[12px]", errorClassName)}>
           {error}
         </p>
       )}
     </div>
   );
 }
-
-/* =========================
-   Field styles
-   input / textarea / select を分離
-   ========================= */
 
 const fieldBase =
   "pre:w-full pre:text-[16px] pre:text-[#222] " +
@@ -111,19 +185,20 @@ const fieldBase =
   "pre:focus-visible:outline-none pre:focus-visible:ring-0 " +
   "pre:sm:sp-fs-[16]";
 
-const inputClass = cx(fieldBase, "pre:h-[40px] pre:px-[12px] pre:bg-beige pre:sm:sp-h-[40] pre:sm:sp-px-[12] pre:sm:box-border");
+const inputClass = cx(
+  fieldBase,
+  "pre:h-[40px] pre:px-[12px] pre:bg-beige pre:sm:sp-h-[40] pre:sm:sp-px-[12] pre:sm:box-border"
+);
 const textareaClass = cx(
   fieldBase,
   "pre:min-h-[244px] pre:sm:sp-min-h-[117] pre:px-[12px] pre:sm:sp-px-[12] pre:py-[10px] pre:sm:sp-py-[10] pre:resize-y pre:bg-beige"
 );
-const selectClass = cx(fieldBase, "pre:h-[40px] pre:px-[12px] pre:border pre:border-solid pre:border-darkGray pre:sm:sp-h-[40] pre:sm:sp-px-[12]");
+const selectClass = cx(
+  fieldBase,
+  "pre:h-[40px] pre:px-[12px] pre:border pre:border-solid pre:border-darkGray pre:sm:sp-h-[40] pre:sm:sp-px-[12]"
+);
 
-const fieldErrorClass =
-  "pre:border-[#f55] pre:text-[#f55] pre:placeholder:text-[#f55]";
-
-/* =========================
-   Options
-   ========================= */
+const fieldErrorClass = "pre:border-[#f55] pre:text-[#f55] pre:placeholder:text-[#f55]";
 
 const JOB_OPTIONS = [
   { value: "web_director", label: "Webディレクター" },
@@ -141,122 +216,68 @@ const STATUS_OPTIONS = [
 ] as const;
 
 const PREFS = [
-  "北海道",
-  "青森県",
-  "岩手県",
-  "宮城県",
-  "秋田県",
-  "山形県",
-  "福島県",
-  "茨城県",
-  "栃木県",
-  "群馬県",
-  "埼玉県",
-  "千葉県",
-  "東京都",
-  "神奈川県",
-  "新潟県",
-  "富山県",
-  "石川県",
-  "福井県",
-  "山梨県",
-  "長野県",
-  "岐阜県",
-  "静岡県",
-  "愛知県",
-  "三重県",
-  "滋賀県",
-  "京都府",
-  "大阪府",
-  "兵庫県",
-  "奈良県",
-  "和歌山県",
-  "鳥取県",
-  "島根県",
-  "岡山県",
-  "広島県",
-  "山口県",
-  "徳島県",
-  "香川県",
-  "愛媛県",
-  "高知県",
-  "福岡県",
-  "佐賀県",
-  "長崎県",
-  "熊本県",
-  "大分県",
-  "宮崎県",
-  "鹿児島県",
-  "沖縄県",
+  "北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県",
+  "新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県",
+  "奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県",
+  "長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県",
 ];
 
-/* =========================
-   Component
-   ========================= */
-
 export default function ApplicationForm() {
-  // job
+  const rootRef = useRef<HTMLElement | null>(null);
+
   const [job, setJob] = useState<(typeof JOB_OPTIONS)[number]["value"] | "">("");
-  // /application#front_end_engineer などの hash から応募職種を初期選択
+
   useEffect(() => {
     const applyFromHash = () => {
       const raw = window.location.hash || "";
-      const hash = decodeURIComponent(raw).replace(/^#/, "").trim(); // "front_end_engineer"
-
+      const hash = decodeURIComponent(raw).replace(/^#/, "").trim();
       if (!hash) return;
 
       const exists = JOB_OPTIONS.some((o) => o.value === hash);
       if (exists) setJob(hash as any);
     };
 
-    applyFromHash(); // 初回
+    applyFromHash();
     window.addEventListener("hashchange", applyFromHash);
     return () => window.removeEventListener("hashchange", applyFromHash);
   }, []);
 
-  // basic
   const [name, setName] = useState("");
   const [furigana, setFurigana] = useState("");
-  const [birthday, setBirthday] = useState(""); // yyyy-mm-dd
+  const [birthday, setBirthday] = useState("");
   const [gender, setGender] = useState<"" | "male" | "female" | "other">("");
 
-  // address
   const [postal, setPostal] = useState("");
   const [pref, setPref] = useState("");
-  const [address1, setAddress1] = useState(""); // 市区町村・番地
-  const [address2, setAddress2] = useState(""); // 建物名・部屋番号
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
 
-  // contact
   const [tel, setTel] = useState("");
   const [email, setEmail] = useState("");
   const [email2, setEmail2] = useState("");
 
-  // status / pr
   const [status, setStatus] = useState<(typeof STATUS_OPTIONS)[number]["value"]>("");
   const [pr, setPr] = useState("");
 
-  // files / url
   const [resume, setResume] = useState<File | null>(null);
   const [workHistory, setWorkHistory] = useState<File | null>(null);
   const [portfolioFile, setPortfolioFile] = useState<File | null>(null);
   const [portfolioUrl, setPortfolioUrl] = useState("");
 
-  // privacy
   const [agree, setAgree] = useState(false);
 
-  // ui
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+
+  // ✅ 初回 & sent切替後に「一度もチラ見えさせず」slide-in
+  useSlideInArm(rootRef, [sent], 120);
 
   const emailRegex = useMemo(
     () => /^([a-z0-9+_\-]+)(\.[a-z0-9+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,}$/i,
     []
   );
-  const telRegex = useMemo(
-    () => /^\(?\d{2,5}\)?[-.\s]?\d{1,4}[-.\s]?\d{3,4}$/,
-    []
-  );
+  const telRegex = useMemo(() => /^\(?\d{2,5}\)?[-.\s]?\d{1,4}[-.\s]?\d{3,4}$/, []);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -314,7 +335,6 @@ export default function ApplicationForm() {
       const fd = new FormData();
 
       fd.append("job", job);
-
       fd.append("name", name);
       fd.append("furigana", furigana);
       fd.append("birthday", birthday);
@@ -345,6 +365,8 @@ export default function ApplicationForm() {
         body: fd,
         mode: "no-cors",
       });
+
+      window.dispatchEvent(new Event("ktcp:scrollTop"));
 
       setSent(true);
 
@@ -378,15 +400,28 @@ export default function ApplicationForm() {
 
   if (sent) {
     return (
-      <div className="pre:sm:flex pre:sm:flex-col">
-        <Image src="/illust/complete.png" alt="" width={827} height={1037} className="pre:w-[250px] pre:mx-auto pre:mb-5 slide-in pre:sm:sp-w-[235] pre:sm:order-2" />
+      <div
+        ref={rootRef as any}
+        style={{ visibility: "hidden" }} // ★初期フレームを確実に隠す
+        className="pre:sm:flex pre:sm:flex-col"
+      >
+        <Image
+          src="/illust/complete.png"
+          alt=""
+          width={827}
+          height={1037}
+          className="pre:w-[250px] pre:mx-auto pre:mb-5 slide-in pre:sm:sp-w-[175] pre:sm:order-2"
+        />
+
         <h2 className="pre:mb-14 pre:sm:sp-mb-[25] pre:text-[24px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[24] pre:text-center pre:sm:order-1">
           Application Sent
         </h2>
-        <h3 className="pre:text-[16px] pre:sm:sp-fs-[16] pre:font-bold pre:mb-5 pre:sm:sp-mb-[20] pre:text-center pre:sm:order-3">
+
+        <h3 className="pre:text-[16px] pre:sm:sp-fs-[16] pre:font-bold pre:mb-5 pre:sm:sp-mb-[20] pre:text-center pre:sm:order-3 slide-in">
           応募受付完了
         </h3>
-        <p className="pre:text-center pre:text-[16px] pre:leading-[180%] pre:sm:sp-fs-[16] pre:sm:text-left pre:sm:order-4">
+
+        <p className="pre:text-center pre:text-[16px] pre:leading-[180%] pre:sm:sp-fs-[16] pre:sm:text-left pre:sm:order-4 slide-in">
           このたびはご応募いただき、誠にありがとうございます。
           <br />
           入力内容を確認し、選考に進む場合は担当者よりご連絡いたします。
@@ -394,7 +429,7 @@ export default function ApplicationForm() {
 
         <FMLink
           href="/"
-          className="btn-submit pre:mt-[50px] pre:sm:sp-mt-[35] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white pre:sm:order-5"
+          className="btn-submit pre:mt-[50px] pre:sm:sp-mt-[35] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white pre:sm:order-5 slide-in"
         >
           <span className="splitting-hover__inner">
             <SplittingSpan text="BACK TO TOP" />
@@ -416,13 +451,24 @@ export default function ApplicationForm() {
   }
 
   return (
-    <div className="pre:mt-[70px] pre:sm:sp-mt-[0] pre:sm:flex pre:sm:flex-col">
-      <Image src="/illust/form.png" alt="" width={543} height={822} className="pre:w-[140px] pre:mx-auto slide-in pre:sm:sp-w-[120] pre:sm:order-2 pre:mb-5 pre:sm:mb-0" />
+    <div
+      ref={rootRef as any}
+      style={{ visibility: "hidden" }} // ★初期フレームを確実に隠す
+      className="pre:mt-[70px] pre:sm:sp-mt-[0] pre:sm:flex pre:sm:flex-col"
+    >
+      <Image
+        src="/illust/form.png"
+        alt=""
+        width={543}
+        height={822}
+        className="pre:w-[140px] pre:mx-auto slide-in pre:sm:sp-w-[120] pre:sm:order-2 pre:mb-5 pre:sm:mb-0"
+      />
+
       <h2 className="pre:mb-14 pre:text-[24px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[24] pre:text-center pre:sm:order-1 pre:sm:text-left pre:sm:sp-mb-[30]">
         Application Form
       </h2>
+
       <form onSubmit={handleSubmit} noValidate className="slide-in pre:sm:order-3 pre:sm:sp-mt-[60]">
-        {/* 応募職種 */}
         <Row
           label="応募職種"
           htmlFor="job"
@@ -454,7 +500,6 @@ export default function ApplicationForm() {
           </div>
         </Row>
 
-        {/* 2カラム */}
         <div className="pre:grid pre:grid-cols-1 pre:gap-x-[28px] pre:gap-y-[35px] pre:md:grid-cols-2">
           <Row label="名前" htmlFor="name" required error={errors.name}>
             <input
@@ -489,7 +534,11 @@ export default function ApplicationForm() {
               type="date"
               value={birthday}
               onChange={(e) => setBirthday(e.target.value)}
-              className={cx(inputClass, ' pre:border pre:border-solid pre:border-darkGray pre:sm:appearance-none ', errors.birthday && fieldErrorClass)}
+              className={cx(
+                inputClass,
+                " pre:border pre:border-solid pre:border-darkGray pre:sm:appearance-none ",
+                errors.birthday && fieldErrorClass
+              )}
               required
             />
           </Row>
@@ -632,7 +681,6 @@ export default function ApplicationForm() {
           </Row>
         </div>
 
-        {/* textarea */}
         <Row
           label="自己PR / 志望動機 / 自由記述欄"
           htmlFor="pr"
@@ -652,7 +700,6 @@ export default function ApplicationForm() {
           />
         </Row>
 
-        {/* 添付 */}
         <div className="pre:grid pre:grid-cols-1 pre:gap-x-[28px] pre:gap-y-[35px] pre:md:grid-cols-2 pre:mt-[35px]">
           <Row label="履歴書" htmlFor="resume" required error={errors.resume}>
             <input
@@ -661,7 +708,11 @@ export default function ApplicationForm() {
               type="file"
               accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
               onChange={(e) => setResume(e.target.files?.[0] ?? null)}
-              className={cx(inputClass, "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray", errors.resume && fieldErrorClass)}
+              className={cx(
+                inputClass,
+                "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray",
+                errors.resume && fieldErrorClass
+              )}
               required
             />
           </Row>
@@ -673,19 +724,26 @@ export default function ApplicationForm() {
               type="file"
               accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
               onChange={(e) => setWorkHistory(e.target.files?.[0] ?? null)}
-              className={cx(inputClass, "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray", errors.workHistory && fieldErrorClass)}
+              className={cx(
+                inputClass,
+                "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray",
+                errors.workHistory && fieldErrorClass
+              )}
               required
             />
           </Row>
 
-          <Row label="ポートフォリオ" htmlFor="portfolioFile" error={errors.portfolioFile}>
+          <Row label="ポートフォリオ" htmlFor="portfolioFile" error={errors.portfolioUrl}>
             <input
               id="portfolioFile"
               name="portfolioFile"
               type="file"
               accept=".pdf,.png,.jpg,.jpeg,.zip"
               onChange={(e) => setPortfolioFile(e.target.files?.[0] ?? null)}
-              className={cx(inputClass, "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray")}
+              className={cx(
+                inputClass,
+                "pre:py-[7px] pre:bg-transparent pre:border pre:border-solid pre:border-lightGray"
+              )}
             />
           </Row>
 
@@ -702,13 +760,14 @@ export default function ApplicationForm() {
           </Row>
         </div>
 
-        {/* privacy */}
         <div className="pre:mt-[100px] pre:mb-[24px]">
           {errors.agree && (
             <p className="pre:mb-[8px] pre:text-[#f55] pre:text-[12px]">{errors.agree}</p>
           )}
 
-          <p className="pre:text-[12px] pre:text-center pre:mb-[15px] pre:sm:sp-text-[12] pre:sm:sp-mb-[15]">プライバシーポリシー同意チェック</p>
+          <p className="pre:text-[12px] pre:text-center pre:mb-[15px] pre:sm:sp-text-[12] pre:sm:sp-mb-[15]">
+            プライバシーポリシー同意チェック
+          </p>
 
           <label className="pre:flex pre:items-center pre:justify-center pre:gap-[10px] pre:sm:sp-gap-[20] pre:cursor-pointer">
             <input
@@ -729,7 +788,6 @@ export default function ApplicationForm() {
 
         <input type="text" name="_gotcha" className="pre:hidden" tabIndex={-1} />
 
-        {/* submit */}
         <div className="pre:mt-[100px] pre:sm:sp-mt-[100]">
           <button
             type="submit"
