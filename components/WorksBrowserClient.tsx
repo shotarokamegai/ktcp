@@ -171,7 +171,7 @@ export default function WorksBrowserClient({
       <div
         key={key}
         className={[
-          "pre:w-[calc(1/4*100%)]",
+          "pre:w-1/4 slide-in",
           "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
           "pre:flex pre:items-start pre:justify-center",
         ].join(" ")}
