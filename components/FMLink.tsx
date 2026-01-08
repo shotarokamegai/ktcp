@@ -27,6 +27,10 @@ const FMLink = forwardRef<HTMLAnchorElement, Props>(
       }
 
       e.preventDefault();
+      // e.preventDefault(); の直後あたりに追加
+      if (String(href) === "/") {
+        window.dispatchEvent(new Event("works:reset"));
+      }
       onClick?.(e as any);
 
       pushedRef.current = false;

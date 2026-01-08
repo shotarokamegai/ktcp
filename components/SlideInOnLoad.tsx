@@ -100,7 +100,7 @@ const runIn = () => {
     const els = Array.from(
       document.querySelectorAll<HTMLElement>(".slide-out")
     ).filter((el) => !shouldSkipByBreakpoint(el))
-    .filter((el) => !el.classList.contains("works-list")); // ★追加
+    // .filter((el) => !el.classList.contains("works-list")); // ★追加
 
 
     if (els.length === 0) {

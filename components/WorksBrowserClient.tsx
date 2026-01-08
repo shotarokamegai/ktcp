@@ -197,6 +197,26 @@ export default function WorksBrowserClient({
     }
   };
 
+  useEffect(() => {
+  const handler = () => {
+    // すでにALLなら何もしない
+    if (activeSlug === null) return;
+
+    // 先頭へ
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+
+    // ALL に戻す（APIから1ページ目を取り直す）
+    onChangeCategory(null);
+
+    // enter アニメをやり直したい場合
+    window.dispatchEvent(new Event("slidein:refresh"));
+  };
+
+  window.addEventListener("works:reset", handler);
+  return () => window.removeEventListener("works:reset", handler);
+}, [activeSlug, onChangeCategory]);
+
+
   const inFlightRef = useRef(false);
   const idsRef = useRef<Set<string>>(new Set());
 
