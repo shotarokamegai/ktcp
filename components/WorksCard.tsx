@@ -16,14 +16,12 @@ type Props = {
   requiredPattern: Pattern;
 };
 
-// ✅ pattern → 横幅（画像ラッパーの幅）
 const PATTERN_WIDTH: Record<Pattern, string> = {
   1: "pre:w-[calc(690/870*100%)]",
   2: "pre:w-[calc(516/870*100%)]",
   3: "pre:w-full",
 };
 
-// ✅ 画像の寄せ（必要なら）
 const PATTERN_ALIGN: Record<Pattern, string> = {
   1: "pre:justify-center",
   2: "pre:justify-end",
@@ -58,11 +56,19 @@ export default function WorksCard({
       href={`/works/${w.slug}`}
       className={[
         widthClass,
-        "works-card group", // ✅ 追加（hover起点）
-        "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
-        "pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))]",
+        "works-card group",
+        // ✅ clip-path は wrapper ではなく「中のclipレイヤー」にかける（背景ちらつき防止）
+        // "pre:[&_.responsive-image__clip]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
+        // "pre:hover:[&_.responsive-image__clip]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))]",
+        // "pre:[&_.responsive-image__clip]:[clip-path:inset(0px)]",
+        // "pre:hover:[&_.responsive-image__clip]:[clip-path:inset(10px)]",
+        // ✅ clip-path のアニメーション（任意だけど滑らかになる）
+        // "pre:[&_.responsive-image__clip]:transition-[clip-path] pre:[&_.responsive-image__clip]:duration-300 pre:[&_.responsive-image__clip]:ease-out",
+        // "pre:[&_.responsive-image__clip]:transition-all pre:[&_.responsive-image__clip]:duration-300 pre:[&_.responsive-image__clip]:ease-out",
+        // ✅ 画像ズーム（imgにだけ当てる）
         "pre:[&_img]:transform-[scale(1)]",
         "pre:hover:[&_img]:transform-[scale(1.05)]",
+        "pre:[&_img]:transition-transform pre:[&_img]:duration-700 pre:[&_img]:ease-out",
         "slide-in",
         "pre:mb-[calc(20/1401*100%)] pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
         className,
@@ -71,7 +77,6 @@ export default function WorksCard({
       data-ratio={ratioKey}
       data-pattern={String(requiredPattern)}
     >
-      {/* ✅ aspect-ratio は一切なし。横幅だけ pattern で制御 */}
       <div className={["pre:flex", PATTERN_ALIGN[requiredPattern]].join(" ")}>
         <ResponsiveImage
           pc={{ url: imgUrl }}
@@ -84,7 +89,10 @@ export default function WorksCard({
       </div>
 
       <header className="works-card__text pre:flex pre:justify-between pre:mt-2.5 pre:sm:block pre:sm:sp-mt-[8]">
-        <h2 className="works-card__title pre:text-[16px] pre:leading-[130%] pre:sm:sp-fs-[14]" dangerouslySetInnerHTML={{ __html: w?.title?.rendered ?? "" }} />
+        <h2
+          className="works-card__title pre:text-[16px] pre:leading-[130%] pre:sm:sp-fs-[14]"
+          dangerouslySetInnerHTML={{ __html: w?.title?.rendered ?? "" }}
+        />
         <p className="works-card__meta pre:text-[10px] pre:w-[105px] pre:text-right pre:font-gt pre:font-light pre:leading-[1.7] pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
           {catLabel}
         </p>
