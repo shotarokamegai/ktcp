@@ -60,36 +60,40 @@ export default function SlideInOnLoad() {
   };
 
   /* ===== IN ===== */
-  const runIn = () => {
-    // ★ works 一覧コンテナの残留 is-hidden を必ず解除
-    document
-      .querySelectorAll<HTMLElement>(".works-list.is-hidden")
-      .forEach((el) => {
-        el.classList.remove("is-hidden");
-        el.style.transitionDelay = "0ms";
-      });
+const runIn = () => {
+  // ★ 残留しがちなコンテナを先に復帰（works-list等）
+  const roots = Array.from(
+    document.querySelectorAll<HTMLElement>(".works-list.slide-in")
+  ).filter((el) => !shouldSkipByBreakpoint(el));
 
-    const els = Array.from(
-      document.querySelectorAll<HTMLElement>(".slide-in")
-    ).filter((el) => !shouldSkipByBreakpoint(el));
+  roots.forEach((el) => {
+    el.classList.remove("is-hidden");
+    el.classList.add("is-shown");
+    el.style.transitionDelay = "0ms";
+  });
 
-    if (els.length === 0) return;
+  const els = Array.from(
+    document.querySelectorAll<HTMLElement>(".slide-in")
+  ).filter((el) => !shouldSkipByBreakpoint(el));
 
-    els.forEach((el) => {
-      el.classList.remove("is-shown", "is-hidden");
-      el.style.transitionDelay = "0ms";
+  if (els.length === 0) return;
+
+  els.forEach((el) => {
+    el.classList.remove("is-shown", "is-hidden");
+    el.style.transitionDelay = "0ms";
+  });
+
+  const count = els.length;
+
+  setTimeout(() => {
+    els.forEach((el, i) => {
+      const delay = getDelay(i, count, IN_MIN_DELAY, IN_MAX_DELAY, IN_MODE);
+      el.style.transitionDelay = `${delay}ms`;
+      requestAnimationFrame(() => el.classList.add("is-shown"));
     });
+  }, IN_BASE_DELAY);
+};
 
-    const count = els.length;
-
-    setTimeout(() => {
-      els.forEach((el, i) => {
-        const delay = getDelay(i, count, IN_MIN_DELAY, IN_MAX_DELAY, IN_MODE);
-        el.style.transitionDelay = `${delay}ms`;
-        requestAnimationFrame(() => el.classList.add("is-shown"));
-      });
-    }, IN_BASE_DELAY);
-  };
 
   /* ===== OUT ===== */
   const runOutAndPush = (href: string) => {
