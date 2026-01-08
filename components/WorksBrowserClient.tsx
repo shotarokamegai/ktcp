@@ -22,7 +22,10 @@ const RATIO_TO_PATTERN: Record<RatioKey, Pattern> = {
   "4/3": 3,
 };
 
-const RATIOS: readonly RatioKey[] = ["1/1", "3/4", "4/3"] as const;
+// ★ row3(=一列3個) は縦長NG → 3/4 を除外
+const RATIOS_ROW3: readonly RatioKey[] = ["1/1", "4/3"] as const;
+// ★ row4(=一列4個) は従来通り
+const RATIOS_ROW4: readonly RatioKey[] = ["1/1", "3/4", "4/3"] as const;
 
 // ------------------------------
 // illust assets（7種）
@@ -49,11 +52,17 @@ function mulberry32(a: number) {
   };
 }
 
-function pickRatioKey(layoutSeed: number, workId: number, isWide: boolean): RatioKey {
+// ★ 候補配列を受け取って ratioKey を決める（row3 / row4 の制御に使う）
+function pickRatioKeyFrom(
+  ratios: readonly RatioKey[],
+  layoutSeed: number,
+  workId: number,
+  isWide: boolean
+): RatioKey {
   const s =
     (layoutSeed ^ Math.imul((workId >>> 0) + (isWide ? 101 : 0), 2654435761)) >>> 0;
   const r = mulberry32(s)();
-  return RATIOS[Math.floor(r * RATIOS.length)];
+  return ratios[Math.floor(r * ratios.length)];
 }
 
 function pickIllustSrc(layoutSeed: number, rowIndex: number) {
@@ -190,53 +199,53 @@ export default function WorksBrowserClient({
 
   const inFlightRef = useRef(false);
   const idsRef = useRef<Set<string>>(new Set());
-  
+
   // works が更新されたら idsRef も同期（初期Works用）
   useEffect(() => {
     idsRef.current = new Set(works.map((w) => String(w.id)));
   }, [works]);
-  
+
   const loadMore = useCallback(async () => {
     if (isAnimating) return;
     if (!hasMore) return;
     if (inFlightRef.current) return; // ★ 即時ロック（stateより強い）
-  
+
     inFlightRef.current = true;
     setIsLoadingMore(true);
-  
+
     if (abortRef.current) abortRef.current.abort();
     const ac = new AbortController();
     abortRef.current = ac;
-  
+
     const nextPage = page + 1;
-  
+
     try {
       const more = await fetchPage(activeSlug, nextPage, ac.signal);
-    
+
       // ★ 0件 → 終端
       if (!more || more.length === 0) {
         setHasMore(false);
         return;
       }
-    
+
       // ★ “追加が1件も増えない” → APIが同じ12件返してる等。ここで終端にする
       const newOnes = more.filter((w) => !idsRef.current.has(String(w.id)));
       if (newOnes.length === 0) {
         setHasMore(false);
         return;
       }
-    
+
       // ★ 追加分だけ append
       setWorks((prev) => [...prev, ...newOnes]);
-    
+
       // idsRef 更新
       newOnes.forEach((w) => idsRef.current.add(String(w.id)));
-    
+
       setPage(nextPage);
-    
+
       // “ページが満杯じゃない”なら次は無い
       setHasMore(more.length >= PER_PAGE);
-    
+
       applyShown();
     } catch (e: any) {
       if (e?.name !== "AbortError") console.error(e);
@@ -269,7 +278,7 @@ export default function WorksBrowserClient({
   }, [loadMore]);
 
   const rendered = useMemo(() => {
-    // ★ ここが重要：slice(0,12) をやめて、stateの works 全部を描画
+    // ★ state の works 全部を描画
     const latest = works;
     const out: JSX.Element[] = [];
 
@@ -282,8 +291,16 @@ export default function WorksBrowserClient({
           "pre:flex pre:items-start pre:justify-center",
         ].join(" ")}
       >
-        <div className="pre:w-full pre:flex pre:items-center pre:justify-center" style={{ aspectRatio: "4 / 3" }}>
-          <img src={src} alt="" className="pre:w-[90%] pre:h-full pre:object-contain" loading="lazy" />
+        <div
+          className="pre:w-full pre:flex pre:items-center pre:justify-center"
+          style={{ aspectRatio: "4 / 3" }}
+        >
+          <img
+            src={src}
+            alt=""
+            className="pre:w-[90%] pre:h-full pre:object-contain"
+            loading="lazy"
+          />
         </div>
       </div>
     );
@@ -306,6 +323,9 @@ export default function WorksBrowserClient({
       const remaining = latest.length - cursor;
       const isRow3 = rowIndex % 2 === 0;
 
+      // -----------------------
+      // Row3: 3 items
+      // -----------------------
       if (isRow3) {
         const take = Math.min(3, remaining);
         const wideIndex = wideToggle === 0 ? 0 : 1;
@@ -314,14 +334,22 @@ export default function WorksBrowserClient({
           const w = latest[cursor++];
           const isWide = take === 3 && i === wideIndex;
 
-          const ratioKey = pickRatioKey(layoutSeed, Number(w.id), isWide);
+          // ★ row3 は 1/1 or 4/3 のみ（3/4 を排除）
+          const ratioKey = pickRatioKeyFrom(
+            RATIOS_ROW3,
+            layoutSeed,
+            Number(w.id),
+            isWide
+          );
 
           out.push(
             <WorksCard
               key={`work-${w.id}`}
               work={w}
               isWide={isWide}
-              widthClass={isWide ? "pre:w-[calc(2/4*100%)]" : "pre:w-[calc(1/4*100%)]"}
+              widthClass={
+                isWide ? "pre:w-[calc(2/4*100%)]" : "pre:w-[calc(1/4*100%)]"
+              }
               className="pre:mb-5"
               ratioKey={ratioKey}
               requiredPattern={RATIO_TO_PATTERN[ratioKey]}
@@ -339,6 +367,9 @@ export default function WorksBrowserClient({
         continue;
       }
 
+      // -----------------------
+      // Row4: 4 items (+ optional illust)
+      // -----------------------
       const insertIllust = needIllust || slotCount + 4 >= ILLUST_EVERY_SLOTS;
       const illustSrc = pickIllustSrc(layoutSeed, rowIndex);
 
@@ -355,7 +386,13 @@ export default function WorksBrowserClient({
           const w = latest[cursor++];
           taken++;
 
-          const ratioKey = pickRatioKey(layoutSeed, Number(w.id), false);
+          // ★ row4 は従来通り全部OK
+          const ratioKey = pickRatioKeyFrom(
+            RATIOS_ROW4,
+            layoutSeed,
+            Number(w.id),
+            false
+          );
 
           out.push(
             <WorksCard
@@ -387,7 +424,11 @@ export default function WorksBrowserClient({
 
   return (
     <>
-      <WorksCategoryNav categories={categories} activeSlug={activeSlug} onChange={onChangeCategory} />
+      <WorksCategoryNav
+        categories={categories}
+        activeSlug={activeSlug}
+        onChange={onChangeCategory}
+      />
 
       <section
         className={[
@@ -396,25 +437,10 @@ export default function WorksBrowserClient({
           isAnimating ? "works-list is-changing" : "works-list",
         ].join(" ")}
       >
-
-        {/* 任意：ローディング表示 */}
-        {/* {isLoadingMore && hasMore && (
-          <div className="pre:w-full pre:py-8 pre:text-center">
-            <p className="pre:text-[14px]">Loading…</p>
-          </div>
-        )} */}
-
-        {/* 任意：終端 */}
-        {/* {!hasMore && works.length > 0 && (
-          <div className="pre:w-full pre:py-8 pre:text-center">
-            <p className="pre:text-[14px]">All loaded</p>
-          </div>
-        )} */}
         {rendered}
 
         {/* ★ infinite scroll sentinel */}
         <div ref={sentinelRef} className="pre:w-full pre:h-[1px]" aria-hidden />
-
       </section>
     </>
   );
