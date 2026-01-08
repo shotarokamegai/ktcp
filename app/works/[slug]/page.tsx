@@ -49,16 +49,23 @@ function toUrl(v: unknown): string | null {
   return typeof v === "string" && v.trim() ? v.trim() : null;
 }
 
-// ratio → width class
+// ratio → width class（レイアウトはここで決まるので触らない）
 const RATIO_WIDTH_CLASS: Record<RatioValue, string> = {
   "1000x1000": "pre:w-[calc(690/870*100%)]",
   "1080x1440": "pre:w-[calc(516/870*100%)]",
   "1600x900": "pre:w-full",
 };
 
-// center → right → left → repeat
+// ✅ 表示用 aspect-ratio（ResponsiveImage の displayRatio に渡す）
+const RATIO_DISPLAY: Record<RatioValue, string> = {
+  "1000x1000": "1/1",
+  "1080x1440": "12/15",
+  "1600x900": "12/7",
+};
+
+// center → right → left → repeat（既存ロジック維持）
 function getAlignClass(ruleIndex: number) {
-  const mod = ((ruleIndex % 3) + 3) % 3; // 念のため負も吸収
+  const mod = ((ruleIndex % 3) + 3) % 3;
   if (mod === 0) return "pre:justify-end";
   if (mod === 1) return "pre:justify-center";
   return "pre:justify-start";
@@ -75,25 +82,20 @@ export default async function WorkDetail({
   const acf = (work as any).acf ?? {};
   const dateTxt: string | undefined = acf.date;
 
-  // works_cat（wp.ts で付与したもの）
   const categories = (work as any).works_cat as
     | { id: number; name: string; slug: string; acf?: any }[]
     | undefined;
 
-  // ✅ ACF定義どおり：eyecatch.pattern3 は URL文字列
   const eyecatchPattern3Url = toUrl(acf?.eyecatch?.pattern3);
 
-  // ------------------------------------
-  // gallery（repeater）内：画像 or 動画を両対応 + ratio 反映
-  // ------------------------------------
+  // gallery
   const gallery: MediaItem[] = [];
   const imagesRep = acf.images as any[] | undefined;
 
   if (Array.isArray(imagesRep)) {
     imagesRep.forEach((row, idx) => {
-      const file = row?.image; // ACF sub field: image (file return_format=array)
+      const file = row?.image;
       const url = file?.url;
-
       if (typeof url !== "string" || !url) return;
 
       const ratio = row?.ratio as RatioValue | undefined;
@@ -123,22 +125,15 @@ export default async function WorkDetail({
     });
   }
 
-  // ✅ eyecatch pattern3 が gallery にも含まれてたら重複しない
   const dedupedGallery =
     eyecatchPattern3Url && gallery.length
       ? gallery.filter((m) => !(m.kind === "image" && m.url === eyecatchPattern3Url))
       : gallery;
 
-  // ▼ Featured works 用：全 works から4件ピックアップ（自分自身は除外）
   const allWorks = await fetchWorks();
   const featured = allWorks.filter((w: any) => w.slug !== (work as any).slug).slice(0, 4);
 
-  // ✅ 先頭に pattern3 を表示している場合、以降の「中央→右→左」のカウントから除外したい
-  // 今回の構成では、ルール適用は dedupedGallery に対して行うので、
-  // offset = (pattern3が存在するなら 0) でOK…だが「pattern3を1枚目として数えない」ので
-  // 2枚目(=galleryの0)は必ず "中央" にしたい → ruleIndex は i をそのまま使う。
-  // ただし「将来、pattern3も同じループに混ぜる」などに備えて明示的にルール起点を作る。
-  const ruleStartIndex = 0; // dedupedGallery の先頭が "中央" になる
+  const ruleStartIndex = 0;
 
   return (
     <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110]">
@@ -158,7 +153,6 @@ export default async function WorkDetail({
             pre:sm:relative pre:sm:top-0
           "
         >
-          {/* 日付 */}
           {dateTxt && (
             <div className="pre:mb-3.5 slide-in pre:sm:mb-0 pre:sm:order-2">
               <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-none pre:sm:sp-fs-[16]">
@@ -167,13 +161,11 @@ export default async function WorkDetail({
             </div>
           )}
 
-          {/* タイトル */}
           <h1
             dangerouslySetInnerHTML={{ __html: (work as any).title.rendered }}
             className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-none slide-in pre:sm:order-1 pre:sm:sp-fs-[24] pre:sm:sp-mb-[10]"
           />
 
-          {/* カテゴリー */}
           {categories && categories.length > 0 && (
             <div className="slide-in pre:mt-auto pre:sm:order-3 pre:sm:sp-mt-[110] pre:sm:sp-mb-[25]">
               <p className="pre:text-[15px] pre:font-gt pre:font-light pre:sm:sp-fs-[14]">
@@ -189,23 +181,28 @@ export default async function WorkDetail({
         </div>
 
         <div className="slide-in pre:sm:w-full">
-          {/* ✅ 1枚目：eyecatch.pattern3（これはカウントしない） */}
+          {/* ✅ 1枚目：pattern3 は「横長表示」したいので displayRatio=12/7 を追加（レイアウトは触らない） */}
           {eyecatchPattern3Url && (
             <div className="pre:mb-2.5">
-              <ResponsiveImage pc={{ url: eyecatchPattern3Url }} alt="eyecatch-pattern3" />
+              <ResponsiveImage
+                pc={{ url: eyecatchPattern3Url }}
+                alt="eyecatch-pattern3"
+                displayRatio="12/7"
+              />
             </div>
           )}
 
-          {/* ✅ 2枚目以降：中央→右→左…（pattern3はカウントしない） */}
           {dedupedGallery.length > 0 && (
             <div>
               {dedupedGallery.map((m, i) => {
                 const ratio = m.ratio;
                 const widthClass = ratio ? RATIO_WIDTH_CLASS[ratio] : "pre:w-full";
 
-                // ここが本題：pattern3は別枠なので、galleryの先頭(i=0)を必ず中央にする
-                const ruleIndex = i - ruleStartIndex; // 0,1,2,...（=中央,右,左...）
+                const ruleIndex = i - ruleStartIndex;
                 const alignClass = getAlignClass(ruleIndex);
+
+                // ✅ ratio があるものだけ displayRatio を渡す（widthClass/alignClassはそのまま）
+                const displayRatio = ratio ? RATIO_DISPLAY[ratio] : undefined;
 
                 return (
                   <div
@@ -214,7 +211,11 @@ export default async function WorkDetail({
                   >
                     <div className={widthClass}>
                       {m.kind === "image" ? (
-                        <ResponsiveImage pc={{ url: m.url }} alt={m.alt || `image-${i}`} />
+                        <ResponsiveImage
+                          pc={{ url: m.url }}
+                          alt={m.alt || `image-${i}`}
+                          displayRatio={displayRatio}
+                        />
                       ) : (
                         <VideoAutoPlay
                           src={m.url}
@@ -231,7 +232,7 @@ export default async function WorkDetail({
         </div>
       </section>
 
-      {/* ▼ Featured works セクション */}
+      {/* Featured works はそのまま */}
       <section className="pre:mt-40 pre:mb-[180px] pre:sm:sp-mt-[170] pre:sm:sp-mb-[110] pre:sm:sp-w-[339] pre:sm:mx-auto">
         <div className="pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[26px] pre:sm:mx-auto pre:sm:sp-mb-[40] pre:sm:w-full">
           <h2 className="pre:text-[24px] pre:font-gt pre:font-light pre:sm:sp-fs-[24]">
@@ -239,10 +240,8 @@ export default async function WorkDetail({
           </h2>
         </div>
 
-        {/* SP：Swiper */}
         <FeaturedWorksMobileSwiper works={featured} />
 
-        {/* PC：4カラム（smでは非表示） */}
         <div className="pre:flex pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:sm:hidden">
           {featured.map((w: any, i: number) => {
             const ratioKey = (["1/1", "3/4", "4/3"] as const)[(Number(w?.id ?? 0) + i) % 3];
