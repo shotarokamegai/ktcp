@@ -12,6 +12,8 @@ const OUT_MIN_DELAY = 0;
 const OUT_MAX_DELAY = 200;
 const TRANSITION_DURATION = 200;
 
+const STAGGER_INTERVAL = 50; // ★ 0.2s 固定
+
 const IN_MODE: "random" | "sequence" = "sequence";
 const OUT_MODE: "random" | "sequence" = "sequence";
 
@@ -35,17 +37,16 @@ export default function SlideInOnLoad() {
 
   const getDelay = (
     index: number,
-    count: number,
-    min: number,
-    max: number,
+    _count: number,
+    _min: number,
+    _max: number,
     mode: "random" | "sequence"
   ) => {
     if (mode === "sequence") {
-      if (count <= 1) return min;
-      const t = index / (count - 1);
-      return Math.round(min + (max - min) * t);
+      return index * STAGGER_INTERVAL;
     }
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    // random を残すなら（不要なら消してOK）
+    return Math.floor(Math.random() * STAGGER_INTERVAL);
   };
 
   const scrollToTop = () => {
@@ -60,6 +61,14 @@ export default function SlideInOnLoad() {
 
   /* ===== IN ===== */
   const runIn = () => {
+    // ★ works 一覧コンテナの残留 is-hidden を必ず解除
+    document
+      .querySelectorAll<HTMLElement>(".works-list.is-hidden")
+      .forEach((el) => {
+        el.classList.remove("is-hidden");
+        el.style.transitionDelay = "0ms";
+      });
+
     const els = Array.from(
       document.querySelectorAll<HTMLElement>(".slide-in")
     ).filter((el) => !shouldSkipByBreakpoint(el));
@@ -86,7 +95,9 @@ export default function SlideInOnLoad() {
   const runOutAndPush = (href: string) => {
     const els = Array.from(
       document.querySelectorAll<HTMLElement>(".slide-out")
-    ).filter((el) => !shouldSkipByBreakpoint(el));
+    ).filter((el) => !shouldSkipByBreakpoint(el))
+    .filter((el) => !el.classList.contains("works-list")); // ★追加
+
 
     if (els.length === 0) {
       router.push(href, { scroll: true });
