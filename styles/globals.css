@@ -98,16 +98,17 @@ a {
   filter: blur(0px);
   transform: translateY(0);
   transition:
-    opacity .5s var(--ease-in-out-quad) .5s,
-    filter 1s var(--ease-in-out-quad),
-    transform 1s var(--ease-in-out-quad);
+    opacity 500ms cubic-bezier(0.23, 1, 0.32, 1),
+    filter 500ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: opacity, filter, transform;
 }
 
-/* 消えた状態 */
 .slide-out.is-hidden {
   opacity: 0;
-  filter: blur(10px);
-  transform: translateY(0px);
+  filter: blur(12px);
+  transform: translateY(8px);
+  pointer-events: none;
 }
 
 /* ▼ 表示アニメ（enter）用 */

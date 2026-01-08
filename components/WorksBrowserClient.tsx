@@ -429,18 +429,17 @@ export default function WorksBrowserClient({
         activeSlug={activeSlug}
         onChange={onChangeCategory}
       />
-
       <section
         className={[
-          "pre:flex pre:flex-wrap pre:items-start pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]",
+          "pre:flex pre:flex-wrap pre:items-start pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] slide-out",
           "pre:sm:sp-w-[360] pre:sm:sp-mb-[110]",
-          isAnimating ? "works-list is-changing" : "works-list",
+          isAnimating ? "works-list is-changing is-hidden" : "works-list",
         ].join(" ")}
       >
         {rendered}
 
         {/* ★ infinite scroll sentinel */}
-        <div ref={sentinelRef} className="pre:w-full pre:h-[1px]" aria-hidden />
+        <div ref={sentinelRef} className="pre:w-full pre:h-px" aria-hidden />
       </section>
     </>
   );
