@@ -77,6 +77,7 @@ export default function WorksCard({
           pc={{ url: imgUrl }}
           alt={w?.title?.rendered ?? ""}
           className={PATTERN_WIDTH[requiredPattern]}
+          ratioKey={ratioKey}
           fit="cover"
           placeholder_color={w?.acf?.placeholder_color}
         />

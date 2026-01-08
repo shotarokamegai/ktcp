@@ -7,32 +7,27 @@ export type ImageMeta = {
   url: string;
   width?: number;
   height?: number;
-  placeholder_color?: string | null; // ← ACF想定
+  placeholder_color?: string | null;
 };
+
+type RatioKey = "1/1" | "3/4" | "4/3";
 
 type Props = {
   pc: ImageMeta;
   alt: string;
 
-  /** 画像の見せ方 */
-  fit?: CSSProperties["objectFit"]; // "cover" | "contain" etc
-
-  /** wrapper の class（横幅はここで指定する） */
+  fit?: CSSProperties["objectFit"];
   className?: string;
 
-  /** 明示的に上書きしたい placeholder 色（任意） */
   placeholder_color?: string;
-
-  /** placeholder を完全に無効化 */
   disablePlaceholder?: boolean;
-
-  /** 任意：ラッパーに足す style */
   style?: CSSProperties;
 
-  /** viewport 判定を一度だけにする（デフォ true） */
-  once?: boolean;
+  // ★ 追加：patternが決まったらここを渡す
+  ratioKey?: RatioKey;
 
-  /** どれくらい手前で inView 扱いにするか */
+  // viewport条件
+  once?: boolean;
   rootMargin?: string;
 };
 
@@ -44,6 +39,9 @@ export default function ResponsiveImage({
   placeholder_color,
   disablePlaceholder = false,
   style,
+
+  ratioKey,
+
   once = true,
   rootMargin = "200px 0px",
 }: Props) {
@@ -53,26 +51,14 @@ export default function ResponsiveImage({
   const imgRef = useRef<HTMLImageElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
-  /**
-   * placeholder 背景色の決定
-   *
-   * 優先順位：
-   * 1. disablePlaceholder → transparent
-   * 2. ACF（pc.placeholder_color）
-   * 3. props（placeholder_color）
-   * 4. fallback
-   */
   const placeholderBg = useMemo(() => {
     if (disablePlaceholder) return "transparent";
     return pc.placeholder_color || placeholder_color || "rgb(217, 217, 217)";
   }, [disablePlaceholder, pc.placeholder_color, placeholder_color]);
 
-  // --------------------------
-  // load 判定
-  // --------------------------
+  // load
   useEffect(() => {
     setLoaded(false);
-
     const img = imgRef.current;
     if (!img) return;
 
@@ -92,32 +78,24 @@ export default function ResponsiveImage({
     };
   }, [pc.url]);
 
-  // --------------------------
-  // viewport 判定（IntersectionObserver）
-  // --------------------------
+  // inView
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
 
-    // IO がない環境は「常に表示扱い」
     if (typeof IntersectionObserver === "undefined") {
       setInView(true);
       return;
     }
 
-    let didSet = false;
-
     const io = new IntersectionObserver(
       (entries) => {
         const e = entries[0];
         if (!e) return;
-
         if (e.isIntersecting) {
           setInView(true);
-          didSet = true;
           if (once) io.disconnect();
         } else {
-          // once=false の時だけ外れたら false に戻す
           if (!once) setInView(false);
         }
       },
@@ -125,16 +103,24 @@ export default function ResponsiveImage({
     );
 
     io.observe(el);
+    return () => io.disconnect();
+  }, [once, rootMargin]);
 
-    return () => {
-      // once=true の場合でも、mount直後に intersect しなかったケースに備えて掃除
-      if (!didSet) io.disconnect();
-      else io.disconnect();
-    };
-  }, [once, rootMargin, pc.url]);
-
-  // ★ 表示条件：loaded かつ inView
   const shouldShow = loaded && inView;
+
+  // ★ ratioKeyがあるなら先に枠を確保
+const aspectRatio: CSSProperties["aspectRatio"] = useMemo(() => {
+  // 1) ratioKey（pattern）優先
+  if (ratioKey) return ratioKey.replace("/", " / ");
+
+  // 2) メタがあるならそれで枠確保（CLS最小）
+  if (pc.width && pc.height && pc.width > 0 && pc.height > 0) {
+    return `${pc.width} / ${pc.height}`;
+  }
+
+  // 3) 最低限の保険（潰れ防止）
+  return "1 / 1";
+}, [ratioKey, pc.width, pc.height]);
 
   return (
     <div
@@ -145,10 +131,11 @@ export default function ResponsiveImage({
         width: "100%",
         overflow: "hidden",
         background: placeholderBg,
+        aspectRatio, // ★ ここで高さが先に決まる
         ...style,
       }}
     >
-      <div className="responsive-image__clip">
+      <div className="responsive-image__clip" style={{ position: "absolute", inset: 0 }}>
         <img
           ref={imgRef}
           src={pc.url}
@@ -157,10 +144,12 @@ export default function ResponsiveImage({
           decoding="async"
           className="responsive-image__img"
           style={{
+            position: "absolute",
+            inset: 0,
             width: "100%",
-            height: "auto",
-            display: "block",
+            height: "100%",
             objectFit: fit,
+
             opacity: shouldShow ? 1 : 0,
             transition:
               "opacity 1s cubic-bezier(0.23, 1, 0.32, 1) .5s, transform .7s cubic-bezier(0.23, 1, 0.32, 1)",
