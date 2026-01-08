@@ -18,6 +18,17 @@ const OUT_MODE: "random" | "sequence" = "sequence";
 const REFRESH_EVENT = "slidein:refresh";
 /* ================= */
 
+function shouldSkipByBreakpoint(el: HTMLElement) {
+  // Tailwind sm=640px を基準に「SP」を判定（sm未満）
+  const isSP = window.matchMedia("(max-width: 639.98px)").matches;
+
+  // SPのとき：PC用として隠される要素（sm以上でhidden）をスキップ
+  if (isSP) return el.classList.contains("pre:sm:hidden");
+
+  // PCのとき：常時hidden（SP用）をスキップ
+  return el.classList.contains("pre:hidden");
+}
+
 export default function SlideInOnLoad() {
   const pathname = usePathname();
   const router = useRouter();
@@ -51,7 +62,9 @@ export default function SlideInOnLoad() {
   const runIn = () => {
     const els = Array.from(
       document.querySelectorAll<HTMLElement>(".slide-in")
-    );
+    ).filter((el) => !shouldSkipByBreakpoint(el));
+
+    if (els.length === 0) return;
 
     els.forEach((el) => {
       el.classList.remove("is-shown", "is-hidden");
@@ -73,7 +86,7 @@ export default function SlideInOnLoad() {
   const runOutAndPush = (href: string) => {
     const els = Array.from(
       document.querySelectorAll<HTMLElement>(".slide-out")
-    );
+    ).filter((el) => !shouldSkipByBreakpoint(el));
 
     if (els.length === 0) {
       router.push(href, { scroll: true });

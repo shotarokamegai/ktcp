@@ -58,8 +58,13 @@ export default function WorksCard({
       href={`/works/${w.slug}`}
       className={[
         widthClass,
+        "works-card group", // ✅ 追加（hover起点）
+        "pre:[&_.responsive-image]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
+        "pre:hover:[&_.responsive-image]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))]",
+        "pre:[&_img]:transform-[scale(1)]",
+        "pre:hover:[&_img]:transform-[scale(1.05)]",
         "slide-in",
-        "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
+        "pre:mb-[calc(20/1401*100%)] pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
         className,
       ].join(" ")}
       data-wide={isWide ? "1" : "0"}
@@ -77,9 +82,9 @@ export default function WorksCard({
         />
       </div>
 
-      <header className="pre:flex pre:mt-2.5 pre:sm:block pre:sm:sp-mt-[8]">
-        <h2 dangerouslySetInnerHTML={{ __html: w?.title?.rendered ?? "" }} />
-        <p className="pre:text-[10px] pre:w-[105px] pre:text-right pre:font-gt pre:font-light pre:leading-[1.7] pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
+      <header className="works-card__text pre:flex pre:justify-between pre:mt-2.5 pre:sm:block pre:sm:sp-mt-[8]">
+        <h2 className="works-card__title pre:text-[16px] pre:leading-[130%] pre:sm:sp-fs-[14]" dangerouslySetInnerHTML={{ __html: w?.title?.rendered ?? "" }} />
+        <p className="works-card__meta pre:text-[10px] pre:w-[105px] pre:text-right pre:font-gt pre:font-light pre:leading-[1.7] pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
           {catLabel}
         </p>
       </header>

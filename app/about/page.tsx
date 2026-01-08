@@ -26,15 +26,33 @@ export default async function AboutPage() {
           <div className="pre:w-[calc(517/1400*100%)] pre:sm:w-full pre:sm:sp-mb-[40]">
             <h1 className="pre:text-[24px] pre:font-gt pre:font-light slide-in pre:mb-[180px] pre:sm:sp-fs-[24] pre:sm:sp-mb-[50]">About</h1>
             <Image src="/illust/about.png" alt="" width={372} height={279} className="pre:w-[calc(372/450*100%)] pre:max-w-[372px] slide-in pre:sm:w-full pre:sm:sp-mb-[30]" />
-            <h2 className="pre:text-[clamp(12px,1.666666vw,24px)] pre:leading-[130%] pre:font-gt pre:font-light pre:sm:sp-fs-[24]">
+            <h2 className="pre:text-[clamp(12px,1.666666vw,24px)] pre:leading-[130%] pre:font-gt pre:font-light pre:sm:sp-fs-[24] pre:sm:whitespace-nowrap">
               <span className="pre:inline-block slide-in">
-                Transforming Your Content Like Ketchup 
+                <span className="pre:hidden pre:sm:block">
+                  Transforming Your Content Like
+                </span>
+                <span className="pre:sm:hidden">
+                  Transforming Your Content Like Ketchup 
+                </span>
               </span><br/>
               <span className="pre:inline-block slide-in">
-                Transforms a Meal, The Perfect Condiment
+                <span className="pre:hidden pre:sm:block">
+                  Ketchup Transforms a Meal,
+                </span>
+                <span className="pre:sm:hidden">
+                  Transforms a Meal, The Perfect Condiment
+                </span>
               </span><br/>
               <span className="pre:inline-block slide-in">
-                for Your Business
+                <span className="pre:hidden pre:sm:block">
+                  The Perfect Condiment
+                </span>
+                <span className="pre:sm:hidden">
+                  for Your Business
+                </span>
+              </span><br className="pre:hidden pre:sm:block"/>
+              <span className="slide-in pre:hidden pre:sm:inline-block">
+                  for Your Business
               </span>
             </h2>
           </div>

@@ -66,7 +66,7 @@ export default function ResponsiveImage({
 
   return (
     <div
-      className={["responsive-image", className].filter(Boolean).join(" ")}
+      className={["responsive-image", "group", className].filter(Boolean).join(" ")}
       style={{
         position: "relative",
         width: "100%",
@@ -75,22 +75,26 @@ export default function ResponsiveImage({
         ...style,
       }}
     >
-      {/* ✅ 高さを画像に任せる：position:absolute はやめる */}
+    {/* ✅ clip-path を当てる対象 */}
+    <div className="responsive-image__clip">
       <img
         ref={imgRef}
         src={pc.url}
         alt={alt}
         loading="lazy"
         decoding="async"
+        className="responsive-image__img"
         style={{
           width: "100%",
           height: "auto",
           display: "block",
           objectFit: fit,
           opacity: loaded ? 1 : 0,
-          transition: "opacity .35s ease, transform .7s cubic-bezier(0.23, 1, 0.32, 1)",
+          transition:
+            "opacity .35s ease, transform .7s cubic-bezier(0.23, 1, 0.32, 1)",
         }}
       />
+    </div>
     </div>
   );
 }

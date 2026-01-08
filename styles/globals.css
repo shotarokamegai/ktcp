@@ -129,6 +129,7 @@ a {
 }
 
 .responsive-image {
+  will-change: clip-path;
   transition:
     clip-path 1.5s var(--ease-in-out-quint);
 }
@@ -303,6 +304,17 @@ html.is-page-masked #page-mask {
   }
 }
 @media screen and (min-width: 750px) {
+  .works-card {
+    header  {
+      will-change: color;
+      transition: color .75s var(--ease-out-quart);
+    }
+    &:hover {
+      header {
+        color: var(--color-ketchup);
+      }
+    }
+  }
   .careers-accordion {
     &.active {
       .careers-accordion-icon {

@@ -286,7 +286,7 @@ export default function ContactForm() {
           Contact
         </h2>
 
-        <div className="pre:w-[256px] pre:mb-2.5 pre:sm:sp-w-[212] pre:sm:sp-mb-[35] pre:sm:mr-0 pre:sm:ml-auto">
+        <div className="pre:w-[calc(256/460*100%)] pre:mb-2.5 pre:sm:sp-w-[212] pre:sm:sp-mb-[35] pre:sm:mr-0 pre:sm:ml-auto">
           <Image
             src="/illust/contact.png"
             alt=""
@@ -296,14 +296,34 @@ export default function ContactForm() {
           />
         </div>
 
-        <p className="pre:text-[clamp(12px,1.666666vw,24px)] pre:font-gt pre:font-light pre:leading-[130%] slide-in pre:wrap-anywhere pre:sm:sp-fs-[24] pre:whitespace-nowrap">
-          Transforming Your Content Like <br className="pre:hidden pre:sm:block" />
-          Ketchup
-          <br className="pre:sm:hidden" />
-          Transforms a Meal, <br className="pre:hidden pre:sm:block" />
-          The Perfect Condiment
-          <br />
-          for Your Business
+        <p className="pre:text-[clamp(12px,1.666666vw,24px)] pre:leading-[130%] pre:font-gt pre:font-light pre:sm:sp-fs-[24] pre:whitespace-nowrap">
+          <span className="pre:inline-block slide-in">
+            <span className="pre:hidden pre:sm:block">
+              Transforming Your Content Like
+            </span>
+            <span className="pre:sm:hidden">
+              Transforming Your Content Like Ketchup 
+            </span>
+          </span><br/>
+          <span className="pre:inline-block slide-in">
+            <span className="pre:hidden pre:sm:block">
+              Ketchup Transforms a Meal,
+            </span>
+            <span className="pre:sm:hidden">
+              Transforms a Meal, The Perfect Condiment
+            </span>
+          </span><br/>
+          <span className="pre:inline-block slide-in">
+            <span className="pre:hidden pre:sm:block">
+              The Perfect Condiment
+            </span>
+            <span className="pre:sm:hidden">
+              for Your Business
+            </span>
+          </span><br className="pre:hidden pre:sm:block"/>
+          <span className="slide-in pre:hidden pre:sm:inline-block">
+              for Your Business
+          </span>
         </p>
       </div>
 
