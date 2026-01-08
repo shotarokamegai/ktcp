@@ -51,21 +51,21 @@ export default function WorksCard({
         .join(" / ")
     : "";
 
+  // ✅ ratioKeyごとの「表示枠」の上書き（確実に効くやつ）
+  const aspectRatioOverride =
+    ratioKey === "4/3"
+      ? ("12 / 7" as const)
+      : ratioKey === "3/4"
+      ? ("12 / 15" as const)
+      : undefined;
+
   return (
     <FMLink
       href={`/works/${w.slug}`}
       className={[
         widthClass,
         "works-card group",
-        // ✅ clip-path は wrapper ではなく「中のclipレイヤー」にかける（背景ちらつき防止）
-        // "pre:[&_.responsive-image__clip]:[clip-path:polygon(0_0,100%_0,100%_100%,0%_100%)]",
-        // "pre:hover:[&_.responsive-image__clip]:[clip-path:polygon(10px_10px,calc(100%-10px)_10px,calc(100%-10px)_calc(100%-10px),10px_calc(100%-10px))]",
-        // "pre:[&_.responsive-image__clip]:[clip-path:inset(0px)]",
-        // "pre:hover:[&_.responsive-image__clip]:[clip-path:inset(10px)]",
-        // ✅ clip-path のアニメーション（任意だけど滑らかになる）
-        // "pre:[&_.responsive-image__clip]:transition-[clip-path] pre:[&_.responsive-image__clip]:duration-300 pre:[&_.responsive-image__clip]:ease-out",
-        // "pre:[&_.responsive-image__clip]:transition-all pre:[&_.responsive-image__clip]:duration-300 pre:[&_.responsive-image__clip]:ease-out",
-        // ✅ 画像ズーム（imgにだけ当てる）
+        // zoom
         "pre:[&_img]:transform-[scale(1)]",
         "pre:hover:[&_img]:transform-[scale(1.05)]",
         "pre:[&_img]:transition-transform pre:[&_img]:duration-700 pre:[&_img]:ease-out",
@@ -85,6 +85,8 @@ export default function WorksCard({
           ratioKey={ratioKey}
           fit="cover"
           placeholder_color={w?.acf?.placeholder_color}
+          // ✅ ここで確実に上書き（ResponsiveImageの実装差異があっても効く）
+          style={aspectRatioOverride ? { aspectRatio: aspectRatioOverride } : undefined}
         />
       </div>
 

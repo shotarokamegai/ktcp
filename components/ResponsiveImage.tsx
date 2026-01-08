@@ -23,17 +23,15 @@ type Props = {
   disablePlaceholder?: boolean;
   style?: CSSProperties;
 
-  /** pattern（= ratio）が決まっているなら渡す */
+  /** ロジック用の比率（そのまま） */
   ratioKey?: RatioKey;
 
-  /** viewport条件 */
+  /** 表示用の比率（上書き用） */
+  displayRatio?: string; // e.g. "12/7", "12/15"
+
   once?: boolean;
   rootMargin?: string;
 
-  /**
-   * 「画像が表示開始してから背景を消す」までの遅延(ms)
-   * img の opacity に 0.5s ディレイがあるので、デフォ 650ms
-   */
   hidePlaceholderAfterMs?: number;
 };
 
@@ -46,14 +44,13 @@ export default function ResponsiveImage({
   disablePlaceholder = false,
   style,
   ratioKey,
+  displayRatio,
   once = true,
   rootMargin = "200px 0px",
   hidePlaceholderAfterMs = 650,
 }: Props) {
   const [loaded, setLoaded] = useState(false);
   const [inView, setInView] = useState(false);
-
-  // ✅ 画像表示開始後に背景を消すためのフラグ
   const [hidePlaceholder, setHidePlaceholder] = useState(false);
 
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -64,14 +61,15 @@ export default function ResponsiveImage({
     return pc.placeholder_color || placeholder_color || "rgb(217, 217, 217)";
   }, [disablePlaceholder, pc.placeholder_color, placeholder_color]);
 
-  // ✅ aspect-ratio は必ず入れる（潰れ防止）
+  // ✅ aspect-ratio 決定（displayRatio 最優先）
   const aspectRatio: CSSProperties["aspectRatio"] = useMemo(() => {
-    if (ratioKey) return ratioKey.replace("/", " / "); // "3/4" -> "3 / 4"
+    if (displayRatio) return displayRatio.replace("/", " / ");
+    if (ratioKey) return ratioKey.replace("/", " / ");
     if (pc.width && pc.height && pc.width > 0 && pc.height > 0) {
       return `${pc.width} / ${pc.height}`;
     }
     return "1 / 1";
-  }, [ratioKey, pc.width, pc.height]);
+  }, [displayRatio, ratioKey, pc.width, pc.height]);
 
   // load
   useEffect(() => {
@@ -111,12 +109,11 @@ export default function ResponsiveImage({
       (entries) => {
         const e = entries[0];
         if (!e) return;
-
         if (e.isIntersecting) {
           setInView(true);
           if (once) io.disconnect();
-        } else {
-          if (!once) setInView(false);
+        } else if (!once) {
+          setInView(false);
         }
       },
       { root: null, rootMargin, threshold: 0 }
@@ -126,33 +123,30 @@ export default function ResponsiveImage({
     return () => io.disconnect();
   }, [once, rootMargin]);
 
-  // ✅ 画像の表示条件
   const showImg = loaded && inView;
 
-  // ✅ 画像が「表示開始」したあとに背景を消す（順序保証）
+  // 画像が出てから背景を消す
   useEffect(() => {
     if (!showImg) return;
-
-    const t = window.setTimeout(() => {
-      setHidePlaceholder(true);
-    }, Math.max(0, hidePlaceholderAfterMs));
-
+    const t = window.setTimeout(
+      () => setHidePlaceholder(true),
+      hidePlaceholderAfterMs
+    );
     return () => window.clearTimeout(t);
   }, [showImg, hidePlaceholderAfterMs]);
 
   return (
     <div
       ref={wrapRef}
-      className={["responsive-image", "group", className].filter(Boolean).join(" ")}
+      className={["responsive-image", className].filter(Boolean).join(" ")}
       style={{
         position: "relative",
         width: "100%",
         aspectRatio,
-        backgroundColor: "transparent", // ✅ wrapperは常に透明（チラつき回避）
+        backgroundColor: "transparent",
         ...style,
       }}
     >
-      {/* ✅ hoverでclipする対象。placeholderも画像もこの中に入れる */}
       <div
         className="responsive-image__clip"
         style={{
@@ -161,7 +155,6 @@ export default function ResponsiveImage({
           overflow: "hidden",
         }}
       >
-        {/* ✅ 背景レイヤー：画像表示開始後にフェードアウト */}
         {!disablePlaceholder && (
           <div
             aria-hidden
@@ -189,7 +182,6 @@ export default function ResponsiveImage({
             width: "100%",
             height: "100%",
             objectFit: fit,
-
             opacity: showImg ? 1 : 0,
             transition:
               "opacity 1s cubic-bezier(0.23, 1, 0.32, 1) .5s, transform .7s cubic-bezier(0.23, 1, 0.32, 1)",

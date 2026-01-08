@@ -308,7 +308,7 @@ html.is-page-masked #page-mask {
     .responsive-image__clip {
       clip-path:inset(0px);
       will-change: clip-path;
-      transition: clip-path .5s var(--ease-out-quart);
+      transition: clip-path .5s var(--power1-ease-in-out);
     }
     header  {
       will-change: color;
