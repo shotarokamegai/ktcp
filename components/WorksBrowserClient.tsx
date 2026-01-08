@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import type { Work, WorkTerm } from "@/lib/wp";
 import WorksCard from "@/components/WorksCard";
 import WorksCategoryNav from "@/components/WorksCategoryNav";
 
 const SWAP_OUT_MS = 350;
 const APPLY_SHOWN_AFTER_MS = 1;
+
+const PER_PAGE = 12; // ★ 12件ずつ
 
 // ------------------------------
 // ratio ↔ pattern
@@ -75,7 +77,13 @@ export default function WorksBrowserClient({
 }: Props) {
   const [works, setWorks] = useState<Work[]>(Array.isArray(initialWorks) ? initialWorks : []);
   const [activeSlug, setActiveSlug] = useState<string | null>(initialActiveSlug);
+
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // ★ infinite scroll states
+  const [page, setPage] = useState(1); // initialWorks が 1ページ目相当
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // layoutSeed（1ロード中は固定）
   const [layoutSeed, setLayoutSeed] = useState<number>(0);
@@ -92,7 +100,8 @@ export default function WorksBrowserClient({
   const abortRef = useRef<AbortController | null>(null);
   const swapIdRef = useRef(0);
   const swapTimerRef = useRef<number | null>(null);
-  const pendingWorksRef = useRef<Work[] | null>(null);
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const applyShown = () => {
     window.setTimeout(() => {
@@ -116,6 +125,25 @@ export default function WorksBrowserClient({
     window.history.replaceState({}, "", url.toString());
   };
 
+  // ★ API fetch helper（page 指定で取る）
+  const fetchPage = useCallback(
+    async (slug: string | null, nextPage: number, signal: AbortSignal) => {
+      const params = new URLSearchParams();
+      if (slug) params.set("category", slug);
+      params.set("page", String(nextPage));
+      params.set("perPage", String(PER_PAGE));
+
+      const res = await fetch(`/api/works?${params.toString()}`, { signal });
+      if (!res.ok) throw new Error("fetch failed");
+      const json = (await res.json()) as { works?: Work[] };
+
+      const list = Array.isArray(json.works) ? json.works : [];
+      return list;
+    },
+    []
+  );
+
+  // ★ カテゴリ変更：1ページ目を読み直し & 状態リセット
   const onChangeCategory = async (slug: string | null) => {
     if (slug === activeSlug) return;
 
@@ -130,26 +158,26 @@ export default function WorksBrowserClient({
     setActiveSlug(slug);
     setUrlOnly(slug);
 
+    // reset infinite states
+    setPage(1);
+    setHasMore(true);
+
     if (abortRef.current) abortRef.current.abort();
     const ac = new AbortController();
     abortRef.current = ac;
 
     try {
-      const params = new URLSearchParams();
-      if (slug) params.set("category", slug);
+      // まず 1ページ目を取得
+      const first = await fetchPage(slug, 1, ac.signal);
 
-      const res = await fetch(`/api/works?${params.toString()}`, { signal: ac.signal });
-      if (!res.ok) throw new Error("fetch failed");
-      const json = (await res.json()) as { works?: Work[] };
-
-      pendingWorksRef.current = Array.isArray(json.works) ? json.works : [];
+      // 12件未満なら次がない扱い
+      const nextHasMore = first.length >= PER_PAGE;
 
       swapTimerRef.current = window.setTimeout(() => {
         if (swapId !== swapIdRef.current) return;
 
-        setWorks(pendingWorksRef.current ?? []);
-        pendingWorksRef.current = null;
-
+        setWorks(first);
+        setHasMore(nextHasMore);
         setIsAnimating(false);
         applyShown();
         swapTimerRef.current = null;
@@ -160,8 +188,89 @@ export default function WorksBrowserClient({
     }
   };
 
+  const inFlightRef = useRef(false);
+  const idsRef = useRef<Set<string>>(new Set());
+  
+  // works が更新されたら idsRef も同期（初期Works用）
+  useEffect(() => {
+    idsRef.current = new Set(works.map((w) => String(w.id)));
+  }, [works]);
+  
+  const loadMore = useCallback(async () => {
+    if (isAnimating) return;
+    if (!hasMore) return;
+    if (inFlightRef.current) return; // ★ 即時ロック（stateより強い）
+  
+    inFlightRef.current = true;
+    setIsLoadingMore(true);
+  
+    if (abortRef.current) abortRef.current.abort();
+    const ac = new AbortController();
+    abortRef.current = ac;
+  
+    const nextPage = page + 1;
+  
+    try {
+      const more = await fetchPage(activeSlug, nextPage, ac.signal);
+    
+      // ★ 0件 → 終端
+      if (!more || more.length === 0) {
+        setHasMore(false);
+        return;
+      }
+    
+      // ★ “追加が1件も増えない” → APIが同じ12件返してる等。ここで終端にする
+      const newOnes = more.filter((w) => !idsRef.current.has(String(w.id)));
+      if (newOnes.length === 0) {
+        setHasMore(false);
+        return;
+      }
+    
+      // ★ 追加分だけ append
+      setWorks((prev) => [...prev, ...newOnes]);
+    
+      // idsRef 更新
+      newOnes.forEach((w) => idsRef.current.add(String(w.id)));
+    
+      setPage(nextPage);
+    
+      // “ページが満杯じゃない”なら次は無い
+      setHasMore(more.length >= PER_PAGE);
+    
+      applyShown();
+    } catch (e: any) {
+      if (e?.name !== "AbortError") console.error(e);
+    } finally {
+      setIsLoadingMore(false);
+      inFlightRef.current = false; // ★ ロック解除
+    }
+  }, [activeSlug, fetchPage, hasMore, isAnimating, page]);
+
+  // ★ sentinel が見えたら追加ロード
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (!first?.isIntersecting) return;
+        loadMore();
+      },
+      {
+        root: null,
+        rootMargin: "600px 0px", // ちょい手前で先読み
+        threshold: 0,
+      }
+    );
+
+    io.observe(el);
+    return () => io.disconnect();
+  }, [loadMore]);
+
   const rendered = useMemo(() => {
-    const latest = works.slice(0, 12);
+    // ★ ここが重要：slice(0,12) をやめて、stateの works 全部を描画
+    const latest = works;
     const out: JSX.Element[] = [];
 
     const IllustCell = (key: string, src: string) => (
@@ -173,16 +282,8 @@ export default function WorksBrowserClient({
           "pre:flex pre:items-start pre:justify-center",
         ].join(" ")}
       >
-        <div
-          className="pre:w-full pre:flex pre:items-center pre:justify-center"
-          style={{ aspectRatio: "4 / 3" }} // ※ illust はあなたの以前の要件どおり 4/3 のまま
-        >
-          <img
-            src={src}
-            alt=""
-            className="pre:w-[90%] pre:h-full pre:object-contain"
-            loading="lazy"
-          />
+        <div className="pre:w-full pre:flex pre:items-center pre:justify-center" style={{ aspectRatio: "4 / 3" }}>
+          <img src={src} alt="" className="pre:w-[90%] pre:h-full pre:object-contain" loading="lazy" />
         </div>
       </div>
     );
@@ -192,7 +293,7 @@ export default function WorksBrowserClient({
     );
 
     const ILLUST_EVERY_SLOTS = 8;
-    const ILLUST_COL_IN_ROW4 = 1; // row4 の 2番目（中央寄り）
+    const ILLUST_COL_IN_ROW4 = 1;
 
     let cursor = 0;
     let rowIndex = 0;
@@ -205,7 +306,6 @@ export default function WorksBrowserClient({
       const remaining = latest.length - cursor;
       const isRow3 = rowIndex % 2 === 0;
 
-      // ---------------- row3 ----------------
       if (isRow3) {
         const take = Math.min(3, remaining);
         const wideIndex = wideToggle === 0 ? 0 : 1;
@@ -239,7 +339,6 @@ export default function WorksBrowserClient({
         continue;
       }
 
-      // ---------------- row4 ----------------
       const insertIllust = needIllust || slotCount + 4 >= ILLUST_EVERY_SLOTS;
       const illustSrc = pickIllustSrc(layoutSeed, rowIndex);
 
@@ -297,7 +396,25 @@ export default function WorksBrowserClient({
           isAnimating ? "works-list is-changing" : "works-list",
         ].join(" ")}
       >
+
+        {/* 任意：ローディング表示 */}
+        {/* {isLoadingMore && hasMore && (
+          <div className="pre:w-full pre:py-8 pre:text-center">
+            <p className="pre:text-[14px]">Loading…</p>
+          </div>
+        )} */}
+
+        {/* 任意：終端 */}
+        {/* {!hasMore && works.length > 0 && (
+          <div className="pre:w-full pre:py-8 pre:text-center">
+            <p className="pre:text-[14px]">All loaded</p>
+          </div>
+        )} */}
         {rendered}
+
+        {/* ★ infinite scroll sentinel */}
+        <div ref={sentinelRef} className="pre:w-full pre:h-[1px]" aria-hidden />
+
       </section>
     </>
   );
