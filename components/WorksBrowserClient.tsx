@@ -180,7 +180,7 @@ export default function WorksBrowserClient({
           <img
             src={src}
             alt=""
-            className="pre:w-full pre:h-full pre:object-contain"
+            className="pre:w-[90%] pre:h-full pre:object-contain"
             loading="lazy"
           />
         </div>
