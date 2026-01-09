@@ -27,7 +27,7 @@ const LOGO_LINK =
 const NAV =
   "js-header-nav pre:absolute pre:top-[26px] pre:right-5 pre:[&_ul]:flex pre:[&_ul]:items-start pre:[&_ul]:justify-end pre:sm:flex " +
   "pre:sm:fixed pre:sm:sp-w-[430] pre:sm:mx-auto pre:sm:bg-white " +
-  "pre:sm:opacity-0 pre:sm:invisible pre:sm:h-screen pre:sm:w-screen pre:sm:top-0 pre:sm:left-0 pre:sm:[&_ul]:flex-col pre:sm:sp-pl-[20] pre:sm:sp-pb-[50]";
+  "pre:sm:opacity-0 pre:sm:invisible pre:sm:h-dvh pre:sm:w-screen pre:sm:top-0 pre:sm:left-0 pre:sm:[&_ul]:flex-col pre:sm:sp-pl-[20] pre:sm:sp-pb-[50]";
 
 const NAV_LINK_BASE =
   "pre:font-gt pre:font-regular pre:text-[12px] " +

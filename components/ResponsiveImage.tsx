@@ -160,10 +160,11 @@ export default function ResponsiveImage({
             aria-hidden
             style={{
               position: "absolute",
+              zIndex: 1,
               inset: 0,
               backgroundColor: placeholderBg,
               opacity: hidePlaceholder ? 0 : 1,
-              transition: "opacity 250ms ease",
+              transition: "opacity .3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
               pointerEvents: "none",
             }}
           />
