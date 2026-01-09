@@ -75,7 +75,7 @@ export default async function AboutPage() {
           <div className="pre:w-[calc(375/1400*100%)] pre:mt-0.5 pre:sm:w-full pre:sm:mt-0">
             <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px] pre:[&_div:last-child]:mb-0">
               <div>
-                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[130%]">Company Name</p>
+                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">Company Name</p>
               </div>
               <div>
                 <p className="pre:text-[12px] pre:font-shuei slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">株式会社Ketchup</p>
@@ -83,7 +83,7 @@ export default async function AboutPage() {
             </div>
             <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px] pre:[&_div:last-child]:mb-0">
               <div>
-                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[130%]">Year Established</p>
+                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">Year Established</p>
               </div>
               <div>
                 <p className="pre:text-[12px] pre:font-shuei slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">2022年7月1日</p>
@@ -91,7 +91,7 @@ export default async function AboutPage() {
             </div>
             <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
               <div>
-                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[130%]">CEO</p>
+                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">CEO</p>
               </div>
               <div>
                 <p className="pre:text-[12px] pre:font-shuei slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">亀谷 晶太郎</p>
@@ -99,7 +99,7 @@ export default async function AboutPage() {
             </div>
             <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
               <div>
-                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[130%]">Office</p>
+                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">Office</p>
               </div>
               <div>
                 <p className="pre:text-[12px] pre:font-shuei slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">〒152-0003 東京都目黒区<br/>
@@ -110,24 +110,24 @@ export default async function AboutPage() {
             </div>
             <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
               <div>
-                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[130%]">Tel</p>
+                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">Tel</p>
               </div>
               <div>
                 <p className="pre:text-[12px] pre:font-shuei slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">03-5936-6477</p>
               </div>
             </div>
-            <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
+            {/* <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)] pre:[&_div]:mb-[30px]">
               <div>
-                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[130%]">Capital</p>
+                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">Capital</p>
               </div>
               <div>
                 <p className="pre:text-[12px] pre:font-shuei slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">1,000,000円
                 </p>
               </div>
-            </div>
+            </div> */}
             <div className="pre:flex pre:flex-wrap pre:[&_div:nth-child(1)]:w-28 pre:[&_div:nth-child(2)]:w-[calc(100%-112px)]">
               <div>
-                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[130%]">Field of<br/>
+                <p className="pre:text-[12px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">Field of<br/>
                 Activities</p>
               </div>
               <div>

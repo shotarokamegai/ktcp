@@ -36,7 +36,7 @@ export default function FrontEndEngineer() {
         },
         {
           kind: "list",
-          en: "Application<br/>\nConditions",
+          en: "Application<br/>Conditions",
           ja: "応募条件",
           lead: "必須要件",
           items: [
@@ -46,8 +46,8 @@ export default function FrontEndEngineer() {
         },
         {
           kind: "list",
-          en: "Application<br/>\nConditions",
-          ja: "応募条件",
+          en: "",
+          ja: "",
           lead: "歓迎要件",
           items: [
             { text: "Webディレクターとしての実務経験" },

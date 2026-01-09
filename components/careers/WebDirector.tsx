@@ -36,7 +36,7 @@ export default function WebDirector() {
         },
         {
           kind: "list",
-          en: "Application<br/>\nConditions",
+          en: "Application<br/>Conditions",
           ja: "応募条件",
           lead: "歓迎要件",
           items: [
