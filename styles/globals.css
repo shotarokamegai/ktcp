@@ -140,6 +140,16 @@ a {
     all 1.1s var(--ease-in-out-quint);
 }
 
+/* careers-accordion-box の after だけを殺す */
+.careers-accordion-box {
+  &.is-no-lang {
+    padding-top: 0;
+    &::before {
+      display: none;
+    }
+  }
+}
+
 @media screen and (max-width: 749px) {
   header {
   transform: translateZ(0);

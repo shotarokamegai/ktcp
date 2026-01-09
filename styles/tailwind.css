@@ -101,6 +101,33 @@
     }
   }
 }
+.careers-accordion-box {
+  &::before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    content: '';
+    width: 100%;
+    background-color: #D8D8D8;
+    height: 1px;
+  }
+}
+.careers-accordion-box:first-child {
+  &::before {
+    display: none;
+  }
+}
+.careers-accordion-box:nth-last-child(2) {
+  &::after {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    content: '';
+    width: 100%;
+    background-color: #D8D8D8;
+    height: 1px;
+  }
+}
 .careers-accordion-title-line {
   &::before {
     content: '';
@@ -144,7 +171,7 @@
   transform: translate3d(0, -50%, 0) rotate(90deg);
 }
 .careers-accordion-box {
-  @apply pre:flex pre:py-[30px] pre:pl-5 pre:pb-10 pre:border-b pre:border-lightGray pre:border-solid pre:sm:sp-py-[30] pre:sm:block pre:sm:border-none pre:sm:relative pre:sm:sp-pl-[89] pre:sm:mr-0 pre:sm:ml-auto pre:first:pt-0
+  @apply pre:flex pre:py-[30px] pre:pl-5 pre:pb-10 pre:sm:sp-py-[30] pre:sm:block pre:sm:border-none pre:relative pre:sm:sp-pl-[89] pre:sm:mr-0 pre:sm:ml-auto pre:first:pt-0
 }
 .careers-accordion-icon {
   @apply pre:h-[22px] pre:w-[22px] pre:absolute pre:right-0 pre:top-[50%] pre:transform-[translate3d(0,-50%,0)] pre:sm:sp-h-[22] pre:sm:sp-w-[22]
@@ -156,7 +183,7 @@
    @apply pre:relative pre:justify-end pre:grid
 }
 .careers-accordion__inner-content {
-   @apply pre:pt-[30px] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-[10px] pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light pre:sm:sp-pt-[30] pre:[&_h4]:sm:sp-fs-[18] pre:[&_h5]:sm:sp-fs-[15] pre:[&_h4]:leading-none pre:[&_h5]:leading-none pre:[&_h4]:sm:sp-mb-[16]
+   @apply pre:pt-[30px] pre:pb-[230px] pre:sm:sp-pb-[94] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-[10px] pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light pre:sm:sp-pt-[30] pre:[&_h4]:sm:sp-fs-[18] pre:[&_h5]:sm:sp-fs-[15] pre:[&_h4]:leading-none pre:[&_h5]:leading-none pre:[&_h4]:sm:sp-mb-[16]
 }
 
 #header {
@@ -294,17 +321,6 @@
         }
     }
   }
-  }
-  .careers-accordion-box {
-    &::after {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      content: '';
-      width: 100%;
-      background-color: #D8D8D8;
-      height: 1px;
-    }
   }
 }
 
