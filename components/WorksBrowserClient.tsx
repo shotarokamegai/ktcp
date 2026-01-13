@@ -31,13 +31,13 @@ const RATIOS_ROW4: readonly RatioKey[] = ["1/1", "3/4", "4/3"] as const;
 // illust assets（7種）
 // ------------------------------
 const ILLUST_IMAGES = [
-  "/illust/about.png",
-  "/illust/careers.png",
-  "/illust/complete.png",
-  "/illust/contact.png",
-  "/illust/engineer.png",
-  "/illust/form.png",
-  "/illust/web-director.png",
+  "/top/about.png",
+  "/top/careers.png",
+  "/top/complete.png",
+  "/top/contact.png",
+  "/top/engineer.png",
+  "/top/form.png",
+  "/top/web-director.png",
 ] as const;
 
 // ------------------------------
@@ -318,7 +318,7 @@ export default function WorksBrowserClient({
           <img
             src={src}
             alt=""
-            className="pre:w-[90%] pre:h-full pre:object-contain"
+            className="pre:w-[90%] pre:h-full pre:object-cover"
             loading="lazy"
           />
         </div>
@@ -326,7 +326,7 @@ export default function WorksBrowserClient({
     );
 
     const EmptyCell = (key: string) => (
-      <div key={key} className="pre:w-[calc(1/4*100%)] pre:mb-5" aria-hidden />
+      <div key={key} className="pre:w-1/4 pre:mb-5" aria-hidden />
     );
 
     const ILLUST_EVERY_SLOTS = 8;
