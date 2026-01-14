@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 type Props = React.ComponentProps<typeof Link>;
 
-const OUT_FALLBACK_MS = 650; // ← 消えるアニメが長いならここを伸ばす
+const OUT_FALLBACK_MS = 650;
 
 const FMLink = forwardRef<HTMLAnchorElement, Props>(
   ({ href, onClick, ...rest }, ref) => {
@@ -27,28 +27,56 @@ const FMLink = forwardRef<HTMLAnchorElement, Props>(
       }
 
       e.preventDefault();
-      // e.preventDefault(); の直後あたりに追加
-      if (String(href) === "/") {
+
+      const targetHref = String(href);
+      const currentPath = window.location.pathname;
+
+      // ============================
+      // ✅ 同じページの場合：scrollTop に変更
+      // ============================
+      if (targetHref === currentPath) {
+        // works 用のリセットなどはそのまま生かせる
+        if (targetHref === "/") {
+          window.dispatchEvent(new Event("works:reset"));
+        }
+
+        // Lenis があれば使う
+        const lenis = (window as any).__lenis;
+        if (lenis) {
+          lenis.scrollTo(0, {
+            duration: 0.8,
+            easing: (t: number) => t,
+          });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        onClick?.(e as any);
+        return;
+      }
+
+      // ============================
+      // ⬇️ 別ページ：今まで通り
+      // ============================
+      if (targetHref === "/") {
         window.dispatchEvent(new Event("works:reset"));
       }
-      onClick?.(e as any);
 
+      onClick?.(e as any);
       pushedRef.current = false;
 
       const go = () => {
         if (pushedRef.current) return;
         pushedRef.current = true;
-        router.push(String(href));
+        router.push(targetHref);
       };
 
-      // “消える開始” を通知（ここで外側がアニメ開始して、終わったら go() を呼ぶ）
       window.dispatchEvent(
         new CustomEvent("fm:start", {
-          detail: { href: String(href), go },
+          detail: { href: targetHref, go },
         })
       );
 
-      // 保険：もし外側が go を呼ばなくても遷移できるように
       window.setTimeout(go, OUT_FALLBACK_MS);
     };
 
