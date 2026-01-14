@@ -54,6 +54,9 @@
 .btn-submit {
   will-change: background-color;
   transition: background-color 0.5s var(--ease-out-quart); 
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
   @apply pre:relative pre:h-20 pre:w-[375px] pre:text-[20px] pre:font-gt pre:font-light pre:text-center pre:leading-20 pre:bg-black pre:block pre:!text-white pre:cursor-pointer pre:border-black pre:border pre:border-solid pre:hover:bg-white pre:sm:sp-h-[80] pre:sm:sp-fs-[20] pre:sm:sp-w-[320];
 }
 
@@ -189,6 +192,9 @@
    @apply pre:relative pre:justify-end pre:grid
 }
 .careers-accordion__inner-content {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
    @apply pre:pt-[30px] pre:pb-[230px] pre:sm:sp-pb-[94] pre:[&_h4]:text-[20px] pre:[&_h4]:font-gt pre:[&_h4]:font-light pre:[&_h4]:mb-[10px] pre:[&_h5]:text-[12px] pre:[&_h5]:font-dnp pre:[&_h5]:font-light pre:sm:sp-pt-[30] pre:[&_h4]:sm:sp-fs-[18] pre:[&_h5]:sm:sp-fs-[15] pre:[&_h4]:leading-none pre:[&_h5]:leading-none pre:[&_h4]:sm:sp-mb-[16]
 }
 
