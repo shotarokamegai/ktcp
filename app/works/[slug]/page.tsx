@@ -146,6 +146,7 @@ export default async function WorkDetail({
           pre:sm:sp-w-[339] pre:sm:block
         "
       >
+
         <div
           className="
             pre:sticky pre:top-[120px] pre:self-start pre:h-[calc(100vh-120px)] pre:pb-[33px]  pre:sm:pb-0 pre:sm:h-auto
@@ -153,18 +154,18 @@ export default async function WorkDetail({
             pre:sm:relative pre:sm:top-0
           "
         >
+          <h1
+            dangerouslySetInnerHTML={{ __html: (work as any).title.rendered }}
+            className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-[130%] slide-in pre:sm:order-1 pre:sm:sp-fs-[24] pre:mb-3.5 pre:sm:sp-mb-[10]"
+          />
           {dateTxt && (
-            <div className="pre:mb-3.5 slide-in pre:sm:mb-0 pre:sm:order-2">
-              <p className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-none pre:sm:sp-fs-[16]">
+            <div className="slide-in pre:sm:mb-0 pre:sm:order-2">
+              <p className="pre:text-[16px] pre:font-gt pre:font-light pre:leading-none pre:sm:sp-fs-[16]">
                 {dateTxt}
               </p>
             </div>
           )}
 
-          <h1
-            dangerouslySetInnerHTML={{ __html: (work as any).title.rendered }}
-            className="pre:text-[24px] pre:font-gt pre:font-light pre:leading-none slide-in pre:sm:order-1 pre:sm:sp-fs-[24] pre:sm:sp-mb-[10]"
-          />
 
           {categories && categories.length > 0 && (
             <div className="slide-in pre:mt-auto pre:sm:order-3 pre:sm:sp-mt-[110] pre:sm:sp-mb-[25]">
