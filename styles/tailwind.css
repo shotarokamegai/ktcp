@@ -34,6 +34,12 @@
   }
 }
 
+.pre\:font-gt {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
+}
+
 .transition-text {
   will-change: color;
   transition: color 0.75s var(--ease-out-quart); 

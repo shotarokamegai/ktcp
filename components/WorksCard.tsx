@@ -92,7 +92,7 @@ export default function WorksCard({
 
       <header className="works-card__text pre:flex pre:justify-between pre:mt-2.5 pre:sm:block pre:sm:sp-mt-[8]">
         <h2
-          className="works-card__title pre:text-[16px] pre:leading-[130%] pre:sm:sp-fs-[14]"
+          className="works-card__title pre:text-[16px] pre:leading-[130%] pre:sm:sp-fs-[14] pre:font-gt pre:font-light"
           dangerouslySetInnerHTML={{ __html: w?.title?.rendered ?? "" }}
         />
         <p className="works-card__meta pre:text-[10px] pre:w-[105px] pre:text-right pre:font-gt pre:font-light pre:leading-[1.7] pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
