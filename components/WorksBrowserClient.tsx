@@ -329,7 +329,7 @@ export default function WorksBrowserClient({
       <div key={key} className="pre:w-1/4 pre:mb-5" aria-hidden />
     );
 
-    const ILLUST_EVERY_SLOTS = 8;
+    const ILLUST_EVERY_SLOTS = 16;
     const ILLUST_COL_IN_ROW4 = 1;
 
     let cursor = 0;

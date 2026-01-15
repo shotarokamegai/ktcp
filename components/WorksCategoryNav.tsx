@@ -17,12 +17,12 @@ export default function WorksCategoryNav({
   allLabel?: string;
 }) {
   const base =
-    "pre:font-gt pre:font-light pre:mr-[25px] pre:last:mr-0 pre:transition-colors pre:cursor-pointer pre:inline-block pre:[&_.splitting-hover__inner]:h-[50px] pre:[&_span]:text-[10px] pre:sm:sp-mr-[20] pre:sm:sp-fs-[10]";
+    "pre:font-gt pre:font-light pre:mr-[25px] pre:last:mr-0 pre:transition-colors pre:cursor-pointer pre:inline-block pre:[&_.splitting-hover__inner]:h-[50px] pre:[&_span]:text-[10px] pre:sm:sp-mr-[20] pre:sm:sp-fs-[10] pre:sm:whitespace-nowrap";
 
   return (
     <section
       className={[
-        "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] pre:sm:sp-w-[340] pre:sm:justify-start pre:sm:sp-mb-[30] pre:sm:sp-py-[20] pre:sticky pre:top-[86px] pre:sm:sp-top-[50] pre:bg-white pre:z-10 slide-in slide-out",
+        "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] pre:sm:sp-w-[340] pre:sm:justify-start pre:sm:sp-mb-[30] pre:sm:sp-py-[20] pre:sticky pre:top-[86px] pre:sm:sp-top-[50] pre:bg-white pre:z-10 slide-in slide-out pre:sm:flex-nowrap pre:sm:overflow-scroll",
         className,
       ].join(" ")}
     >
