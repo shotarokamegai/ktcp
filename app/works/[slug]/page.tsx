@@ -18,8 +18,61 @@ export async function generateMetadata({
   params: { slug: string };
 }): Promise<Metadata> {
   const work = await fetchWorkBySlug(params.slug);
-  const title = work ? strip((work as any).title?.rendered) : "Work";
-  return { title, openGraph: { title } };
+  if (!work) return {};
+
+  const title = strip(work.title.rendered);
+
+  const description = work.excerpt?.rendered
+    ?.replace(/<[^>]+>/g, "")
+    ?.trim()
+    ?.slice(0, 120);
+
+  const acf = (work as any).acf ?? {};
+
+  // ✅ PCサムネ（あなたの表示ロジックと同じ）
+  const pcThumb = toUrl(acf?.eyecatch?.pattern3);
+
+  /**
+   * OGP画像の優先順位（PCサムネ最優先）
+   *  - PCサムネ（acf.eyecatch.pattern3）
+   *  - ACFのogp_image
+   *  - ACFのeyecatch / thumbnail（url形式）
+   *  - WP標準のfeatured_media
+   *  - fallback
+   */
+  const ogImage =
+    pcThumb ||
+    acf?.ogp_image ||
+    acf?.eyecatch?.url ||
+    acf?.thumbnail?.url ||
+    (work as any)._embedded?.["wp:featuredmedia"]?.[0]?.source_url ||
+    "/ogp.png";
+
+  return {
+    title,
+    description,
+
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
+  };
 }
 
 type RatioValue = "1000x1000" | "1080x1440" | "1600x900";

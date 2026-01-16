@@ -1,6 +1,7 @@
 // app/layout.tsx (or RootLayout)
 import "../styles/globals.css";
 import "../styles/tailwind.css";
+import type { Metadata } from "next";
 import { gtAmerica } from "./fonts";
 import MenuToggle from "@/components/MenuToggle";
 import SplittingSpan from "@/components/SplittingSpan";
@@ -11,6 +12,40 @@ import Script from "next/script";
 import { LenisProvider } from "./../components/LenisProvider";
 import Plus from "../components/svg/Plus";
 import SlideInOnLoad from "@/components/SlideInOnLoad";
+
+export const metadata: Metadata = {
+  title: {
+    default: "Ketchup Inc. | 株式会社 Ketchup",
+    template: "%s | Ketchup Inc.",
+  },
+  description:
+    "Add a bit of flavoring to those contents, and deliver them in an even better thing. | デザインから幅広いWebサイト制作まで、一貫した企画制作・運用。",
+
+  openGraph: {
+    type: "website",
+    siteName: "Ketchup Inc.",
+    title: "Ketchup Inc. | 株式会社 Ketchup",
+    description:
+      "Add a bit of flavoring to those contents, and deliver them in an even better thing. | デザインから幅広いWebサイト制作まで、一貫した企画制作・運用。",
+    url: "https://ktcp.jp",
+    images: [
+      {
+        url: "https://ktcp.jp/ogp.png",
+        width: 1200,
+        height: 630,
+        alt: "Ketchup Inc.",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Ketchup Inc. | 株式会社 Ketchup",
+    description:
+      "ブランドサイト・EC・Webシステム開発を手がけるクリエイティブカンパニー。",
+    images: ["https://ktcp.jp/ogp.png"],
+  },
+};
 
 // ============================
 // Tailwind class presets
@@ -47,9 +82,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja" className={gtAmerica.variable}>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Ketchup Inc. | 株式会社 Ketchup</title>
-
         <Script
           id="adobe-fonts"
           strategy="afterInteractive"
