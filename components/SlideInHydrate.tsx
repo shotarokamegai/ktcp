@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function SlideInHydrate({
   selector = ".slide-in",
@@ -13,7 +13,6 @@ export default function SlideInHydrate({
   bootScans?: number;
 }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const addOnly = (targets?: HTMLElement[]) => {
@@ -55,7 +54,7 @@ export default function SlideInHydrate({
       cancelAnimationFrame(rafId);
       mo.disconnect();
     };
-  }, [pathname, searchParams?.toString(), selector, className, bootScans]);
+  }, [pathname, selector, className, bootScans]);
 
   return null;
 }

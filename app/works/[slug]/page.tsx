@@ -22,10 +22,10 @@ export async function generateMetadata({
 
   const title = strip(work.title.rendered);
 
-  const description = work.excerpt?.rendered
-    ?.replace(/<[^>]+>/g, "")
-    ?.trim()
-    ?.slice(0, 120);
+const description = (work as any).excerpt?.rendered
+  ?.replace(/<[^>]+>/g, "")
+  ?.trim()
+  ?.slice(0, 120);
 
   const acf = (work as any).acf ?? {};
 
