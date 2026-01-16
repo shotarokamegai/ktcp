@@ -21,7 +21,7 @@ export default async function AboutPage() {
   const page = await fetchPageBySlug("about");
   if (!page) {
     return (
-      <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110]">
+      <main className="container pre:pt-[307px] slide-out pre:sm:sp-pt-[110] pre:min-h-screen pre:sm:min-h-[initial] pre:flex pre:flex-col">
         <section className="pre:flex pre:justify-justify-between pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[98px] pre:sm:block pre:sm:sp-w-[339] pre:sm:sp-mb-[110]">
           <div className="pre:w-[calc(517/1400*100%)] pre:sm:w-full pre:sm:sp-mb-[40]">
             <h1 className="pre:text-[24px] pre:font-gt pre:font-light slide-in pre:mb-[180px] pre:sm:sp-fs-[24] pre:sm:sp-mb-[50]">About</h1>
@@ -137,7 +137,9 @@ export default async function AboutPage() {
             </div>
           </div>
         </section>
-        <Footer/>
+        <div className="pre:mt-auto">
+          <Footer/>
+        </div>
       </main>
     );
   }
