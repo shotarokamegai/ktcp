@@ -131,7 +131,7 @@ export default async function AboutPage() {
                 Activities</p>
               </div>
               <div>
-                <p className="pre:text-[12px] pre:font-shuei slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">Web制作（コーポレートサイト・ブランドサイト・EC サイト・オウンドメディア・LP 他） ブランド戦略・デジタルブランディング（コミュニケーション戦略・カスタマーエクスペリエンス・CI/VI開発 他） グラフィック制作（広告・会社案内・入社案内・パンフレット・ポスター 他） WEBシステム・アプリケーション開発（CMS開発・EC開発・フロントエンド開発・アニメーション 他） WEBサイトの保守・運用支援（取材・ライティング・更新支援・デジタルマーケティング）
+                <p className="pre:text-[12px] pre:font-shuei slide-in pre:sm:sp-fs-[12] pre:sm:leading-[180%]">Web制作（コーポレートサイト・ブランドサイト・EC サイト・オウンドメディア・LP 他） ブランド戦略・デジタルブランディング（コミュニケーション戦略・カスタマーエクスペリエンス・CI/VI開発 他） グラフィック制作（広告・会社案内・入社案内・パンフレット・ポスター 他） Webシステム・アプリケーション開発（CMS開発・EC開発・フロントエンド開発・アニメーション 他） Webサイトの保守・運用支援（取材・ライティング・更新支援・デジタルマーケティング）
                 </p>
               </div>
             </div>
