@@ -276,7 +276,7 @@ export default function ContactForm() {
           alt=""
           width={827}
           height={1037}
-          className="pre:w-[250px] pre:mx-auto pre:mb-5 slide-in pre:sm:sp-w-[175]"
+          className="pre:w-[200px] pre:mx-auto pre:mb-5 slide-in pre:sm:sp-w-[175]"
         />
 
         <p className="pre:text-center pre:text-[16px] pre:leading-[180%] slide-in">
@@ -467,8 +467,8 @@ export default function ContactForm() {
               ].join(" ")}
             >
               <span className="splitting-hover__inner">
-                <SplittingSpan text="SEND" />
-                <SplittingSpan text="SEND" />
+                <SplittingSpan text={sending ? "SENDING..." : "APPLY NOW"} />
+                <SplittingSpan text={sending ? "SENDING..." : "APPLY NOW"} />
               </span>
               <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center pre:sm:sp-right-[15] sm:center-y">
                 <span className="icon-content__inner">

@@ -1,5 +1,6 @@
 "use client";
 
+import { init, send } from "emailjs-com";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import FMLink from "@/components/FMLink";
 import Arrow from "@/components/svg/Arrow";
@@ -366,6 +367,54 @@ export default function ApplicationForm() {
         mode: "no-cors",
       });
 
+      const user_id =
+        process.env.NEXT_PUBLIC_APPLICATION_EMAILJS_USER_ID ||
+        process.env.NEXT_PUBLIC_PORTFOLIO_EMAILJS_USER_ID;
+
+      const service_id =
+        process.env.NEXT_PUBLIC_APPLICATION_EMAILJS_SERVICE_ID ||
+        process.env.NEXT_PUBLIC_PORTFOLIO_EMAILJS_SERVICE_ID;
+
+      const template_id =
+        process.env.NEXT_PUBLIC_APPLICATION_EMAILJS_TEMPLATE_ID ||
+        process.env.NEXT_PUBLIC_PORTFOLIO_EMAILJS_TEMPLATE_ID;
+
+      if (!user_id || !service_id || !template_id) {
+        throw new Error("EmailJS env vars are missing (application)");
+      }
+
+      // init は毎回でもOK（気になるなら useEffect で1回でも可）
+      init(user_id);
+
+      await send(service_id, template_id, {
+        to_name: "Ketchup Inc.",
+          from_name: name,          // ★テンプレに合わせる
+          tel,
+          email,
+          subject: `Job Application: ${job || "unknown"}`, // ★テンプレに合わせる
+          message: [
+            `【応募職種】${job}`,
+            `【ふりがな】${furigana}`,
+            `【生年月日】${birthday}`,
+            `【性別】${gender}`,
+            ``,
+            `【住所】${postal} ${pref} ${address1} ${address2}`,
+            ``,
+            `【就業状況】${status}`,
+            ``,
+            `【自己PR】`,
+            pr,
+            ``,
+            `【添付（Getformに実体あり）】`,
+            `履歴書: ${resume?.name || ""}`,
+            `職務経歴書: ${workHistory?.name || ""}`,
+            `ポートフォリオファイル: ${portfolioFile?.name || ""}`,
+            `ポートフォリオURL: ${portfolioUrl || ""}`,
+            ``,
+            `【同意】${agree ? "yes" : "no"}`,
+          ].join("\n"),
+      });
+
       window.dispatchEvent(new Event("ktcp:scrollTop"));
 
       setSent(true);
@@ -410,7 +459,7 @@ export default function ApplicationForm() {
           alt=""
           width={827}
           height={1037}
-          className="pre:w-[250px] pre:mx-auto pre:mb-5 slide-in pre:sm:sp-w-[175] pre:sm:order-2"
+          className="pre:w-[200px] pre:mx-auto pre:mb-5 slide-in pre:sm:sp-w-[175] pre:sm:order-2"
         />
 
         <h2 className="pre:mb-14 pre:sm:sp-mb-[25] pre:text-[24px] pre:font-gt pre:font-light slide-in pre:sm:sp-fs-[24] pre:text-center pre:sm:order-1">
