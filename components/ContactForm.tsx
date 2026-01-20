@@ -1,5 +1,6 @@
 "use client";
 
+import { init, send } from "emailjs-com";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import FMLink from "@/components/FMLink";
 import Arrow from "@/components/svg/Arrow";
@@ -169,38 +170,78 @@ export default function ContactForm() {
     if (!validate()) return;
 
     try {
-      setSending(true);
+  setSending(true);
 
-      const fd = new FormData();
-      fd.append("company", company);
-      fd.append("name", personName);
-      fd.append("email", email);
-      fd.append("tel", tel);
-      fd.append("subject", subject);
-      fd.append("content", content);
-      fd.append("_gotcha", "");
+  const user_id = process.env.NEXT_PUBLIC_PORTFOLIO_EMAILJS_USER_ID;
+  const service_id = process.env.NEXT_PUBLIC_PORTFOLIO_EMAILJS_SERVICE_ID;
+  const template_id = process.env.NEXT_PUBLIC_PORTFOLIO_EMAILJS_TEMPLATE_ID;
 
-      await fetch(GETFORM_ENDPOINT, {
-        method: "POST",
-        body: fd,
-        mode: "no-cors",
-      });
+  if (!user_id || !service_id || !template_id) {
+    throw new Error("EmailJS env vars are missing");
+  }
 
-      window.dispatchEvent(new Event("ktcp:scrollTop"));
+  init(user_id);
 
-      setSent(true);
-      setCompany("");
-      setPersonName("");
-      setEmail("");
-      setTel("");
-      setSubject("");
-      setContent("");
-      setErrors({});
-    } catch {
-      setErrors({ submit: "送信に失敗しました。時間をおいて再度お試しください。" });
-    } finally {
-      setSending(false);
-    }
+  const template_param = {
+    to_name: "Ketchup Inc.",
+    from_name: personName,
+    tel,
+    email,
+    subject,      // ※テンプレで使うなら
+    message: content,
+  };
+
+  await send(service_id, template_id, template_param);
+
+  window.dispatchEvent(new Event("ktcp:scrollTop"));
+
+  setSent(true);
+  setCompany("");
+  setPersonName("");
+  setEmail("");
+  setTel("");
+  setSubject("");
+  setContent("");
+  setErrors({});
+} catch (err) {
+  console.error(err);
+  setErrors({ submit: "送信に失敗しました（EmailJS）。設定をご確認ください。" });
+} finally {
+  setSending(false);
+}
+    // try {
+    //   setSending(true);
+
+    //   const fd = new FormData();
+    //   fd.append("company", company);
+    //   fd.append("name", personName);
+    //   fd.append("email", email);
+    //   fd.append("tel", tel);
+    //   fd.append("subject", subject);
+    //   fd.append("content", content);
+    //   fd.append("_gotcha", "");
+
+    //   await fetch(GETFORM_ENDPOINT, {
+    //     method: "POST",
+    //     body: fd,
+    //     mode: "no-cors",
+    //   });
+
+    //   window.dispatchEvent(new Event("ktcp:scrollTop"));
+
+    //   setSent(true);
+    //   setCompany("");
+    //   setPersonName("");
+    //   setEmail("");
+    //   setTel("");
+    //   setSubject("");
+    //   setContent("");
+    //   setErrors({});
+    // } catch {
+    //   setErrors({ submit: "送信に失敗しました。時間をおいて再度お試しください。" });
+    // } finally {
+    //   setSending(false);
+    // }
   };
 
   const iptClass =
