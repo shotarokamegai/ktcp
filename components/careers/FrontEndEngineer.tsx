@@ -18,7 +18,7 @@ export default function FrontEndEngineer() {
 
         {
           kind: "list",
-          en: "Job Description",
+          en: "Job<br/>Description",
           ja: "職務内容",
           lead:
             "Webサイト・Webアプリのフロントエンド実装を中心に、体験の質を担保しながら開発を進めます。",

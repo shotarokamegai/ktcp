@@ -17,7 +17,7 @@ export default function WebDirector() {
         },
         {
           kind: "list",
-          en: "Job Description",
+          en: "Job<br/>Description",
           ja: "職務内容",
           lead: "Web領域における、企画立案・制作・運用といったプロジェクトの全体統括",
           items: [
