@@ -7,8 +7,7 @@ import WorksCategoryNav from "@/components/WorksCategoryNav";
 
 const SWAP_OUT_MS = 350;
 const APPLY_SHOWN_AFTER_MS = 1;
-
-const PER_PAGE = 12; // ★ 12件ずつ
+const PER_PAGE = 12;
 
 // ------------------------------
 // ratio ↔ pattern
@@ -22,13 +21,11 @@ const RATIO_TO_PATTERN: Record<RatioKey, Pattern> = {
   "4/3": 3,
 };
 
-// ★ row3(=一列3個) は縦長NG → 3/4 を除外
 const RATIOS_ROW3: readonly RatioKey[] = ["1/1", "4/3"] as const;
-// ★ row4(=一列4個) は従来通り
 const RATIOS_ROW4: readonly RatioKey[] = ["1/1", "3/4", "4/3"] as const;
 
 // ------------------------------
-// illust assets（7種）
+// illust assets
 // ------------------------------
 const ILLUST_IMAGES = [
   "/top/about.png",
@@ -52,7 +49,6 @@ function mulberry32(a: number) {
   };
 }
 
-// ★ 候補配列を受け取って ratioKey を決める（row3 / row4 の制御に使う）
 function pickRatioKeyFrom(
   ratios: readonly RatioKey[],
   layoutSeed: number,
@@ -84,17 +80,17 @@ export default function WorksBrowserClient({
   categories,
   initialActiveSlug = null,
 }: Props) {
-  const [works, setWorks] = useState<Work[]>(Array.isArray(initialWorks) ? initialWorks : []);
+  const [works, setWorks] = useState<Work[]>(
+    Array.isArray(initialWorks) ? initialWorks : []
+  );
   const [activeSlug, setActiveSlug] = useState<string | null>(initialActiveSlug);
-
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // ★ infinite scroll states
-  const [page, setPage] = useState(1); // initialWorks が 1ページ目相当
+  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // layoutSeed（1ロード中は固定）
+  // layoutSeed
   const [layoutSeed, setLayoutSeed] = useState<number>(0);
   useEffect(() => {
     try {
@@ -109,7 +105,6 @@ export default function WorksBrowserClient({
   const abortRef = useRef<AbortController | null>(null);
   const swapIdRef = useRef(0);
   const swapTimerRef = useRef<number | null>(null);
-
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const applyShown = () => {
@@ -134,7 +129,9 @@ export default function WorksBrowserClient({
     window.history.replaceState({}, "", url.toString());
   };
 
-  // ★ API fetch helper（page 指定で取る）
+  // ------------------------------
+  // API fetch
+  // ------------------------------
   const fetchPage = useCallback(
     async (slug: string | null, nextPage: number, signal: AbortSignal) => {
       const params = new URLSearchParams();
@@ -145,14 +142,14 @@ export default function WorksBrowserClient({
       const res = await fetch(`/api/works?${params.toString()}`, { signal });
       if (!res.ok) throw new Error("fetch failed");
       const json = (await res.json()) as { works?: Work[] };
-
-      const list = Array.isArray(json.works) ? json.works : [];
-      return list;
+      return Array.isArray(json.works) ? json.works : [];
     },
     []
   );
 
-  // ★ カテゴリ変更：1ページ目を読み直し & 状態リセット
+  // ------------------------------
+  // category change
+  // ------------------------------
   const onChangeCategory = async (slug: string | null) => {
     if (slug === activeSlug) return;
 
@@ -167,7 +164,6 @@ export default function WorksBrowserClient({
     setActiveSlug(slug);
     setUrlOnly(slug);
 
-    // reset infinite states
     setPage(1);
     setHasMore(true);
 
@@ -176,10 +172,7 @@ export default function WorksBrowserClient({
     abortRef.current = ac;
 
     try {
-      // まず 1ページ目を取得
       const first = await fetchPage(slug, 1, ac.signal);
-
-      // 12件未満なら次がない扱い
       const nextHasMore = first.length >= PER_PAGE;
 
       swapTimerRef.current = window.setTimeout(() => {
@@ -197,38 +190,18 @@ export default function WorksBrowserClient({
     }
   };
 
-  useEffect(() => {
-  const handler = () => {
-    // すでにALLなら何もしない
-    if (activeSlug === null) return;
-
-    // 先頭へ
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
-
-    // ALL に戻す（APIから1ページ目を取り直す）
-    onChangeCategory(null);
-
-    // enter アニメをやり直したい場合
-    window.dispatchEvent(new Event("slidein:refresh"));
-  };
-
-  window.addEventListener("works:reset", handler);
-  return () => window.removeEventListener("works:reset", handler);
-}, [activeSlug, onChangeCategory]);
-
-
+  // ------------------------------
+  // infinite load
+  // ------------------------------
   const inFlightRef = useRef(false);
   const idsRef = useRef<Set<string>>(new Set());
 
-  // works が更新されたら idsRef も同期（初期Works用）
   useEffect(() => {
     idsRef.current = new Set(works.map((w) => String(w.id)));
   }, [works]);
 
   const loadMore = useCallback(async () => {
-    if (isAnimating) return;
-    if (!hasMore) return;
-    if (inFlightRef.current) return; // ★ 即時ロック（stateより強い）
+    if (isAnimating || !hasMore || inFlightRef.current) return;
 
     inFlightRef.current = true;
     setIsLoadingMore(true);
@@ -241,120 +214,89 @@ export default function WorksBrowserClient({
 
     try {
       const more = await fetchPage(activeSlug, nextPage, ac.signal);
-
-      // ★ 0件 → 終端
       if (!more || more.length === 0) {
         setHasMore(false);
         return;
       }
 
-      // ★ “追加が1件も増えない” → APIが同じ12件返してる等。ここで終端にする
       const newOnes = more.filter((w) => !idsRef.current.has(String(w.id)));
       if (newOnes.length === 0) {
         setHasMore(false);
         return;
       }
 
-      // ★ 追加分だけ append
       setWorks((prev) => [...prev, ...newOnes]);
-
-      // idsRef 更新
       newOnes.forEach((w) => idsRef.current.add(String(w.id)));
-
       setPage(nextPage);
-
-      // “ページが満杯じゃない”なら次は無い
       setHasMore(more.length >= PER_PAGE);
-
       applyShown();
     } catch (e: any) {
       if (e?.name !== "AbortError") console.error(e);
     } finally {
       setIsLoadingMore(false);
-      inFlightRef.current = false; // ★ ロック解除
+      inFlightRef.current = false;
     }
   }, [activeSlug, fetchPage, hasMore, isAnimating, page]);
 
-  // ★ sentinel が見えたら追加ロード
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
 
     const io = new IntersectionObserver(
       (entries) => {
-        const first = entries[0];
-        if (!first?.isIntersecting) return;
-        loadMore();
+        if (entries[0]?.isIntersecting) loadMore();
       },
-      {
-        root: null,
-        rootMargin: "600px 0px", // ちょい手前で先読み
-        threshold: 0,
-      }
+      { rootMargin: "600px 0px" }
     );
 
     io.observe(el);
     return () => io.disconnect();
   }, [loadMore]);
 
+  // ------------------------------
+  // rendered (GRID)
+  // ------------------------------
   const rendered = useMemo(() => {
-    // ★ state の works 全部を描画
-    const latest = works;
     const out: JSX.Element[] = [];
-
-    const IllustCell = (key: string, src: string) => (
-      <div
-        key={key}
-        className={[
-          "pre:w-1/4 slide-in",
-          "pre:mb-5 pre:px-[calc(7.5/1401*100%)] pre:sm:sp-w-[160] pre:sm:sp-mx-[10] pre:sm:sp-mb-[40] pre:sm:px-0",
-          "pre:flex pre:items-start pre:justify-center",
-        ].join(" ")}
-      >
-        <div
-          className="pre:w-full pre:flex pre:items-center pre:justify-center"
-          style={{ aspectRatio: "4 / 3" }}
-        >
-          <img
-            src={src}
-            alt=""
-            className="pre:w-full pre:h-full pre:object-cover"
-            loading="lazy"
-          />
-        </div>
-      </div>
-    );
-
-    const EmptyCell = (key: string) => (
-      <div key={key} className="pre:w-1/4 pre:mb-5" aria-hidden />
-    );
-
-    const ILLUST_EVERY_SLOTS = 16;
-    const ILLUST_COL_IN_ROW4 = 1;
-
     let cursor = 0;
     let rowIndex = 0;
     let wideToggle = (layoutSeed & 1) === 0 ? 0 : 1;
 
+    const ILLUST_EVERY_SLOTS = 16;
+    const ILLUST_COL_IN_ROW4 = 1;
+
     let slotCount = 0;
     let needIllust = false;
 
-    while (cursor < latest.length) {
-      const remaining = latest.length - cursor;
+    // ★ row4カウント（4列ブロック何回目か）
+    let row4Count = 0;
+
+    // ★ 直前のrow4がillust行だったか
+    let prevRow4HadIllust = false;
+
+    const IllustCell = (key: string, src: string) => (
+      <div
+        key={key}
+        className="pre:col-span-1 pre:sm:col-span-2 slide-in pre:sm:mt-[calc(40/375*-100vw)]"
+        style={{ aspectRatio: "4 / 3" }}
+      >
+        <img src={src} className="pre:w-full pre:h-full pre:object-cover" />
+      </div>
+    );
+
+    while (cursor < works.length) {
+      const remaining = works.length - cursor;
       const isRow3 = rowIndex % 2 === 0;
 
-      // -----------------------
-      // Row3: 3 items
-      // -----------------------
+      // -------- Row3 (3 works)
       if (isRow3) {
         const take = Math.min(3, remaining);
         const wideIndex = wideToggle === 0 ? 0 : 1;
 
         for (let i = 0; i < take; i++) {
-          const w = latest[cursor++];
+          const w = works[cursor++];
           const isWide = take === 3 && i === wideIndex;
 
-          // ★ row3 は 1/1 or 4/3 のみ（3/4 を排除）
           const ratioKey = pickRatioKeyFrom(
             RATIOS_ROW3,
             layoutSeed,
@@ -364,13 +306,14 @@ export default function WorksBrowserClient({
 
           out.push(
             <WorksCard
-              key={`work-${w.id}`}
+              key={w.id}
               work={w}
               isWide={isWide}
-              widthClass={
-                isWide ? "pre:w-[calc(2/4*100%)]" : "pre:w-[calc(1/4*100%)]"
-              }
-              className="pre:mb-5"
+              widthClass={[
+                "pre:w-full",
+                isWide ? "pre:col-span-2" : "pre:col-span-1",
+                "pre:sm:col-span-1",
+              ].join(" ")}
               ratioKey={ratioKey}
               requiredPattern={RATIO_TO_PATTERN[ratioKey]}
             />
@@ -387,13 +330,50 @@ export default function WorksBrowserClient({
         continue;
       }
 
-      // -----------------------
-      // Row4: 4 items (+ optional illust)
-      // -----------------------
+      // -------- Row4 (4 works + illust)
+      row4Count++;
+
       const insertIllust = needIllust || slotCount + 4 >= ILLUST_EVERY_SLOTS;
       const illustSrc = pickIllustSrc(layoutSeed, rowIndex);
 
-      const worksToTake = Math.min(insertIllust ? 3 : 4, remaining);
+      // ★ 「作品full(100%)」をたまに差し込む条件
+      // - row4が4回に1回くらい
+      // - illust行ではない
+      // - illust直後ではない
+      // - illustが近そうなタイミング（slotCount溜まり気味）は避ける（保守的）
+      
+      const wantFullWork =
+        row4Count % 4 === 0 &&
+        !insertIllust &&
+        !prevRow4HadIllust &&
+        slotCount <= 12 &&
+        cursor < works.length;
+          
+      if (wantFullWork) {
+        const w = works[cursor++];
+      
+        const ratioKey = pickRatioKeyFrom(
+          RATIOS_ROW4,
+          layoutSeed,
+          Number(w.id),
+          false
+        );
+      
+        out.push(
+          <WorksCard
+            key={`work-full-${w.id}`}
+            work={w}
+            isWide={false}
+            widthClass="pre:col-span-1 pre:sm:col-span-2 pre:sm:!w-full pre:sm:!sp-w-[340] pre:sm:!sp-mx-0"
+            ratioKey={ratioKey}
+            requiredPattern={RATIO_TO_PATTERN[ratioKey]}
+          />
+        );
+      }
+
+      // 残りを通常row4として描画
+      const remainingAfter = works.length - cursor;
+      const worksToTake = Math.min(insertIllust ? 3 : 4, remainingAfter);
       let taken = 0;
 
       for (let i = 0; i < 4; i++) {
@@ -402,11 +382,10 @@ export default function WorksBrowserClient({
           continue;
         }
 
-        if (taken < worksToTake) {
-          const w = latest[cursor++];
+        if (taken < worksToTake && cursor < works.length) {
+          const w = works[cursor++];
           taken++;
 
-          // ★ row4 は従来通り全部OK
           const ratioKey = pickRatioKeyFrom(
             RATIOS_ROW4,
             layoutSeed,
@@ -416,25 +395,26 @@ export default function WorksBrowserClient({
 
           out.push(
             <WorksCard
-              key={`work-${w.id}`}
+              key={w.id}
               work={w}
               isWide={false}
-              widthClass="pre:w-[calc(1/4*100%)]"
-              className="pre:mb-5"
+              widthClass="pre:w-full pre:col-span-1 pre:sm:col-span-1"
               ratioKey={ratioKey}
               requiredPattern={RATIO_TO_PATTERN[ratioKey]}
             />
           );
-        } else {
-          out.push(EmptyCell(`empty-${rowIndex}-${i}`));
         }
       }
 
+      // ★ slotCount / illustフラグ更新（row4は+4扱いを維持）
       slotCount += 4;
       if (insertIllust) {
         needIllust = false;
         slotCount = 0;
       }
+
+      // ★ 次のrow4用に状態保持
+      prevRow4HadIllust = insertIllust;
 
       rowIndex++;
     }
@@ -449,17 +429,25 @@ export default function WorksBrowserClient({
         activeSlug={activeSlug}
         onChange={onChangeCategory}
       />
+
       <section
         className={[
-          "pre:flex pre:flex-wrap pre:items-start pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px] slide-out",
-          "pre:sm:sp-w-[360] pre:sm:sp-mb-[110]",
-          isAnimating ? "works-list is-changing is-hidden" : "works-list",
+          "works-list slide-out",
+          "pre:grid pre:grid-cols-4 pre:items-start",
+          "pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]",
+          "pre:gap-x-[calc(15/1401*100%)] pre:gap-y-[70px]",
+          "pre:sm:grid-cols-2 pre:sm:gap-x-[20px] pre:sm:gap-y-[40px]",
+          "pre:sm:sp-w-[340] pre:sm:sp-mb-[110]",
+          isAnimating ? "is-changing is-hidden" : "",
         ].join(" ")}
       >
         {rendered}
 
-        {/* ★ infinite scroll sentinel */}
-        <div ref={sentinelRef} className="pre:w-full pre:h-px" aria-hidden />
+        <div
+          ref={sentinelRef}
+          className="pre:col-span-4 pre:sm:col-span-2 pre:h-px"
+          aria-hidden
+        />
       </section>
     </>
   );
