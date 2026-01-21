@@ -95,7 +95,7 @@ export default function WorksCard({
           className="works-card__title pre:text-[16px] pre:leading-[130%] pre:sm:sp-fs-[14] pre:font-gt pre:font-light"
           dangerouslySetInnerHTML={{ __html: w?.title?.rendered ?? "" }}
         />
-        <p className="works-card__meta pre:text-[10px] pre:w-[105px] pre:text-right pre:font-gt pre:font-light pre:leading-[1.7] pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10]">
+        <p className="works-card__meta pre:text-[10px] pre:w-[105px] pre:text-right pre:font-gt pre:font-light pre:leading-[1.7] pre:sm:w-full pre:sm:text-left transition-text pre:sm:sp-fs-[10] pre:sm:mt-[.3vw]">
           {catLabel}
         </p>
       </header>
