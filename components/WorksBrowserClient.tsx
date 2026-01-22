@@ -436,7 +436,7 @@ export default function WorksBrowserClient({
           "pre:grid pre:grid-cols-4 pre:items-start",
           "pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]",
           "pre:gap-x-[calc(15/1401*100%)] pre:gap-y-[70px]",
-          "pre:sm:grid-cols-2 pre:sm:gap-x-[20px] pre:sm:gap-y-[40px]",
+          "pre:sm:grid-cols-2 pre:sm:sp-gap-x-[20] pre:sm:sp-gap-y-[80]",
           "pre:sm:sp-w-[340] pre:sm:sp-mb-[110]",
           isAnimating ? "is-changing is-hidden" : "",
         ].join(" ")}

@@ -70,7 +70,7 @@ export default function WorksCard({
         "pre:hover:[&_img]:transform-[scale(1.05)]",
         "pre:[&_img]:transition-transform pre:[&_img]:duration-700 pre:[&_img]:ease-out",
         "slide-in",
-        "pre:mb-[calc(150/1401*100%)] pre:sm:sp-mb-[40] pre:sm:px-0",
+        "pre:mb-[calc(150/1401*100%)] pre:sm:sp-mb-[0] pre:sm:px-0",
         className,
       ].join(" ")}
       data-wide={isWide ? "1" : "0"}
