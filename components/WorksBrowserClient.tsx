@@ -349,7 +349,9 @@ export default function WorksBrowserClient({
         slotCount <= 12 &&
         cursor < works.length;
           
+        console.log('full1')
       if (wantFullWork) {
+        console.log('full2')
         const w = works[cursor++];
       
         const ratioKey = pickRatioKeyFrom(
