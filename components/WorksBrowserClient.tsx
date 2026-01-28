@@ -256,8 +256,14 @@ export default function WorksBrowserClient({
   // ------------------------------
   // rendered (GRID)
   // ------------------------------
-  const rendered = useMemo(() => {
-    const out: JSX.Element[] = [];
+  // ------------------------------
+  // rendered (PC + SP separate)
+  // ------------------------------
+  const { renderedPC, renderedSP } = useMemo(() => {
+    // ==============================
+    // PC: 現状ロジックをそのまま維持
+    // ==============================
+    const outPC: JSX.Element[] = [];
     let cursor = 0;
     let rowIndex = 0;
     let wideToggle = (layoutSeed & 1) === 0 ? 0 : 1;
@@ -268,13 +274,10 @@ export default function WorksBrowserClient({
     let slotCount = 0;
     let needIllust = false;
 
-    // ★ row4カウント（4列ブロック何回目か）
     let row4Count = 0;
-
-    // ★ 直前のrow4がillust行だったか
     let prevRow4HadIllust = false;
 
-    const IllustCell = (key: string, src: string) => (
+    const IllustCellPC = (key: string, src: string) => (
       <div
         key={key}
         className="pre:col-span-1 pre:sm:col-span-2 slide-in pre:sm:mt-[calc(40/375*-100vw)]"
@@ -304,7 +307,7 @@ export default function WorksBrowserClient({
             isWide
           );
 
-          out.push(
+          outPC.push(
             <WorksCard
               key={w.id}
               work={w}
@@ -336,32 +339,24 @@ export default function WorksBrowserClient({
       const insertIllust = needIllust || slotCount + 4 >= ILLUST_EVERY_SLOTS;
       const illustSrc = pickIllustSrc(layoutSeed, rowIndex);
 
-      // ★ 「作品full(100%)」をたまに差し込む条件
-      // - row4が4回に1回くらい
-      // - illust行ではない
-      // - illust直後ではない
-      // - illustが近そうなタイミング（slotCount溜まり気味）は避ける（保守的）
-      
       const wantFullWork =
         row4Count % 4 === 0 &&
         !insertIllust &&
         !prevRow4HadIllust &&
         slotCount <= 12 &&
         cursor < works.length;
-          
-        console.log('full1')
+
       if (wantFullWork) {
-        console.log('full2')
         const w = works[cursor++];
-      
+
         const ratioKey = pickRatioKeyFrom(
           RATIOS_ROW4,
           layoutSeed,
           Number(w.id),
           false
         );
-      
-        out.push(
+
+        outPC.push(
           <WorksCard
             key={`work-full-${w.id}`}
             work={w}
@@ -373,14 +368,13 @@ export default function WorksBrowserClient({
         );
       }
 
-      // 残りを通常row4として描画
       const remainingAfter = works.length - cursor;
       const worksToTake = Math.min(insertIllust ? 3 : 4, remainingAfter);
       let taken = 0;
 
       for (let i = 0; i < 4; i++) {
         if (insertIllust && i === ILLUST_COL_IN_ROW4) {
-          out.push(IllustCell(`illust-${rowIndex}-${i}`, illustSrc));
+          outPC.push(IllustCellPC(`illust-${rowIndex}-${i}`, illustSrc));
           continue;
         }
 
@@ -395,7 +389,7 @@ export default function WorksBrowserClient({
             false
           );
 
-          out.push(
+          outPC.push(
             <WorksCard
               key={w.id}
               work={w}
@@ -408,21 +402,114 @@ export default function WorksBrowserClient({
         }
       }
 
-      // ★ slotCount / illustフラグ更新（row4は+4扱いを維持）
       slotCount += 4;
       if (insertIllust) {
         needIllust = false;
         slotCount = 0;
       }
-
-      // ★ 次のrow4用に状態保持
       prevRow4HadIllust = insertIllust;
-
       rowIndex++;
     }
 
-    return out;
+// ==============================
+    // SP: 2列を前提に “余りゼロ” で並べる（colで管理 + illust無限ループ防止）
+    // ==============================
+    const outSP: JSX.Element[] = [];
+    let i = 0;
+
+    let workCount = 0; // 作品だけのカウント（illust除外）
+    let col = 0;       // 0=行頭, 1=右列が空いてる状態
+    let illustIndex = 0;
+
+    const ILLUST_EVERY_WORKS = 6;      // ← ここを好きに
+    const FULL_WORK_EVERY_WORKS = 8;   // ← ここも好きに
+
+    // ★ 無限ループ防止：同じworkCountでillustを2回入れない
+    let lastIllustAtWorkCount = -1;
+
+    const IllustCellSP = (key: string, src: string) => (
+      <div
+        key={key}
+        className="pre:col-span-2 slide-in pre:sm:mt-[calc(40/375*-100vw)]"
+        style={{ aspectRatio: "4 / 3" }}
+      >
+        <img src={src} className="pre:w-full pre:h-full pre:object-cover" />
+      </div>
+    );
+
+    const pushWorkSP = (w: Work, span2: boolean) => {
+      const ratioKey = pickRatioKeyFrom(
+        RATIOS_ROW4,
+        layoutSeed,
+        Number(w.id),
+        false
+      );
+
+      outSP.push(
+        <WorksCard
+          key={`sp-${span2 ? "full" : "half"}-${w.id}`}
+          work={w}
+          isWide={false}
+          widthClass={[
+            "pre:w-full",
+            span2 ? "pre:col-span-2" : "pre:col-span-1",
+          ].join(" ")}
+          ratioKey={ratioKey}
+          requiredPattern={RATIO_TO_PATTERN[ratioKey]}
+        />
+      );
+
+      // col更新（span2なら次は必ず行頭）
+      if (span2) col = 0;
+      else col = col === 0 ? 1 : 0;
+    };
+
+    while (i < works.length) {
+      // ---- illust 挿入（行頭のみ / 同じworkCountで2回入れない）
+      if (
+        col === 0 &&
+        workCount > 0 &&
+        workCount % ILLUST_EVERY_WORKS === 0 &&
+        lastIllustAtWorkCount !== workCount
+      ) {
+        const src = pickIllustSrc(layoutSeed, illustIndex);
+        outSP.push(IllustCellSP(`sp-illust-${illustIndex}`, src));
+        illustIndex++;
+        lastIllustAtWorkCount = workCount; // ★ ここが重要（無限ループ防止）
+        continue;
+      }
+
+      // ---- full work 挿入（行頭のみ）
+      if (
+        col === 0 &&
+        workCount > 0 &&
+        workCount % FULL_WORK_EVERY_WORKS === 0
+      ) {
+        const w = works[i++];
+        pushWorkSP(w, true);
+        workCount++;
+        continue;
+      }
+
+      // ---- 通常：最後が1個なら full にして余りゼロ
+      const remaining = works.length - i;
+      if (remaining === 1) {
+        const w = works[i++];
+        pushWorkSP(w, true);
+        workCount++;
+        break;
+      }
+
+      // ---- 通常：半分幅（2列を埋める。row head/row tail は col が管理）
+      const w = works[i++];
+      pushWorkSP(w, false);
+      workCount++;
+    }
+
+
+    return { renderedPC: outPC, renderedSP: outSP };
   }, [works, layoutSeed]);
+
 
   return (
     <>
@@ -432,25 +519,39 @@ export default function WorksBrowserClient({
         onChange={onChangeCategory}
       />
 
-      <section
-        className={[
-          "works-list slide-out",
-          "pre:grid pre:grid-cols-4 pre:items-start",
-          "pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]",
-          "pre:gap-x-[calc(15/1401*100%)] pre:gap-y-[70px]",
-          "pre:sm:grid-cols-2 pre:sm:sp-gap-x-[20] pre:sm:sp-gap-y-[80]",
-          "pre:sm:sp-w-[340] pre:sm:sp-mb-[110]",
-          isAnimating ? "is-changing is-hidden" : "",
-        ].join(" ")}
-      >
-        {rendered}
+{/* PC (smでは非表示) */}
+<section
+  data-variant="pc"
+  className={[
+    "works-list slide-out",
+    "pre:grid pre:grid-cols-4 pre:items-start",
+    "pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]",
+    "pre:gap-x-[calc(15/1401*100%)] pre:gap-y-[70px]",
+    "pre:sm:hidden",
+    isAnimating ? "is-changing is-hidden" : "",
+  ].join(" ")}
+>
+  {renderedPC}
 
-        <div
-          ref={sentinelRef}
-          className="pre:col-span-4 pre:sm:col-span-2 pre:h-px"
-          aria-hidden
-        />
-      </section>
+  <div ref={sentinelRef} className="pre:col-span-4 pre:h-px" aria-hidden />
+</section>
+
+{/* SP (smだけ表示) */}
+<section
+  data-variant="sp"
+  className={[
+    "works-list slide-out pre:mx-auto",
+    "pre:hidden pre:sm:grid pre:sm:grid-cols-2 pre:sm:items-start",
+    "pre:sm:sp-w-[340] pre:sm:sp-mx-auto pre:sm:sp-mb-[110]",
+    "pre:sm:sp-gap-x-[20] pre:sm:sp-gap-y-[80]",
+    isAnimating ? "is-changing is-hidden" : "",
+  ].join(" ")}
+>
+  {renderedSP}
+
+  <div ref={sentinelRef} className="pre:col-span-2 pre:h-px" aria-hidden />
+</section>
+
     </>
   );
 }

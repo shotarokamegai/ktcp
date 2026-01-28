@@ -21,10 +21,16 @@ const REFRESH_EVENT = "slidein:refresh";
 /* ================= */
 
 function shouldSkipByBreakpoint(el: HTMLElement) {
-  // Tailwind sm=640px を基準に「SP」を判定（sm未満）
-  const isSP = window.matchMedia("(max-width: 639.98px)").matches;
+  // ★ Tailwindの sm: { max: 750px } に合わせる
+  const isSP = window.matchMedia("(max-width: 750px)").matches;
 
-  // SPのとき：PC用として隠される要素（sm以上でhidden）をスキップ
+  // ★ works-list等で data-variant が付いている場合は最優先で判定
+  const variant = el.getAttribute("data-variant");
+  if (variant === "pc") return isSP;   // SPではPC要素をスキップ
+  if (variant === "sp") return !isSP;  // PCではSP要素をスキップ
+
+  // ===== フォールバック（他の要素向け）=====
+  // SPのとき：PC用として隠される要素（smでhidden）をスキップ
   if (isSP) return el.classList.contains("pre:sm:hidden");
 
   // PCのとき：常時hidden（SP用）をスキップ
@@ -60,48 +66,52 @@ export default function SlideInOnLoad() {
   };
 
   /* ===== IN ===== */
-const runIn = () => {
-  // ★ 残留しがちなコンテナを先に復帰（works-list等）
-  const roots = Array.from(
-    document.querySelectorAll<HTMLElement>(".works-list.slide-in")
-  ).filter((el) => !shouldSkipByBreakpoint(el));
+  const runIn = () => {
+    const isSP = window.matchMedia("(max-width: 750px)").matches;
+    const activeVariant = isSP ? "sp" : "pc";
 
-  roots.forEach((el) => {
-    el.classList.remove("is-hidden");
-    el.classList.add("is-shown");
-    el.style.transitionDelay = "0ms";
-  });
+    // ★ 表示している works-list だけを対象にする
+    const container = document.querySelector<HTMLElement>(
+      `.works-list[data-variant="${activeVariant}"]`
+    );
 
-  const els = Array.from(
-    document.querySelectorAll<HTMLElement>(".slide-in")
-  ).filter((el) => !shouldSkipByBreakpoint(el));
+    // works-list自体を先に復帰（必要なら）
+    if (container) {
+      container.classList.remove("is-hidden");
+      container.classList.add("is-shown");
+      container.style.transitionDelay = "0ms";
+    }
 
-  if (els.length === 0) return;
+    // ★ slide-inは「表示中コンテナ内だけ」
+    const els = Array.from(
+      (container ?? document).querySelectorAll<HTMLElement>(".slide-in")
+    );
 
-  els.forEach((el) => {
-    el.classList.remove("is-shown", "is-hidden");
-    el.style.transitionDelay = "0ms";
-  });
+    if (els.length === 0) return;
 
-  const count = els.length;
-
-  setTimeout(() => {
-    els.forEach((el, i) => {
-      const delay = getDelay(i, count, IN_MIN_DELAY, IN_MAX_DELAY, IN_MODE);
-      el.style.transitionDelay = `${delay}ms`;
-      requestAnimationFrame(() => el.classList.add("is-shown"));
+    // 初期化
+    els.forEach((el) => {
+      el.classList.remove("is-shown", "is-hidden");
+      el.style.transitionDelay = "0ms";
     });
-  }, IN_BASE_DELAY);
-};
+
+    const count = els.length;
+
+    setTimeout(() => {
+      els.forEach((el, i) => {
+        const delay = getDelay(i, count, IN_MIN_DELAY, IN_MAX_DELAY, IN_MODE);
+        el.style.transitionDelay = `${delay}ms`;
+        requestAnimationFrame(() => el.classList.add("is-shown"));
+      });
+    }, IN_BASE_DELAY);
+  };
 
 
   /* ===== OUT ===== */
   const runOutAndPush = (href: string) => {
     const els = Array.from(
       document.querySelectorAll<HTMLElement>(".slide-out")
-    ).filter((el) => !shouldSkipByBreakpoint(el))
-    // .filter((el) => !el.classList.contains("works-list")); // ★追加
-
+    ).filter((el) => !shouldSkipByBreakpoint(el));
 
     if (els.length === 0) {
       router.push(href, { scroll: true });
