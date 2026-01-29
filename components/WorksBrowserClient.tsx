@@ -421,8 +421,8 @@ export default function WorksBrowserClient({
     let workCount = 0; // 作品の累計（illust除外）
     let illustIndex = 0;
 
-    const ILLUST_EVERY_WORKS = 7;      // ← ここを好きに
-    const FULL_WORK_EVERY_WORKS = 6;   // ← ここも好きに
+    const ILLUST_EVERY_WORKS = 9;      // ← ここを好きに
+    const FULL_WORK_EVERY_WORKS = 7;   // ← ここも好きに
 
     // ★ 次に挿入する「作品数のしきい値」
     // workCount がこの値以上になったら（行頭なら）挿入する
