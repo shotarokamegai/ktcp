@@ -411,21 +411,23 @@ export default function WorksBrowserClient({
       rowIndex++;
     }
 
-// ==============================
-    // SP: 2列を前提に “余りゼロ” で並べる（colで管理 + illust無限ループ防止）
+    // ==============================
+    // SP: 2列を前提に “余りゼロ” で並べる（しきい値方式で確実に出す）
     // ==============================
     const outSP: JSX.Element[] = [];
-    let i = 0;
+    let idx = 0;
 
-    let workCount = 0; // 作品だけのカウント（illust除外）
-    let col = 0;       // 0=行頭, 1=右列が空いてる状態
+    let col = 0; // 0=行頭, 1=右列が空いてる状態
+    let workCount = 0; // 作品の累計（illust除外）
     let illustIndex = 0;
 
-    const ILLUST_EVERY_WORKS = 6;      // ← ここを好きに
-    const FULL_WORK_EVERY_WORKS = 8;   // ← ここも好きに
+    const ILLUST_EVERY_WORKS = 7;      // ← ここを好きに
+    const FULL_WORK_EVERY_WORKS = 6;   // ← ここも好きに
 
-    // ★ 無限ループ防止：同じworkCountでillustを2回入れない
-    let lastIllustAtWorkCount = -1;
+    // ★ 次に挿入する「作品数のしきい値」
+    // workCount がこの値以上になったら（行頭なら）挿入する
+    let nextIllustAt = ILLUST_EVERY_WORKS;
+    let nextFullAt = FULL_WORK_EVERY_WORKS;
 
     const IllustCellSP = (key: string, src: string) => (
       <div
@@ -459,52 +461,50 @@ export default function WorksBrowserClient({
         />
       );
 
-      // col更新（span2なら次は必ず行頭）
+      // col更新
       if (span2) col = 0;
       else col = col === 0 ? 1 : 0;
+
+      // 作品を置いたのでカウント
+      workCount++;
     };
 
-    while (i < works.length) {
-      // ---- illust 挿入（行頭のみ / 同じworkCountで2回入れない）
-      if (
-        col === 0 &&
-        workCount > 0 &&
-        workCount % ILLUST_EVERY_WORKS === 0 &&
-        lastIllustAtWorkCount !== workCount
-      ) {
+    while (idx < works.length) {
+      const atRowHead = col === 0;
+
+      // ---- illust（優先）: workCountがしきい値に到達していて、行頭なら入れる
+      // ※ illust は作品を消費しない
+      if (atRowHead && workCount >= nextIllustAt) {
         const src = pickIllustSrc(layoutSeed, illustIndex);
         outSP.push(IllustCellSP(`sp-illust-${illustIndex}`, src));
         illustIndex++;
-        lastIllustAtWorkCount = workCount; // ★ ここが重要（無限ループ防止）
+        nextIllustAt += ILLUST_EVERY_WORKS; // 次のしきい値へ
+        col = 0;
         continue;
       }
 
-      // ---- full work 挿入（行頭のみ）
-      if (
-        col === 0 &&
-        workCount > 0 &&
-        workCount % FULL_WORK_EVERY_WORKS === 0
-      ) {
-        const w = works[i++];
+      // ---- full: workCountがしきい値に到達していて、行頭なら入れる
+      // ※ full は作品を1つ消費する
+      if (atRowHead && workCount >= nextFullAt) {
+        const w = works[idx++];
         pushWorkSP(w, true);
-        workCount++;
+        nextFullAt += FULL_WORK_EVERY_WORKS; // 次のしきい値へ
         continue;
       }
 
-      // ---- 通常：最後が1個なら full にして余りゼロ
-      const remaining = works.length - i;
+      // ---- 通常：残り1個なら full で余りゼロ
+      const remaining = works.length - idx;
       if (remaining === 1) {
-        const w = works[i++];
+        const w = works[idx++];
         pushWorkSP(w, true);
-        workCount++;
         break;
       }
 
-      // ---- 通常：半分幅（2列を埋める。row head/row tail は col が管理）
-      const w = works[i++];
+      // ---- 通常：half を2列で進める（colで管理）
+      const w = works[idx++];
       pushWorkSP(w, false);
-      workCount++;
     }
+
 
 
     return { renderedPC: outPC, renderedSP: outSP };
