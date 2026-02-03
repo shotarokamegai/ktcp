@@ -9,9 +9,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = page ? strip(page.title?.rendered ?? "") : "Privacy Policy";
 
   return {
-    title: `${title} | Ketchup Inc. | 株式会社 Ketchup`,
+    title: `${title} | Ketchup ｜株式会社 Ketchup`,
     description: "プライバシーポリシーページ",
-    openGraph: { title: `${title} | Ketchup Inc. | 株式会社 Ketchup` },
+    openGraph: { title: `${title} | Ketchup ｜株式会社 Ketchup` },
   };
 }
 

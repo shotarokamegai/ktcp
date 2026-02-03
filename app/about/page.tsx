@@ -6,9 +6,9 @@ import { fetchPageBySlug } from "@/lib/wp";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "About | Ketchup Inc. | 株式会社 Ketchup",
+  title: "About | Ketchup ｜株式会社 Ketchup",
   description: "会社概要ページ",
-  openGraph: { title: "About | Ketchup Inc. | 株式会社 Ketchup" },
+  openGraph: { title: "About | Ketchup ｜株式会社 Ketchup" },
 };
 
 // export async function generateMetadata(): Promise<Metadata> {

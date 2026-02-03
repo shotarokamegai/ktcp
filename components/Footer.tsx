@@ -1,19 +1,25 @@
 // components/Footer.tsx
+import Instagram from "@/components/svg/Instagram";
 import FMLink from "@/components/FMLink";
 import SplittingSpan from "@/components/SplittingSpan"
 
 export default function Footer() {
   return (
     <footer className="pre:flex pre:items-center pre:justify-between pre:px-5 pre:pb-[33px]  slide-in slide-out pre:sm:block pre:sm:sp-pb-[40]">
-      <a
-        href="mailto:info@ktcp.jp"
-        className="pre:text-[24px] pre:font-gt pre:font-light pre:hover:text-ketchup splitting-hover pre:sm:sp-fs-[14] pre:sm:sp-mb-[10]"
-      >
-        <span className="splitting-hover__inner">
-          <SplittingSpan text="info@ktcp.jp" />
-          <SplittingSpan text="info@ktcp.jp" />
-        </span>
-      </a>
+      <div className="pre:flex pre:items-center">
+        <a href="https://www.instagram.com/ktcp_inc/" target="_blank" rel="noopener" className="pre:mr-[90px] pre:sm:sp-mr-[90] pre:hover:[&_path]:fill-ketchup" id="instagram">
+          <Instagram />
+        </a>
+        <a
+          href="mailto:info@ktcp.jp"
+          className="pre:text-[24px] pre:font-gt pre:font-light pre:hover:text-ketchup splitting-hover pre:sm:sp-fs-[14] pre:sm:sp-mb-[10]"
+        >
+          <span className="splitting-hover__inner">
+            <SplittingSpan text="info@ktcp.jp" />
+            <SplittingSpan text="info@ktcp.jp" />
+          </span>
+        </a>
+      </div>
       <div className="pre:flex pre:items-baseline">
         <p className="pre:text-[12px] pre:font-gt pre:font-light pre:mr-[180px] pre:sm:sp-fs-[10] pre:sm:sp-mr-[32]">
           ©Ketchup inc. all rights reserved.
