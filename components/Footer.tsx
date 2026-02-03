@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="pre:flex pre:items-center pre:justify-between pre:px-5 pre:pb-[33px]  slide-in slide-out pre:sm:block pre:sm:sp-pb-[40]">
       <div className="pre:flex pre:items-center pre:sm:sp-mb-[10]">
-        <a href="https://www.instagram.com/ktcp_inc/" target="_blank" rel="noopener" className="pre:mr-[90px] pre:sm:sp-mr-[90] pre:hover:[&_path]:fill-ketchup" id="instagram">
+        <a href="https://www.instagram.com/ktcp_inc/" target="_blank" rel="noopener" className="pre:mr-[90px] pre:sm:sp-mr-[32] pre:hover:[&_path]:fill-ketchup" id="instagram">
           <Instagram />
         </a>
         <a
