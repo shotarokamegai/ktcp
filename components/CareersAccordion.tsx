@@ -44,6 +44,7 @@ type Props = {
 
   // ★追加：表示サイズはclassで制御できるように
   illustClassName?: string;
+  illustClassName_?: string;
   illustWrapClassName?: string;
 
   sections: Section[];
@@ -70,6 +71,7 @@ export default function CareersAccordion({
   // デフォルト：親に合わせつつ最大幅だけPC/SPで分ける
   illustClassName = "pre:block pre:w-full pre:h-auto pre:max-w-[372px] pre:sm:max-w-[240px]",
   illustWrapClassName = "",
+  illustClassName_ = (id === 'web-director') ? "pre:sticky pre:top-[140px] careers-accordion-illust pre:pl-[38.1468%] pre:pr-[10%] pre:pt-[70px] pre:sm:relative pre:sm:top-auto pre:sm:pt-0 pre:sm:p-0 pre:sm:sp-mt-[50]" : "pre:sticky pre:top-[140px] careers-accordion-illust pre:pl-[calc(114/436*100%)] pre:pt-[70px] pre:sm:relative pre:sm:top-auto pre:sm:pt-0 pre:sm:p-0 pre:sm:sp-mt-[50]",
 
   sections,
   applyLabel = "APPLY NOW",
@@ -102,7 +104,7 @@ export default function CareersAccordion({
       </div>
 
       <div className="accordion__inner careers-accordion__inner pre:grid-cols-[calc(436/1401*100%)_1fr] pre:gap-x-[calc(158/1401*100%)] pre:items-start pre:sm:!block">
-        <div className="pre:sticky pre:top-[140px] careers-accordion-illust pre:pl-[calc(114/436*100%)] pre:pt-[70px] pre:sm:relative pre:sm:top-auto pre:sm:pt-0 pre:sm:p-0 pre:sm:sp-mt-[50]">
+        <div className={illustClassName_}>
           <div className={cx("pre:w-full pre:sm:sp-pl-[89] pre:sm:flex pre:sm:justify-center", illustWrapClassName)}>
             <Image src={illustSrc} alt="" width={illustWidth} height={illustHeight} className={illustClassName} />
           </div>
