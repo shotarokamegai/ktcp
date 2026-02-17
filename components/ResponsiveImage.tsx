@@ -27,7 +27,7 @@ type Props = {
   ratioKey?: RatioKey;
 
   /** 表示用の比率（上書き用） */
-  displayRatio?: string; // e.g. "12/7", "12/15"
+  displayRatio?: string; // e.g. "12/6.74", "12/16"
 
   once?: boolean;
   rootMargin?: string;
@@ -38,7 +38,7 @@ type Props = {
 export default function ResponsiveImage({
   pc,
   alt,
-  fit = "cover",
+  fit = "contain",
   className = "",
   placeholder_color,
   disablePlaceholder = false,

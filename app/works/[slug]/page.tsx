@@ -112,8 +112,8 @@ const RATIO_WIDTH_CLASS: Record<RatioValue, string> = {
 // ✅ 表示用 aspect-ratio（ResponsiveImage の displayRatio に渡す）
 const RATIO_DISPLAY: Record<RatioValue, string> = {
   "1000x1000": "1/1",
-  "1080x1440": "12/15",
-  "1600x900": "12/7",
+  "1080x1440": "12/16",
+  "1600x900": "12/6.74",
 };
 
 // center → right → left → repeat（既存ロジック維持）
@@ -235,13 +235,13 @@ export default async function WorkDetail({
         </div>
 
         <div className="slide-in pre:sm:w-full">
-          {/* ✅ 1枚目：pattern3 は「横長表示」したいので displayRatio=12/7 を追加（レイアウトは触らない） */}
+          {/* ✅ 1枚目：pattern3 は「横長表示」したいので displayRatio=12/6.74 を追加（レイアウトは触らない） */}
           {eyecatchPattern3Url && (
             <div className="pre:mb-2.5">
               <ResponsiveImage
                 pc={{ url: eyecatchPattern3Url }}
                 alt="eyecatch-pattern3"
-                displayRatio="12/7"
+                displayRatio="12/6.74"
               />
             </div>
           )}
