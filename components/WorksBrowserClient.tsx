@@ -107,9 +107,9 @@ export default function WorksBrowserClient({
   const swapTimerRef = useRef<number | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ sticky nav ref（top値取得用）
+  // ✅ 追加：sticky nav本体（top値取得用）
   const stickyNavRef = useRef<HTMLElement | null>(null);
-  // ✅ sticky開始地点アンカー（ここに戻す）
+  // ✅ 追加：sticky開始地点アンカー（ここに戻す）
   const stickyAnchorRef = useRef<HTMLDivElement | null>(null);
 
   const applyShown = () => {
@@ -136,8 +136,8 @@ export default function WorksBrowserClient({
 
   // ------------------------------
   // ✅ scroll to "sticky attach point" (Lenis preferred)
-  //    - 基準は anchor（stickyの直前）
-  //    - 現在スクロール値は lenis.scroll を優先
+  // - anchor（sticky直前）を基準にするので、上に居ても下に居ても必ず同じ地点に戻る
+  // - 現在スクロール値は lenis.scroll を優先（window.scrollYズレ対策）
   // ------------------------------
   const scrollToStickyTopReliable = useCallback((smooth = true) => {
     const anchor = stickyAnchorRef.current;
@@ -155,13 +155,16 @@ export default function WorksBrowserClient({
     const parsed = Number.parseFloat(topStr || "");
     const topOffset = Number.isFinite(parsed) ? parsed : 0;
 
-    // ✅ anchor の位置（viewport基準）→ 現在スクロール値に足して document座標へ
-    const y = Math.max(0, currentScroll + anchor.getBoundingClientRect().top - topOffset);
+    const y = Math.max(
+      0,
+      currentScroll + anchor.getBoundingClientRect().top - topOffset
+    );
 
     // 即時でまず合わせる（安定化）
     if (lenis?.scrollTo) lenis.scrollTo(y, { immediate: true, force: true });
     else window.scrollTo(0, y);
 
+    // smooth は次フレームで
     if (smooth) {
       requestAnimationFrame(() => {
         const lenis2 = (window as any).lenis as typeof lenis | undefined;
@@ -195,7 +198,7 @@ export default function WorksBrowserClient({
   const onChangeCategory = async (slug: string | null) => {
     if (slug === activeSlug) return;
 
-    // ✅ カテゴリ切替時：stickyが吸着する地点へ戻す（下にいても必ず戻る）
+    // ✅ カテゴリ切替時：stickyが吸着する地点へ戻す（上でも下でも安定）
     scrollToStickyTopReliable(true);
 
     if (swapTimerRef.current) {
@@ -227,7 +230,7 @@ export default function WorksBrowserClient({
         setHasMore(nextHasMore);
         setIsAnimating(false);
 
-        // ✅ DOM差し替え後の保険
+        // ✅ DOM差し替え後の保険（ズレ戻り防止）
         scrollToStickyTopReliable(false);
 
         applyShown();
@@ -306,7 +309,9 @@ export default function WorksBrowserClient({
   // rendered (PC + SP separate)
   // ------------------------------
   const { renderedPC, renderedSP } = useMemo(() => {
-    // （ここから下はあなたの既存のレンダリングロジックそのまま）
+    // ==============================
+    // PC: 現状ロジックをそのまま維持
+    // ==============================
     const outPC: JSX.Element[] = [];
     let cursor = 0;
     let rowIndex = 0;
@@ -335,6 +340,7 @@ export default function WorksBrowserClient({
       const remaining = works.length - cursor;
       const isRow3 = rowIndex % 2 === 0;
 
+      // -------- Row3 (3 works)
       if (isRow3) {
         const take = Math.min(3, remaining);
         const wideIndex = wideToggle === 0 ? 0 : 1;
@@ -376,6 +382,7 @@ export default function WorksBrowserClient({
         continue;
       }
 
+      // -------- Row4 (4 works + illust)
       row4Count++;
 
       const insertIllust = needIllust || slotCount + 4 >= ILLUST_EVERY_SLOTS;
@@ -415,7 +422,7 @@ export default function WorksBrowserClient({
       let taken = 0;
 
       for (let i = 0; i < 4; i++) {
-        if (insertIllust && i === ILLUST_COL_IN_ROW4) {
+        if (insertIllust && i === 1) {
           outPC.push(IllustCellPC(`illust-${rowIndex}-${i}`, illustSrc));
           continue;
         }
@@ -453,6 +460,9 @@ export default function WorksBrowserClient({
       rowIndex++;
     }
 
+    // ==============================
+    // SP
+    // ==============================
     const outSP: JSX.Element[] = [];
     let idx = 0;
 
@@ -541,13 +551,15 @@ export default function WorksBrowserClient({
     <>
       <WorksCategoryNav
         ref={stickyNavRef}
-        stickyAnchorRef={stickyAnchorRef}
+        stickyAnchorRef={(el) => {
+          stickyAnchorRef.current = el;
+        }}
         categories={categories}
         activeSlug={activeSlug}
         onChange={onChangeCategory}
       />
 
-      {/* PC */}
+      {/* PC (smでは非表示) */}
       <section
         data-variant="pc"
         className={[
@@ -563,7 +575,7 @@ export default function WorksBrowserClient({
         <div ref={sentinelRef} className="pre:col-span-4 pre:h-px" aria-hidden />
       </section>
 
-      {/* SP */}
+      {/* SP (smだけ表示) */}
       <section
         data-variant="sp"
         className={[

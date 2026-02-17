@@ -1,9 +1,9 @@
 "use client";
 
+import type React from "react";
+import { forwardRef } from "react";
 import SplittingSpan from "@/components/SplittingSpan";
 import type { WorkTerm } from "@/lib/wp";
-import { forwardRef } from "react";
-import type { RefObject } from "react";
 
 type Props = {
   categories?: WorkTerm[];
@@ -12,8 +12,11 @@ type Props = {
   className?: string;
   allLabel?: string;
 
-  // ✅ 追加：sticky開始位置のアンカー（section直前）
-  stickyAnchorRef?: RefObject<HTMLDivElement | null>;
+  /**
+   * ✅ stickyが吸着し始める地点のアンカー（section直前）
+   * WorksBrowserClient 側で current に格納したいので callback ref 推奨
+   */
+  stickyAnchorRef?: React.Ref<HTMLDivElement>;
 };
 
 const WorksCategoryNav = forwardRef<HTMLElement, Props>(function WorksCategoryNav(
@@ -32,14 +35,13 @@ const WorksCategoryNav = forwardRef<HTMLElement, Props>(function WorksCategoryNa
 
   return (
     <>
-      {/* ✅ 追加：この地点が「stickyが上に吸着し始める地点」 */}
+      {/* ✅ 追加：ここが「stickyが上に吸着し始める地点」 */}
       <div ref={stickyAnchorRef} aria-hidden className="pre:h-0 pre:w-0" />
 
       <section
-        ref={ref}
-        id="works-category-sticky"
+        ref={ref as React.Ref<HTMLElement>}
         className={[
-          "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] pre:sm:sp-w-[340] pre:sm:justify-start pre:sm:sp-mb-[30] pre:sm:sp-py-[20] pre:sticky pre:top-[86px] pre:sm:sp-top-[49] pre:bg-white pre:z-10 slide-in slide-out pre:sm:flex-nowrap pre:sm:overflow-scroll",
+          "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] pre:sm:sp-w-[340] pre:sm:justify-start pre:sm:sp-mb-[30] pre:sm:sp-py-[20] pre:sticky pre:top-[86px] pre:sm:sp-top-[49] pre:bg-white pre:z-10 slide-in slide-out pre:sm:flex-nowrap pre:sm:overflow-scroll is-shown",
           className,
         ].join(" ")}
       >
