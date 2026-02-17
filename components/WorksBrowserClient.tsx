@@ -107,6 +107,11 @@ export default function WorksBrowserClient({
   const swapTimerRef = useRef<number | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
+  // ✅ sticky nav ref（top値取得用）
+  const stickyNavRef = useRef<HTMLElement | null>(null);
+  // ✅ sticky開始地点アンカー（ここに戻す）
+  const stickyAnchorRef = useRef<HTMLDivElement | null>(null);
+
   const applyShown = () => {
     window.setTimeout(() => {
       document
@@ -128,6 +133,43 @@ export default function WorksBrowserClient({
     else url.searchParams.delete("category");
     window.history.replaceState({}, "", url.toString());
   };
+
+  // ------------------------------
+  // ✅ scroll to "sticky attach point" (Lenis preferred)
+  //    - 基準は anchor（stickyの直前）
+  //    - 現在スクロール値は lenis.scroll を優先
+  // ------------------------------
+  const scrollToStickyTopReliable = useCallback((smooth = true) => {
+    const anchor = stickyAnchorRef.current;
+    const nav = stickyNavRef.current;
+    if (!anchor || !nav) return;
+
+    const lenis = (window as any).lenis as
+      | undefined
+      | { scrollTo: (to: number, opts?: any) => void; scroll?: number };
+
+    const currentScroll =
+      typeof lenis?.scroll === "number" ? lenis.scroll : window.scrollY;
+
+    const topStr = getComputedStyle(nav).top; // "86px" / "49px"
+    const parsed = Number.parseFloat(topStr || "");
+    const topOffset = Number.isFinite(parsed) ? parsed : 0;
+
+    // ✅ anchor の位置（viewport基準）→ 現在スクロール値に足して document座標へ
+    const y = Math.max(0, currentScroll + anchor.getBoundingClientRect().top - topOffset);
+
+    // 即時でまず合わせる（安定化）
+    if (lenis?.scrollTo) lenis.scrollTo(y, { immediate: true, force: true });
+    else window.scrollTo(0, y);
+
+    if (smooth) {
+      requestAnimationFrame(() => {
+        const lenis2 = (window as any).lenis as typeof lenis | undefined;
+        if (lenis2?.scrollTo) lenis2.scrollTo(y, { duration: 0.6, force: true });
+        else window.scrollTo({ top: y, behavior: "smooth" });
+      });
+    }
+  }, []);
 
   // ------------------------------
   // API fetch
@@ -152,6 +194,9 @@ export default function WorksBrowserClient({
   // ------------------------------
   const onChangeCategory = async (slug: string | null) => {
     if (slug === activeSlug) return;
+
+    // ✅ カテゴリ切替時：stickyが吸着する地点へ戻す（下にいても必ず戻る）
+    scrollToStickyTopReliable(true);
 
     if (swapTimerRef.current) {
       window.clearTimeout(swapTimerRef.current);
@@ -181,6 +226,10 @@ export default function WorksBrowserClient({
         setWorks(first);
         setHasMore(nextHasMore);
         setIsAnimating(false);
+
+        // ✅ DOM差し替え後の保険
+        scrollToStickyTopReliable(false);
+
         applyShown();
         swapTimerRef.current = null;
       }, SWAP_OUT_MS);
@@ -254,15 +303,10 @@ export default function WorksBrowserClient({
   }, [loadMore]);
 
   // ------------------------------
-  // rendered (GRID)
-  // ------------------------------
-  // ------------------------------
   // rendered (PC + SP separate)
   // ------------------------------
   const { renderedPC, renderedSP } = useMemo(() => {
-    // ==============================
-    // PC: 現状ロジックをそのまま維持
-    // ==============================
+    // （ここから下はあなたの既存のレンダリングロジックそのまま）
     const outPC: JSX.Element[] = [];
     let cursor = 0;
     let rowIndex = 0;
@@ -291,7 +335,6 @@ export default function WorksBrowserClient({
       const remaining = works.length - cursor;
       const isRow3 = rowIndex % 2 === 0;
 
-      // -------- Row3 (3 works)
       if (isRow3) {
         const take = Math.min(3, remaining);
         const wideIndex = wideToggle === 0 ? 0 : 1;
@@ -333,7 +376,6 @@ export default function WorksBrowserClient({
         continue;
       }
 
-      // -------- Row4 (4 works + illust)
       row4Count++;
 
       const insertIllust = needIllust || slotCount + 4 >= ILLUST_EVERY_SLOTS;
@@ -411,21 +453,16 @@ export default function WorksBrowserClient({
       rowIndex++;
     }
 
-    // ==============================
-    // SP: 2列を前提に “余りゼロ” で並べる（しきい値方式で確実に出す）
-    // ==============================
     const outSP: JSX.Element[] = [];
     let idx = 0;
 
-    let col = 0; // 0=行頭, 1=右列が空いてる状態
-    let workCount = 0; // 作品の累計（illust除外）
+    let col = 0;
+    let workCount = 0;
     let illustIndex = 0;
 
-    const ILLUST_EVERY_WORKS = 9;      // ← ここを好きに
-    const FULL_WORK_EVERY_WORKS = 7;   // ← ここも好きに
+    const ILLUST_EVERY_WORKS = 9;
+    const FULL_WORK_EVERY_WORKS = 7;
 
-    // ★ 次に挿入する「作品数のしきい値」
-    // workCount がこの値以上になったら（行頭なら）挿入する
     let nextIllustAt = ILLUST_EVERY_WORKS;
     let nextFullAt = FULL_WORK_EVERY_WORKS;
 
@@ -461,38 +498,31 @@ export default function WorksBrowserClient({
         />
       );
 
-      // col更新
       if (span2) col = 0;
       else col = col === 0 ? 1 : 0;
 
-      // 作品を置いたのでカウント
       workCount++;
     };
 
     while (idx < works.length) {
       const atRowHead = col === 0;
 
-      // ---- illust（優先）: workCountがしきい値に到達していて、行頭なら入れる
-      // ※ illust は作品を消費しない
       if (atRowHead && workCount >= nextIllustAt) {
         const src = pickIllustSrc(layoutSeed, illustIndex);
         outSP.push(IllustCellSP(`sp-illust-${illustIndex}`, src));
         illustIndex++;
-        nextIllustAt += ILLUST_EVERY_WORKS; // 次のしきい値へ
+        nextIllustAt += ILLUST_EVERY_WORKS;
         col = 0;
         continue;
       }
 
-      // ---- full: workCountがしきい値に到達していて、行頭なら入れる
-      // ※ full は作品を1つ消費する
       if (atRowHead && workCount >= nextFullAt) {
         const w = works[idx++];
         pushWorkSP(w, true);
-        nextFullAt += FULL_WORK_EVERY_WORKS; // 次のしきい値へ
+        nextFullAt += FULL_WORK_EVERY_WORKS;
         continue;
       }
 
-      // ---- 通常：残り1個なら full で余りゼロ
       const remaining = works.length - idx;
       if (remaining === 1) {
         const w = works[idx++];
@@ -500,58 +530,53 @@ export default function WorksBrowserClient({
         break;
       }
 
-      // ---- 通常：half を2列で進める（colで管理）
       const w = works[idx++];
       pushWorkSP(w, false);
     }
 
-
-
     return { renderedPC: outPC, renderedSP: outSP };
   }, [works, layoutSeed]);
-
 
   return (
     <>
       <WorksCategoryNav
+        ref={stickyNavRef}
+        stickyAnchorRef={stickyAnchorRef}
         categories={categories}
         activeSlug={activeSlug}
         onChange={onChangeCategory}
       />
 
-{/* PC (smでは非表示) */}
-<section
-  data-variant="pc"
-  className={[
-    "works-list slide-out",
-    "pre:grid pre:grid-cols-4 pre:items-start",
-    "pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]",
-    "pre:gap-x-[calc(15/1401*100%)] pre:gap-y-[70px]",
-    "pre:sm:hidden",
-    isAnimating ? "is-changing is-hidden" : "",
-  ].join(" ")}
->
-  {renderedPC}
+      {/* PC */}
+      <section
+        data-variant="pc"
+        className={[
+          "works-list slide-out",
+          "pre:grid pre:grid-cols-4 pre:items-start",
+          "pre:w-[calc(100%-40px)] pre:mx-auto pre:mb-[180px]",
+          "pre:gap-x-[calc(15/1401*100%)] pre:gap-y-[70px]",
+          "pre:sm:hidden",
+          isAnimating ? "is-changing is-hidden" : "",
+        ].join(" ")}
+      >
+        {renderedPC}
+        <div ref={sentinelRef} className="pre:col-span-4 pre:h-px" aria-hidden />
+      </section>
 
-  <div ref={sentinelRef} className="pre:col-span-4 pre:h-px" aria-hidden />
-</section>
-
-{/* SP (smだけ表示) */}
-<section
-  data-variant="sp"
-  className={[
-    "works-list slide-out pre:mx-auto",
-    "pre:hidden pre:sm:grid pre:sm:grid-cols-2 pre:sm:items-start",
-    "pre:sm:sp-w-[340] pre:sm:sp-mx-auto pre:sm:sp-mb-[110]",
-    "pre:sm:sp-gap-x-[20] pre:sm:sp-gap-y-[80]",
-    isAnimating ? "is-changing is-hidden" : "",
-  ].join(" ")}
->
-  {renderedSP}
-
-  <div ref={sentinelRef} className="pre:col-span-2 pre:h-px" aria-hidden />
-</section>
-
+      {/* SP */}
+      <section
+        data-variant="sp"
+        className={[
+          "works-list slide-out pre:mx-auto",
+          "pre:hidden pre:sm:grid pre:sm:grid-cols-2 pre:sm:items-start",
+          "pre:sm:sp-w-[340] pre:sm:sp-mx-auto pre:sm:sp-mb-[110]",
+          "pre:sm:sp-gap-x-[20] pre:sm:sp-gap-y-[80]",
+          isAnimating ? "is-changing is-hidden" : "",
+        ].join(" ")}
+      >
+        {renderedSP}
+        <div ref={sentinelRef} className="pre:col-span-2 pre:h-px" aria-hidden />
+      </section>
     </>
   );
 }
