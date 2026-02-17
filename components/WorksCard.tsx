@@ -56,7 +56,7 @@ export default function WorksCard({
     ratioKey === "4/3"
       ? ("12 / 6.74" as const)
       : ratioKey === "3/4"
-      ? ("12 / 15" as const)
+      ? ("12 / 16" as const)
       : undefined;
 
   return (
