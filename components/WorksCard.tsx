@@ -54,7 +54,7 @@ export default function WorksCard({
   // ✅ ratioKeyごとの「表示枠」の上書き（確実に効くやつ）
   const aspectRatioOverride =
     ratioKey === "4/3"
-      ? ("12 / 7" as const)
+      ? ("12 / 16" as const)
       : ratioKey === "3/4"
       ? ("12 / 15" as const)
       : undefined;
