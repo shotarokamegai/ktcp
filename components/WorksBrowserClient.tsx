@@ -67,6 +67,99 @@ function pickIllustSrc(layoutSeed: number, rowIndex: number) {
 }
 
 // ------------------------------
+// ✅ sort rule helpers
+// 直近1ヶ月: upload（アップロード日時）
+// それ以外: acf_date（年）
+// 同一年: ランダム（layoutSeedで安定）
+// ------------------------------
+const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+
+function getUploadTime(w: any): number {
+  // ★ あなたのデータは upload が正解（ms）
+  if (typeof w?.upload === "number") return w.upload;
+
+  // 保険：string数値でも吸収
+  if (typeof w?.upload === "string") {
+    const n = Number(w.upload);
+    if (!Number.isNaN(n)) return n;
+  }
+
+  // fallback（念のため）
+  const candidates = [w?.wp_date, w?.wp_modified, w?.date, w?.modified].filter(Boolean);
+  for (const c of candidates) {
+    const t = new Date(String(c)).getTime();
+    if (Number.isFinite(t)) return t;
+  }
+
+  return 0;
+}
+
+function getAcfYear(w: any): number {
+  // 優先順位：年が入ってる可能性が高い順に候補を並べる
+  const candidates = [
+    w?.acf_date,          // ← あなたのログに出てる
+    w?.acf?.date,         // ← ACFにまともなdateが入ってるケース
+    w?.acf?.year,         // ← year単体フィールドのケース
+    w?.acf?.work_year,    // ← ありがちな命名
+  ].filter((v) => v !== undefined && v !== null && String(v).trim() !== "");
+
+  for (const v of candidates) {
+    // 1) "2025" みたいな年だけ
+    const y = Number(String(v).slice(0, 4));
+    if (Number.isFinite(y) && y >= 1900 && y <= 2100) return y;
+
+    // 2) "2025-01-01" / "20250101" など日付っぽい
+    const t = new Date(String(v)).getTime();
+    if (Number.isFinite(t)) return new Date(t).getFullYear();
+  }
+
+  // 年が取れない作品は最後尾に落とす
+  return 0;
+}
+
+
+function yearRandomRank(layoutSeed: number, year: number, workId: number): number {
+  const s =
+    (layoutSeed ^
+      Math.imul((year >>> 0) + 0x9e3779b9, 2654435761) ^
+      Math.imul((workId >>> 0) + 0x85ebca6b, 1597334677)) >>> 0;
+  return mulberry32(s)();
+}
+
+function sortWorksByRule(works: Work[], layoutSeed: number, nowMs: number) {
+  const keyed = works.map((w) => {
+    const uploadT = getUploadTime(w);
+    const isRecent = uploadT >= nowMs - ONE_MONTH_MS;
+
+    const acfYear = getAcfYear(w);
+    const rand = isRecent ? 0 : yearRandomRank(layoutSeed, acfYear, Number(w.id));
+
+    return { w, uploadT, isRecent, acfYear, rand };
+  });
+
+  keyed.sort((a, b) => {
+    // 1) 直近1ヶ月を先頭へ
+    if (a.isRecent !== b.isRecent) return a.isRecent ? -1 : 1;
+
+    // 2) 直近1ヶ月内：upload（アップロード日時）新しい順
+    if (a.isRecent && b.isRecent) {
+      if (b.uploadT !== a.uploadT) return b.uploadT - a.uploadT;
+      return Number(b.w.id) - Number(a.w.id);
+    }
+
+    // 3) それ以外：年（acf_date）降順
+    if (b.acfYear !== a.acfYear) return b.acfYear - a.acfYear;
+
+    // 4) 同一年：ランダム（seed固定で安定）
+    if (a.rand !== b.rand) return a.rand < b.rand ? -1 : 1;
+
+    return Number(a.w.id) - Number(b.w.id);
+  });
+
+  return keyed.map((x) => x.w);
+}
+
+// ------------------------------
 // Props
 // ------------------------------
 type Props = {
@@ -102,6 +195,9 @@ export default function WorksBrowserClient({
     }
   }, []);
 
+  // ✅ “今”を固定（ソート基準がレンダーでブレない）
+  const nowRef = useRef<number>(Date.now());
+
   const abortRef = useRef<AbortController | null>(null);
   const swapIdRef = useRef(0);
   const swapTimerRef = useRef<number | null>(null);
@@ -136,8 +232,6 @@ export default function WorksBrowserClient({
 
   // ------------------------------
   // ✅ scroll to "sticky attach point" (Lenis preferred)
-  // - anchor（sticky直前）を基準にするので、上に居ても下に居ても必ず同じ地点に戻る
-  // - 現在スクロール値は lenis.scroll を優先（window.scrollYズレ対策）
   // ------------------------------
   const scrollToStickyTopReliable = useCallback((smooth = true) => {
     const anchor = stickyAnchorRef.current;
@@ -160,11 +254,9 @@ export default function WorksBrowserClient({
       currentScroll + anchor.getBoundingClientRect().top - topOffset
     );
 
-    // 即時でまず合わせる（安定化）
     if (lenis?.scrollTo) lenis.scrollTo(y, { immediate: true, force: true });
     else window.scrollTo(0, y);
 
-    // smooth は次フレームで
     if (smooth) {
       requestAnimationFrame(() => {
         const lenis2 = (window as any).lenis as typeof lenis | undefined;
@@ -198,7 +290,6 @@ export default function WorksBrowserClient({
   const onChangeCategory = async (slug: string | null) => {
     if (slug === activeSlug) return;
 
-    // ✅ カテゴリ切替時：stickyが吸着する地点へ戻す（上でも下でも安定）
     scrollToStickyTopReliable(true);
 
     if (swapTimerRef.current) {
@@ -230,7 +321,6 @@ export default function WorksBrowserClient({
         setHasMore(nextHasMore);
         setIsAnimating(false);
 
-        // ✅ DOM差し替え後の保険（ズレ戻り防止）
         scrollToStickyTopReliable(false);
 
         applyShown();
@@ -309,6 +399,9 @@ export default function WorksBrowserClient({
   // rendered (PC + SP separate)
   // ------------------------------
   const { renderedPC, renderedSP } = useMemo(() => {
+    // ✅ 並び順だけルール適用（レイアウトロジックは一切そのまま）
+    const sortedWorks = sortWorksByRule(works, layoutSeed, nowRef.current);
+
     // ==============================
     // PC: 現状ロジックをそのまま維持
     // ==============================
@@ -336,8 +429,8 @@ export default function WorksBrowserClient({
       </div>
     );
 
-    while (cursor < works.length) {
-      const remaining = works.length - cursor;
+    while (cursor < sortedWorks.length) {
+      const remaining = sortedWorks.length - cursor;
       const isRow3 = rowIndex % 2 === 0;
 
       // -------- Row3 (3 works)
@@ -346,7 +439,7 @@ export default function WorksBrowserClient({
         const wideIndex = wideToggle === 0 ? 0 : 1;
 
         for (let i = 0; i < take; i++) {
-          const w = works[cursor++];
+          const w = sortedWorks[cursor++];
           const isWide = take === 3 && i === wideIndex;
 
           const ratioKey = pickRatioKeyFrom(
@@ -393,10 +486,10 @@ export default function WorksBrowserClient({
         !insertIllust &&
         !prevRow4HadIllust &&
         slotCount <= 12 &&
-        cursor < works.length;
+        cursor < sortedWorks.length;
 
       if (wantFullWork) {
-        const w = works[cursor++];
+        const w = sortedWorks[cursor++];
 
         const ratioKey = pickRatioKeyFrom(
           RATIOS_ROW4,
@@ -417,18 +510,18 @@ export default function WorksBrowserClient({
         );
       }
 
-      const remainingAfter = works.length - cursor;
+      const remainingAfter = sortedWorks.length - cursor;
       const worksToTake = Math.min(insertIllust ? 3 : 4, remainingAfter);
       let taken = 0;
 
       for (let i = 0; i < 4; i++) {
-        if (insertIllust && i === 1) {
+        if (insertIllust && i === ILLUST_COL_IN_ROW4) {
           outPC.push(IllustCellPC(`illust-${rowIndex}-${i}`, illustSrc));
           continue;
         }
 
-        if (taken < worksToTake && cursor < works.length) {
-          const w = works[cursor++];
+        if (taken < worksToTake && cursor < sortedWorks.length) {
+          const w = sortedWorks[cursor++];
           taken++;
 
           const ratioKey = pickRatioKeyFrom(
@@ -514,7 +607,7 @@ export default function WorksBrowserClient({
       workCount++;
     };
 
-    while (idx < works.length) {
+    while (idx < sortedWorks.length) {
       const atRowHead = col === 0;
 
       if (atRowHead && workCount >= nextIllustAt) {
@@ -527,20 +620,20 @@ export default function WorksBrowserClient({
       }
 
       if (atRowHead && workCount >= nextFullAt) {
-        const w = works[idx++];
+        const w = sortedWorks[idx++];
         pushWorkSP(w, true);
         nextFullAt += FULL_WORK_EVERY_WORKS;
         continue;
       }
 
-      const remaining = works.length - idx;
+      const remaining = sortedWorks.length - idx;
       if (remaining === 1) {
-        const w = works[idx++];
+        const w = sortedWorks[idx++];
         pushWorkSP(w, true);
         break;
       }
 
-      const w = works[idx++];
+      const w = sortedWorks[idx++];
       pushWorkSP(w, false);
     }
 
