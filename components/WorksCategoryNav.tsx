@@ -41,7 +41,7 @@ const WorksCategoryNav = forwardRef<HTMLElement, Props>(function WorksCategoryNa
       <section
         ref={ref as React.Ref<HTMLElement>}
         className={[
-          "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] pre:sm:sp-w-[340] pre:sm:justify-start pre:sm:sp-mb-[30] pre:sm:sp-py-[20] pre:sticky pre:top-[86px] pre:sm:sp-top-[49] pre:bg-white pre:z-10 slide-in slide-out pre:sm:flex-nowrap pre:sm:overflow-scroll is-shown",
+          "pre:flex pre:justify-end pre:flex-wrap pre:w-[calc(100%-40px)] pre:mx-auto pre:pb-[18px] pre:mb-[18px] pre:sm:sp-w-[340] pre:sm:justify-start pre:sm:sp-mb-[30] pre:sm:sp-py-[20] pre:sticky pre:top-[86px] pre:sm:sp-top-[49] pre:bg-white pre:z-10 slide-in slide-out pre:sm:flex-nowrap pre:sm:overflow-scroll",
           className,
         ].join(" ")}
       >
