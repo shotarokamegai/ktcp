@@ -73,6 +73,7 @@ function pickIllustSrc(layoutSeed: number, rowIndex: number) {
 // 同一年: ランダム（layoutSeedで安定）
 // ------------------------------
 const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 function getUploadTime(w: any): number {
   // ★ あなたのデータは upload が正解（ms）
@@ -129,7 +130,7 @@ function yearRandomRank(layoutSeed: number, year: number, workId: number): numbe
 function sortWorksByRule(works: Work[], layoutSeed: number, nowMs: number) {
   const keyed = works.map((w) => {
     const uploadT = getUploadTime(w);
-    const isRecent = uploadT >= nowMs - ONE_MONTH_MS;
+    const isRecent = uploadT >= nowMs - ONE_WEEK_MS; // ← ここ
 
     const acfYear = getAcfYear(w);
     const rand = isRecent ? 0 : yearRandomRank(layoutSeed, acfYear, Number(w.id));
