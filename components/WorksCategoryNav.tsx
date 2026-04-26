@@ -56,8 +56,8 @@ const WorksCategoryNav = forwardRef<HTMLElement, Props>(function WorksCategoryNa
           ].join(" ")}
         >
           <span className="splitting-hover__inner">
-            <SplittingSpan text={allLabel} />
-            <SplittingSpan text={allLabel} />
+            <SplittingSpan text={allLabel} aria-hidden="true" />
+            <SplittingSpan text={allLabel} aria-hidden="true" />
           </span>
         </button>
 
@@ -77,8 +77,8 @@ const WorksCategoryNav = forwardRef<HTMLElement, Props>(function WorksCategoryNa
               ].join(" ")}
             >
               <span className="splitting-hover__inner">
-                <SplittingSpan text={cat.name} />
-                <SplittingSpan text={cat.name} />
+                <SplittingSpan text={cat.name} aria-hidden="true" />
+                <SplittingSpan text={cat.name} aria-hidden="true" />
               </span>
             </button>
           );

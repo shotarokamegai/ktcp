@@ -481,8 +481,8 @@ export default function ApplicationForm() {
           className="btn-submit pre:mt-[50px] pre:sm:sp-mt-[35] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white pre:sm:order-5 slide-in"
         >
           <span className="splitting-hover__inner">
-            <SplittingSpan text="BACK TO TOP" />
-            <SplittingSpan text="BACK TO TOP" />
+            <SplittingSpan text="BACK TO TOP" aria-hidden="true" />
+            <SplittingSpan text="BACK TO TOP" aria-hidden="true" />
           </span>
           <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center">
             <span className="icon-content__inner">
@@ -848,8 +848,8 @@ export default function ApplicationForm() {
             )}
           >
             <span className="splitting-hover__inner">
-              <SplittingSpan text={sending ? "SENDING..." : "APPLY NOW"} />
-              <SplittingSpan text={sending ? "SENDING..." : "APPLY NOW"} />
+              <SplittingSpan text={sending ? "SENDING..." : "APPLY NOW"} aria-hidden="true" />
+              <SplittingSpan text={sending ? "SENDING..." : "APPLY NOW"} aria-hidden="true" />
             </span>
             <div className="icon-content pre:absolute center-y pre:right-[25px] pre:flex pre:items-center pre:sm:sp-right-[15] sm:center-y">
               <span className="icon-content__inner">

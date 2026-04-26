@@ -46,8 +46,8 @@ export default function WorksCategoryNavShell({
 
   const Label = ({ text }: { text: string }) => (
     <span className="splitting-hover__inner">
-      <SplittingSpan text={text} />
-      <SplittingSpan text={text} />
+      <SplittingSpan text={text} aria-hidden="true" />
+      <SplittingSpan text={text} aria-hidden="true" />
     </span>
   );
 

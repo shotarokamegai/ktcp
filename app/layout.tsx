@@ -17,17 +17,17 @@ import SlideInOnLoad from "@/components/SlideInOnLoad";
 export const metadata: Metadata = {
   title: {
     default: "Ketchup Inc.｜株式会社 Ketchup",
-    template: "%s | Ketchup Inc.",
+    template: "%s - Ketchup Inc.",
   },
   description:
-    "Add a bit of flavoring to those contents, and deliver them in an even better thing. ｜ デザインから幅広いWebサイト制作まで、一貫した企画制作・運用。",
+    "東京発のクリエイティブカンパニー。デザインからWebサイト制作・ブランディングまで、企画・制作・運用を一貫して手がけます。| Add a bit of flavoring to those contents, and deliver them in an even better thing.",
 
   openGraph: {
     type: "website",
-    siteName: "Ketchup Inc.",
+    siteName: "Ketchup Inc.｜株式会社 Ketchup",
     title: "Ketchup Inc.｜株式会社 Ketchup",
     description:
-      "Add a bit of flavoring to those contents, and deliver them in an even better thing. ｜ デザインから幅広いWebサイト制作まで、一貫した企画制作・運用。",
+      "東京発のクリエイティブカンパニー。デザインからWebサイト制作・ブランディングまで、企画・制作・運用を一貫して手がけます。| Add a bit of flavoring to those contents, and deliver them in an even better thing.",
     url: "https://ktcp.jp",
     images: [
       {
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ketchup Inc.｜株式会社 Ketchup",
     description:
-      "ブランドサイト・EC・Webシステム開発を手がけるクリエイティブカンパニー。",
+      "東京発のクリエイティブカンパニー。デザインからWebサイト制作・ブランディングまで、企画・制作・運用を一貫して手がけます。| Add a bit of flavoring to those contents, and deliver them in an even better thing.",
     images: ["https://ktcp.jp/ogp.png"],
   },
 };
@@ -173,8 +173,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
                 >
                   <span className="splitting-hover__inner">
-                    <SplittingSpan text="ABOUT" />
-                    <SplittingSpan text="ABOUT" />
+                    <SplittingSpan text="ABOUT" aria-hidden="false" />
+                    <SplittingSpan text="ABOUT" aria-hidden="true" />
                   </span>
                 </HeaderNavLink>
               </li>
@@ -185,8 +185,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
                 >
                   <span className="splitting-hover__inner">
-                    <SplittingSpan text="CONTACT" />
-                    <SplittingSpan text="CONTACT" />
+                    <SplittingSpan text="CONTACT" aria-hidden="false" />
+                    <SplittingSpan text="CONTACT" aria-hidden="true" />
                   </span>
                 </HeaderNavLink>
               </li>
@@ -203,8 +203,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <span
                     className={`${CAREERS_TEXT} splitting-hover__inner`}
                   >
-                    <SplittingSpan text="CAREERS" />
-                    <SplittingSpan text="CAREERS" />
+                    <SplittingSpan text="CAREERS" aria-hidden="false" />
+                    <SplittingSpan text="CAREERS" aria-hidden="true" />
                   </span>
 
                   <div className="pre:absolute center-y pre:right-0 sm:center-y plus">
@@ -226,8 +226,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <p className="pre:font-gt pre:font-light pre:sp-fs-[12] pre:text-ketchup pre:absolute sm:center-x pre:bottom-[calc(12/393*-100vw)] splitting-hover pre:w-[104%] pre:invisible pre:in-[.is-open]:visible">
               <span className="splitting-hover__inner">
-                <SplittingSpan text="Close" />
-                <SplittingSpan text="Close" />
+                <SplittingSpan text="Close" aria-hidden="true" />
+                <SplittingSpan text="Close" aria-hidden="true" />
               </span>
             </p>
             </div>

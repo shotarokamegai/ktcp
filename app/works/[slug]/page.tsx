@@ -22,24 +22,18 @@ export async function generateMetadata({
 
   const title = strip(work.title.rendered);
 
-const description = (work as any).excerpt?.rendered
-  ?.replace(/<[^>]+>/g, "")
-  ?.trim()
-  ?.slice(0, 120);
+  const excerptRaw = (work as any).excerpt?.rendered
+    ?.replace(/<[^>]+>/g, "")
+    ?.trim()
+    ?.slice(0, 100);
+
+  // excerptが空の場合のフォールバック
+  const description = excerptRaw
+    ? `${excerptRaw} | Ketchup Inc.`
+    : `${title} | 株式会社Ketchupの制作実績。デザイン・Web制作・ブランディングを手がけるクリエイティブカンパニー。`;
 
   const acf = (work as any).acf ?? {};
-
-  // ✅ PCサムネ（あなたの表示ロジックと同じ）
   const pcThumb = toUrl(acf?.eyecatch?.pattern3);
-
-  /**
-   * OGP画像の優先順位（PCサムネ最優先）
-   *  - PCサムネ（acf.eyecatch.pattern3）
-   *  - ACFのogp_image
-   *  - ACFのeyecatch / thumbnail（url形式）
-   *  - WP標準のfeatured_media
-   *  - fallback
-   */
   const ogImage =
     pcThumb ||
     acf?.ogp_image ||
@@ -51,21 +45,12 @@ const description = (work as any).excerpt?.rendered
   return {
     title,
     description,
-
     openGraph: {
       type: "article",
       title,
       description,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
-
     twitter: {
       card: "summary_large_image",
       title,

@@ -22,8 +22,8 @@ export default function WorksCategoryNavLink({
         className={[base, !activeSlug ? "pre:text-black" : "pre:text-gray-400 splitting-hover pre:hover:text-ketchup"].join(" ")}
       >
         <span className="splitting-hover__inner">
-          <SplittingSpan text="ALL" />
-          <SplittingSpan text="ALL" />
+          <SplittingSpan text="ALL" aria-hidden="true" />
+          <SplittingSpan text="ALL" aria-hidden="true" />
         </span>
       </FMLink>
 
@@ -39,8 +39,8 @@ export default function WorksCategoryNavLink({
             ].join(" ")}
           >
             <span className="splitting-hover__inner">
-              <SplittingSpan text={cat.name} />
-              <SplittingSpan text={cat.name} />
+              <SplittingSpan text={cat.name} aria-hidden="true" />
+              <SplittingSpan text={cat.name} aria-hidden="true" />
             </span>
           </FMLink>
         );

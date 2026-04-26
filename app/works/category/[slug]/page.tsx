@@ -4,6 +4,7 @@ import SlideInHydrate from "@/components/SlideInHydrate";
 import Footer from "@/components/Footer";
 import ResponsiveImage from "@/components/ResponsiveImage";
 import WorksCategoryNav from "@/components/WorksCategoryNav";
+import type { Metadata } from "next";
 import WorksCard from "@/components/WorksCard";
 import WorksCategoryNavLink from "@/components/WorksCategoryNavLink";
 import { fetchWorksByCategorySlug, fetchWorkCategories } from "@/lib/wp";
@@ -46,6 +47,25 @@ function pickRatioKey(seed: number, workId: number): RatioKey {
   if (r < 0.33) return "1/1";
   if (r < 0.66) return "3/4";
   return "4/3";
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const categories = await fetchWorkCategories();
+  const category = categories?.find((c: any) => c.slug === params.slug);
+  const categoryName = category?.name ?? params.slug;
+
+  return {
+    title: `${categoryName} | Works`,
+    description: `${categoryName}の制作実績 | 株式会社Ketchup。デザイン・Web制作・ブランディングを手がけるクリエイティブカンパニー。| Works by Ketchup Inc.`,
+    openGraph: {
+      title: `${categoryName} | Works | Ketchup Inc.`,
+      description: `${categoryName}の制作実績 | 株式会社Ketchup。デザイン・Web制作・ブランディングを手がけるクリエイティブカンパニー。`,
+    },
+  };
 }
 
 export default async function WorksCategoryPage({

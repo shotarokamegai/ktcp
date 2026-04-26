@@ -4,9 +4,9 @@ import Footer from "@/components/Footer";
 import ContactForm from "@/components/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact | Ketchup Portfolio",
-  description: "お問い合わせフォーム",
-  openGraph: { title: "Contact | Ketchup Portfolio" },
+  title: "Contact",
+  description: "株式会社Ketchupへのお問い合わせはこちら。Web制作・ブランディング・デザインなどお気軽にご相談ください。| Feel free to reach out — we'd love to hear about your project.",
+  openGraph: { title: "Contact" },
 };
 
 export const revalidate = 60;

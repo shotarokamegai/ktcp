@@ -9,9 +9,9 @@ import WebDirector from "@/components/careers/WebDirector";
 import AccordionClient from "@/components/AccordionClient";
 
 export const metadata: Metadata = {
-  title: "Careers | Ketchup Portfolio",
-  description: "採用ページ",
-  openGraph: { title: "Careers | Ketchup Portfolio" },
+  title: "Careers",
+  description: "株式会社Ketchupの採用情報。こだわりを持って制作に向き合えるWebディレクター・エンジニアを募集中。| We're looking for creative people who care about the details.",
+  openGraph: { title: "Careers" },
 };
 
 export const revalidate = 60;

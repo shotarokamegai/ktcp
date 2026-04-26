@@ -33,8 +33,8 @@ export default function InteractiveButton({
     >
       {/* ===== Label ===== */}
       <span className="c-button__label splitting-hover__inner">
-        <SplittingSpan text={text} />
-        <SplittingSpan text={text} />
+        <SplittingSpan text={text} aria-hidden="true" />
+        <SplittingSpan text={text} aria-hidden="true" />
       </span>
 
       {/* ===== Icon ===== */}

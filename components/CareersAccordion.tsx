@@ -90,8 +90,8 @@ export default function CareersAccordion({
       >
         <h3 className="pre:text-[18px] pr:font-gt pre:font-light">
           <span className="splitting-hover__inner">
-            <SplittingSpan text={title} />
-            <SplittingSpan text={title} />
+            <SplittingSpan text={title} aria-hidden="true" />
+            <SplittingSpan text={title} aria-hidden="true" />
           </span>
         </h3>
 
@@ -187,8 +187,8 @@ export default function CareersAccordion({
             className="btn-submit pre:mt-[30px] pre:mx-auto splitting-hover icon-hover pre:hover:[&_.char]:text-black pre:hover:[&_path]:stroke-black pre:hover:[&_line]:stroke-black pre:hover:bg-white pre:sm:sp-mt-[12] pre:sm:sp-w-[320]"
           >
             <span className="splitting-hover__inner">
-              <SplittingSpan text={applyLabel} />
-              <SplittingSpan text={applyLabel} />
+              <SplittingSpan text={applyLabel} aria-hidden="true" />
+              <SplittingSpan text={applyLabel} aria-hidden="true" />
             </span>
 
             <div className="icon-content pre:absolute center-y sm:center-y pre:right-[25px] pre:flex pre:items-center pre:sm:sp-right-[30]">
