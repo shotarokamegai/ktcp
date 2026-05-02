@@ -16,16 +16,16 @@ import SlideInOnLoad from "@/components/SlideInOnLoad";
 
 export const metadata: Metadata = {
   title: {
-    default: "Ketchup Inc.｜株式会社 Ketchup",
-    template: "%s - Ketchup Inc.",
+    default: "Ketchup Inc. | Tokyo-based creative company.",
+    template: "%s - Ketchup Inc. | Tokyo-based creative company.",
   },
   description:
     "東京発のクリエイティブカンパニー。デザインからWebサイト制作・ブランディングまで、企画・制作・運用を一貫して手がけます。| Add a bit of flavoring to those contents, and deliver them in an even better thing.",
 
   openGraph: {
     type: "website",
-    siteName: "Ketchup Inc.｜株式会社 Ketchup",
-    title: "Ketchup Inc.｜株式会社 Ketchup",
+    siteName: "Ketchup Inc. | Tokyo-based creative company.",
+    title: "Ketchup Inc. | Tokyo-based creative company.",
     description:
       "東京発のクリエイティブカンパニー。デザインからWebサイト制作・ブランディングまで、企画・制作・運用を一貫して手がけます。| Add a bit of flavoring to those contents, and deliver them in an even better thing.",
     url: "https://ktcp.jp",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Ketchup Inc.｜株式会社 Ketchup",
+    title: "Ketchup Inc. | Tokyo-based creative company.",
     description:
       "東京発のクリエイティブカンパニー。デザインからWebサイト制作・ブランディングまで、企画・制作・運用を一貫して手がけます。| Add a bit of flavoring to those contents, and deliver them in an even better thing.",
     images: ["https://ktcp.jp/ogp.png"],
