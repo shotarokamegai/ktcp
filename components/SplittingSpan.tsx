@@ -4,11 +4,11 @@ import { useEffect, useRef } from "react";
 export default function SplittingSpan({
   text,
   className = "",
-  ariaHidden = false, // ← 追加
+  "aria-hidden": ariaHidden,
 }: {
   text: string;
   className?: string;
-  ariaHidden?: boolean; // ← 追加
+  "aria-hidden"?: boolean | "true" | "false";
 }) {
   const ref = useRef<HTMLSpanElement | null>(null);
 
@@ -35,7 +35,7 @@ export default function SplittingSpan({
       ref={ref}
       className={`splitting-text ${className}`}
       data-splitting="chars"
-      aria-hidden={ariaHidden} // ← propsから受け取る
+      aria-hidden={ariaHidden}
     >
       {text}
     </span>

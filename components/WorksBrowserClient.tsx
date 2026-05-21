@@ -67,54 +67,40 @@ function pickIllustSrc(layoutSeed: number, rowIndex: number) {
 }
 
 // ------------------------------
-// ✅ sort rule helpers
-// 直近1ヶ月: upload（アップロード日時）
-// それ以外: acf_date（年）
-// 同一年: ランダム（layoutSeedで安定）
+// sort rule helpers
+// 直近1週間: upload新しい順、それ以外: acf_date年降順、同一年: seed固定ランダム
 // ------------------------------
-const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 function getUploadTime(w: any): number {
-  // ★ あなたのデータは upload が正解（ms）
   if (typeof w?.upload === "number") return w.upload;
-
-  // 保険：string数値でも吸収
   if (typeof w?.upload === "string") {
     const n = Number(w.upload);
     if (!Number.isNaN(n)) return n;
   }
-
-  // fallback（念のため）
   const candidates = [w?.wp_date, w?.wp_modified, w?.date, w?.modified].filter(Boolean);
   for (const c of candidates) {
     const t = new Date(String(c)).getTime();
     if (Number.isFinite(t)) return t;
   }
-
   return 0;
 }
 
 function getAcfYear(w: any): number {
-  // 優先順位：年が入ってる可能性が高い順に候補を並べる
   const candidates = [
-    w?.acf_date,          // ← あなたのログに出てる
-    w?.acf?.date,         // ← ACFにまともなdateが入ってるケース
-    w?.acf?.year,         // ← year単体フィールドのケース
-    w?.acf?.work_year,    // ← ありがちな命名
+    w?.acf_date,
+    w?.acf?.date,
+    w?.acf?.year,
+    w?.acf?.work_year,
   ].filter((v) => v !== undefined && v !== null && String(v).trim() !== "");
 
   for (const v of candidates) {
-    // 1) "2025" みたいな年だけ
     const y = Number(String(v).slice(0, 4));
     if (Number.isFinite(y) && y >= 1900 && y <= 2100) return y;
-
-    // 2) "2025-01-01" / "20250101" など日付っぽい
     const t = new Date(String(v)).getTime();
     if (Number.isFinite(t)) return new Date(t).getFullYear();
   }
 
-  // 年が取れない作品は最後尾に落とす
   return 0;
 }
 
@@ -130,7 +116,7 @@ function yearRandomRank(layoutSeed: number, year: number, workId: number): numbe
 function sortWorksByRule(works: Work[], layoutSeed: number, nowMs: number) {
   const keyed = works.map((w) => {
     const uploadT = getUploadTime(w);
-    const isRecent = uploadT >= nowMs - ONE_WEEK_MS; // ← ここ
+    const isRecent = uploadT >= nowMs - ONE_WEEK_MS;
 
     const acfYear = getAcfYear(w);
     const rand = isRecent ? 0 : yearRandomRank(layoutSeed, acfYear, Number(w.id));
@@ -196,7 +182,6 @@ export default function WorksBrowserClient({
     }
   }, []);
 
-  // ✅ “今”を固定（ソート基準がレンダーでブレない）
   const nowRef = useRef<number>(Date.now());
 
   const abortRef = useRef<AbortController | null>(null);
@@ -204,9 +189,7 @@ export default function WorksBrowserClient({
   const swapTimerRef = useRef<number | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ 追加：sticky nav本体（top値取得用）
   const stickyNavRef = useRef<HTMLElement | null>(null);
-  // ✅ 追加：sticky開始地点アンカー（ここに戻す）
   const stickyAnchorRef = useRef<HTMLDivElement | null>(null);
 
   const applyShown = () => {
@@ -232,7 +215,7 @@ export default function WorksBrowserClient({
   };
 
   // ------------------------------
-  // ✅ scroll to "sticky attach point" (Lenis preferred)
+  // scroll to "sticky attach point" (Lenis preferred)
   // ------------------------------
   const scrollToStickyTopReliable = useCallback((smooth = true) => {
     const anchor = stickyAnchorRef.current;
@@ -400,7 +383,6 @@ export default function WorksBrowserClient({
   // rendered (PC + SP separate)
   // ------------------------------
   const { renderedPC, renderedSP } = useMemo(() => {
-    // ✅ 並び順だけルール適用（レイアウトロジックは一切そのまま）
     const sortedWorks = sortWorksByRule(works, layoutSeed, nowRef.current);
 
     // ==============================

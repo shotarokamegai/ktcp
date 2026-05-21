@@ -12,10 +12,6 @@ type Props = {
   className?: string;
   allLabel?: string;
 
-  /**
-   * ✅ stickyが吸着し始める地点のアンカー（section直前）
-   * WorksBrowserClient 側で current に格納したいので callback ref 推奨
-   */
   stickyAnchorRef?: React.Ref<HTMLDivElement>;
 };
 
@@ -35,7 +31,6 @@ const WorksCategoryNav = forwardRef<HTMLElement, Props>(function WorksCategoryNa
 
   return (
     <>
-      {/* ✅ 追加：ここが「stickyが上に吸着し始める地点」 */}
       <div ref={stickyAnchorRef} aria-hidden className="pre:h-0 pre:w-0" />
 
       <section
@@ -56,7 +51,7 @@ const WorksCategoryNav = forwardRef<HTMLElement, Props>(function WorksCategoryNa
           ].join(" ")}
         >
           <span className="splitting-hover__inner">
-            <SplittingSpan text={allLabel} aria-hidden="true" />
+            <SplittingSpan text={allLabel} />
             <SplittingSpan text={allLabel} aria-hidden="true" />
           </span>
         </button>
@@ -77,7 +72,7 @@ const WorksCategoryNav = forwardRef<HTMLElement, Props>(function WorksCategoryNa
               ].join(" ")}
             >
               <span className="splitting-hover__inner">
-                <SplittingSpan text={cat.name} aria-hidden="true" />
+                <SplittingSpan text={cat.name} />
                 <SplittingSpan text={cat.name} aria-hidden="true" />
               </span>
             </button>

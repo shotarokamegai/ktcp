@@ -1,6 +1,6 @@
-// app/sitemap.ts
 import { MetadataRoute } from "next";
 import { fetchWorks, fetchWorkCategories } from "@/lib/wp";
+import type { Work, WorkTerm } from "@/lib/wp";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [works, categories] = await Promise.all([
@@ -8,14 +8,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     fetchWorkCategories(),
   ]);
 
-  const workUrls = works.map((w: any) => ({
+  const workUrls = works.map((w: Work) => ({
     url: `https://ktcp.jp/works/${w.slug}`,
-    lastModified: w.modified ?? new Date(),
+    lastModified: w.date ? new Date(w.date) : new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
 
-  const categoryUrls = categories.map((c: any) => ({
+  const categoryUrls = categories.map((c: WorkTerm) => ({
     url: `https://ktcp.jp/works/category/${c.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,

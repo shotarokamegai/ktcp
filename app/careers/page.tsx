@@ -1,4 +1,3 @@
-// app/contact/page.tsx
 import type { Metadata } from "next";
 import Footer from "@/components/Footer";
 import Image from "next/image";
@@ -11,7 +10,7 @@ import AccordionClient from "@/components/AccordionClient";
 export const metadata: Metadata = {
   title: "Careers",
   description: "株式会社Ketchupの採用情報。こだわりを持って制作に向き合えるWebディレクター・エンジニアを募集中。| We're looking for creative people who care about the details.",
-  openGraph: { title: "Careers" },
+  openGraph: { title: "Careers | Ketchup Inc." },
 };
 
 export const revalidate = 60;

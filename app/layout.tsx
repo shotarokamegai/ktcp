@@ -1,4 +1,3 @@
-// app/layout.tsx (or RootLayout)
 import GAListener from "@/components/GAListener";
 import "../styles/globals.css";
 import "../styles/tailwind.css";
@@ -49,10 +48,7 @@ export const metadata: Metadata = {
 };
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
-const VERCEL_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV; // 使うなら
-const ENABLE_GA = !!GA_ID; // previewでも計測したいならこれだけでOK
-// previewでGAを入れたくないなら：
-// const ENABLE_GA = !!GA_ID && VERCEL_ENV === "production";
+const ENABLE_GA = !!GA_ID;
 
 // ============================
 // Tailwind class presets
@@ -173,7 +169,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
                 >
                   <span className="splitting-hover__inner">
-                    <SplittingSpan text="ABOUT" aria-hidden="false" />
+                    <SplittingSpan text="ABOUT" />
                     <SplittingSpan text="ABOUT" aria-hidden="true" />
                   </span>
                 </HeaderNavLink>
@@ -185,7 +181,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   className={`${NAV_LINK_BASE} ${NAV_LINK_GAP} splitting-hover`}
                 >
                   <span className="splitting-hover__inner">
-                    <SplittingSpan text="CONTACT" aria-hidden="false" />
+                    <SplittingSpan text="CONTACT" />
                     <SplittingSpan text="CONTACT" aria-hidden="true" />
                   </span>
                 </HeaderNavLink>
@@ -203,7 +199,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <span
                     className={`${CAREERS_TEXT} splitting-hover__inner`}
                   >
-                    <SplittingSpan text="CAREERS" aria-hidden="false" />
+                    <SplittingSpan text="CAREERS" />
                     <SplittingSpan text="CAREERS" aria-hidden="true" />
                   </span>
 

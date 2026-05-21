@@ -8,14 +8,9 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "About",
   description: "東京発のクリエイティブカンパニー。デザインからWebサイト制作・ブランディングまで、企画・制作・運用を一貫して手がけます。| Add a bit of flavoring to those contents, and deliver them in an even better thing.",
-  openGraph: { title: "About" },
+  openGraph: { title: "About | Ketchup Inc." },
 };
 
-// export async function generateMetadata(): Promise<Metadata> {
-//   const page = await fetchPageBySlug("about");
-//   const title = page ? strip(page.title.rendered) : "About";
-//   return { title, openGraph: { title } };
-// }
 
 export default async function AboutPage() {
   const page = await fetchPageBySlug("about");
