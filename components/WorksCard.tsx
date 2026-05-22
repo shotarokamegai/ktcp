@@ -44,12 +44,17 @@ export default function WorksCard({
   const url = getEyecatchUrlByPattern(w, requiredPattern);
   const imgUrl = url || "";
 
-  const catLabel = Array.isArray(w?.works_cat)
-    ? w.works_cat
-        .map((c: any) => c?.acf?.ryaku || c?.ryaku || c?.name)
-        .filter(Boolean)
-        .join(" / ")
-    : "";
+  const cats: any[] = Array.isArray(w?.works_cat) ? w.works_cat : [];
+  const seenLabels = new Set<string>();
+  const catLabel = cats
+    .map((c: any) => {
+      const label = c?.acf?.ryaku || c?.ryaku || c?.name || null;
+      if (!label || seenLabels.has(label)) return null;
+      seenLabels.add(label);
+      return label;
+    })
+    .filter(Boolean)
+    .join(" / ");
 
   // ✅ ratioKeyごとの「表示枠」の上書き（確実に効くやつ）
   const aspectRatioOverride =
