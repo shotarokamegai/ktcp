@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 import { fetchWorkBySlug, strip, fetchWorks } from "@/lib/wp";
 import ResponsiveImage from "@/components/ResponsiveImage";
+import SplittingSpan from "@/components/SplittingSpan";
 import FeaturedWorksMobileSwiper from "@/components/FeaturedWorksMobileSwiper";
 
 export const revalidate = 60;
@@ -119,6 +120,11 @@ export default async function WorkDetail({
 
   const acf = (work as any).acf ?? {};
   const dateTxt: string | undefined = acf.date;
+  // ACF "url"（サイトURL）。http(s) のものだけリンクにする
+  const siteUrl: string | undefined =
+    typeof acf.url === "string" && /^https?:\/\//.test(acf.url.trim())
+      ? acf.url.trim()
+      : undefined;
 
   const categories = (work as any).works_cat as
     | { id: number; name: string; slug: string; acf?: any }[]
@@ -203,7 +209,25 @@ export default async function WorkDetail({
               </p>
             </div>
           )}
-
+          {siteUrl && (
+            <div className="slide-in pre:mt-[42px] pre:sm:sp-mt-[30] pre:sm:order-2">
+              {/* ホバーはヘッダーナビ・フッターと同じ splitting-hover */}
+              <div className="pre:inline-block pre:relative">
+                <a
+                  href={siteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pre:text-[16px] pre:font-gt pre:font-light pre:leading-none pre:hover:text-ketchup splitting-hover pre:sm:sp-fs-[16]"
+                >
+                  <span className="splitting-hover__inner">
+                    <SplittingSpan text="Visit site" />
+                    <SplittingSpan text="Visit site" aria-hidden="true" />
+                  </span>
+                </a>
+                <div className="pre:h-px pre:w-full pre:bg-black pre:absolute pre:bottom-0 pre:left-0"></div>
+              </div>
+            </div>
+          )}
 
           {categories && categories.length > 0 && (
             <div className="slide-in pre:mt-auto pre:sm:order-3 pre:sm:sp-mt-[110] pre:sm:sp-mb-[25]">
